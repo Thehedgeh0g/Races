@@ -146,6 +146,6 @@ XHR.onload = function() {
         DataError();
     }
     else {
-        window.location.href = "/admin"
+        window.location.href = "/menu"
     }
 }
