@@ -9,7 +9,7 @@
         <link rel="stylesheet" type="text/css" href="../static/css/loginstyle.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         
         <script defer src="../static/js/login.js"></script>
     </head>
@@ -19,19 +19,19 @@
             <form class="login-box__form">
                 <div id="message"></div>
                 <div id="login-block" class="login-box__email">
-                    <p class="login-box__comment">sdf</p>
+                    <p class="login-box__comment">login</p>
                     <input id="login-field" class="login-box__field" type="email" onfocus="Select('login')" onblur="NotSelect('login')" type="email">
                 </div>
                 <div id="password-block" class="login-box__pass">
-                    <p class="login-box__comment">sdf</p>
-                    <div>
+                    <p class="login-box__comment">password</p>
+                    <div class="centering">
                         <input id="password-field" class="login-box__field" onfocus="Select('password')" onblur="NotSelect('password')" type="password">
-                        <img onclick="password_visibility()" class="login-box__eye" src="../static/sources/eye.svg" alt="eye">
+                        <img onclick="password_visibility()" class="login-box__eye" src="../static/img/eye.png" alt="eye">
                     </div>
                     
                 </div>
             </form>
-            <button class="login-box__button" onclick="Click()">{{ .Button }}</button>
+            <button class="login-box__button" onclick="Click()">log in</button>
         </div>
     </body>
 </html>
