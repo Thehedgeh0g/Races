@@ -74,6 +74,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		log.Println(req.Email, ' ', req.Password)
 		user, err := getUser(db, req)
+		//log.Println(user.Email, ' ', user.Password)
 
 		if err != nil {
 			http.Error(w, "Incorect email or password", 401)
@@ -124,7 +125,7 @@ func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
 	  email,
 	  password
   	FROM
-	  user
+	  users
   	WHERE
 	  email = ? AND
 	  password = ?
@@ -135,7 +136,7 @@ func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	log.Println(user.UserId)
 	return user, nil
 }
 
@@ -146,7 +147,7 @@ func search(db *sqlx.DB, UserID string) error {
 	  email,
 	  password
 	FROM
-	  user
+	  users
 	WHERE
 	  post_id = ?
 	`
