@@ -1,0 +1,19 @@
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+.map
+{
+    display: grid;
+    grid-template-columns: repeat(25, 94px);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.tile
+{
+    width: 94px;
+    height: 94px;
+}
