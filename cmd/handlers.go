@@ -1,1 +1,202 @@
 package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"html/template"
+	"io"
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/jmoiron/sqlx"
+)
+
+type loginpage struct {
+	Header []headerlogindata
+	Main   []mainlogindata
+}
+
+type headerlogindata struct {
+	Escape string
+	Title  string
+}
+
+type mainlogindata struct {
+	Title  string
+	Email  string
+	Pass   string
+	Button string
+}
+
+type UserRequest struct {
+	Email    string `json:"Email"`
+	Password string `json:"Password"`
+}
+
+type Userdata struct {
+	UserId   string
+	Email    string
+	Password string
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	ts, err := template.ParseFiles("pages/login.html") // Главная страница блога
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500) // В случае ошибки парсинга - возвращаем 500
+		log.Println(err.Error())                    // Используем стандартный логгер для вывода ошбики в консоль
+		return                                      // Не забываем завершить выполнение ф-ии
+	}
+
+	data := loginpage{
+		Header: headerlogin(),
+		Main:   mainlogin(),
+	}
+
+	err = ts.Execute(w, data) // Заставляем шаблонизатор вывести шаблон в тело ответа
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		log.Println(err.Error())
+		return
+	}
+}
+func headerlogin() []headerlogindata {
+	return []headerlogindata{
+		{
+			Escape: "../static/sources/login-logo.svg",
+			Title:  "Log in to start creating",
+		},
+	}
+}
+
+func mainlogin() []mainlogindata {
+	return []mainlogindata{
+		{
+			Title:  "Log In",
+			Email:  "Email",
+			Pass:   "Password",
+			Button: "Log In",
+		},
+	}
+}
+
+func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		var req UserRequest
+
+		err = json.Unmarshal(reqData, &req)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		log.Println(req.Email, ' ', req.Password)
+		user, err := getUser(db, req)
+
+		if err != nil {
+			http.Error(w, "Incorect email or password", 401)
+			log.Println("Incorect email or password")
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:    "authCookieName",
+			Value:   fmt.Sprint(user.UserId),
+			Path:    "/",
+			Expires: time.Now().AddDate(0, 0, 1),
+		})
+
+		log.Println("Cookie setted")
+	}
+}
+
+func AuthByCookie(db *sqlx.DB, w http.ResponseWriter, r *http.Request) error {
+	cookie, err := r.Cookie("authCookieName")
+
+	if err != nil {
+		if err == http.ErrNoCookie {
+			http.Error(w, "No auth cookie passed", 401)
+			log.Println(err)
+			return err
+		}
+		http.Error(w, "Internal Server Error", 500)
+		log.Println(err)
+		return err
+	}
+
+	userIDStr := cookie.Value
+
+	err = search(db, userIDStr)
+	log.Println(err)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
+	const query = `
+	SELECT
+	  user_id,
+	  email,
+	  password
+  	FROM
+	  user
+  	WHERE
+	  email = ? AND
+	  password = ?
+	`
+	row := db.QueryRow(query, req.Email, req.Password)
+	user := new(Userdata)
+	err := row.Scan(&user.UserId, &user.Email, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func search(db *sqlx.DB, UserID string) error {
+	const query = `
+	SELECT
+	  post_id,
+	  email,
+	  password
+	FROM
+	  user
+	WHERE
+	  post_id = ?
+	`
+
+	row := db.QueryRow(query, UserID)
+	user := new(Userdata)
+	err := row.Scan(&user.UserId, &user.Email, &user.Password)
+	fmt.Println(user, UserID)
+	if err != nil {
+		fmt.Println("fdf")
+		return err
+	}
+
+	fmt.Println(UserID)
+	return nil
+}
+
+func deleteUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.SetCookie(w, &http.Cookie{
+			Name:    "authCookieName",
+			Path:    "/",
+			Expires: time.Now().AddDate(0, 0, -1),
+		})
+
+		return
+	}
+}

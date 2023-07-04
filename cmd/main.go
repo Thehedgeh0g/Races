@@ -25,9 +25,11 @@ func main() {
 	dbx := sqlx.NewDb(db, dbDriverName)
 
 	mux := mux.NewRouter()
+	mux.HandleFunc("/login", login)
 	//mux.HandleFunc("/home", index(dbx))
 
-	//mux.HandleFunc("/api/logout", deleteUser(dbx)).Methods(http.MethodPost)
+	mux.HandleFunc("/api/login", searchUser(dbx)).Methods(http.MethodPost)
+	mux.HandleFunc("/api/logout", deleteUser(dbx)).Methods(http.MethodPost)
 
 	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	fmt.Println("Start server " + port)
