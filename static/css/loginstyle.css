@@ -1,0 +1,20 @@
+.page {
+    margin: 0;
+    height: 96vh;
+    background-color: #ffe6bf;
+    border-style: solid;
+    border-width: 2vh;
+    border-color: #ffc30e;
+}
+
+.button-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 7vh;
+}
+
+.button {
+    width: 15vw;
+}
