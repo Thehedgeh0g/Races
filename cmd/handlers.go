@@ -39,6 +39,22 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func menu(w http.ResponseWriter, r *http.Request) {
+	ts, err := template.ParseFiles("pages/menu.html") // Главная страница блога
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500) // В случае ошибки парсинга - возвращаем 500
+		log.Println(err.Error())                    // Используем стандартный логгер для вывода ошбики в консоль
+		return                                      // Не забываем завершить выполнение ф-ии
+	}
+
+	err = ts.Execute(w, nil) // Заставляем шаблонизатор вывести шаблон в тело ответа
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		log.Println(err.Error())
+		return
+	}
+}
+
 func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqData, err := io.ReadAll(r.Body)
