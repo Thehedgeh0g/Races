@@ -18,6 +18,23 @@
     justify-content: center;
 }
 
+.player {
+    display: flex;
+    border-style: solid;
+    margin-top: 10px;
+    border-width: 5px;
+    border-color: #ffc30e;
+    padding: 4px;
+    align-items: center;
+    gap: 20px;
+    background-color: #ffe6bf;
+}
+
+.avatar {
+    height: 40px;
+    width: 40px;
+}
+
 .title {
     font-size: 50px;
     margin: 0 auto;
