@@ -26,12 +26,13 @@ func main() {
 
 	mux := mux.NewRouter()
 	mux.HandleFunc("/login", login)
+	mux.HandleFunc("/menu", menu)
 	//mux.HandleFunc("/home", index(dbx))
 
 	mux.HandleFunc("/api/login", searchUser(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/logout", deleteUser(dbx)).Methods(http.MethodPost)
 
-	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/static"))))
 	fmt.Println("Start server " + port)
 	err = http.ListenAndServe(port, mux)
 	if err != nil {
