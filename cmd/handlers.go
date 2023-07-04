@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -23,15 +24,26 @@ type Userdata struct {
 	Password string
 }
 
+type CreationPage struct {
+	Lobby []*LobbyData
+}
+
+type LobbyData struct {
+	ImgPath  string `db:"avatar"`
+	Nickname string `db:"nickname"`
+	Level    string `db:"exp"`
+	Host     bool
+}
+
 func login(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("pages/login.html") // Главная страница блога
+	ts, err := template.ParseFiles("pages/login.html")
 	if err != nil {
-		http.Error(w, "Internal Server Error", 500) // В случае ошибки парсинга - возвращаем 500
-		log.Println(err.Error())                    // Используем стандартный логгер для вывода ошбики в консоль
-		return                                      // Не забываем завершить выполнение ф-ии
+		http.Error(w, "Internal Server Error", 500)
+		log.Println(err.Error())
+		return
 	}
 
-	err = ts.Execute(w, nil) // Заставляем шаблонизатор вывести шаблон в тело ответа
+	err = ts.Execute(w, nil)
 	if err != nil {
 		http.Error(w, "Internal Server Error", 500)
 		log.Println(err.Error())
@@ -40,19 +52,64 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func menu(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("pages/menu.html") // Главная страница блога
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500) // В случае ошибки парсинга - возвращаем 500
-		log.Println(err.Error())                    // Используем стандартный логгер для вывода ошбики в консоль
-		return                                      // Не забываем завершить выполнение ф-ии
-	}
-
-	err = ts.Execute(w, nil) // Заставляем шаблонизатор вывести шаблон в тело ответа
+	ts, err := template.ParseFiles("pages/menu.html")
 	if err != nil {
 		http.Error(w, "Internal Server Error", 500)
 		log.Println(err.Error())
 		return
 	}
+
+	err = ts.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		log.Println(err.Error())
+		return
+	}
+}
+
+func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		LobbyData, err := lobbyData(db, 1)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err)
+			return
+		}
+
+		ts, err := template.ParseFiles("pages/lobbycreation.html")
+		if err != nil {
+			http.Error(w, "Internal Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		data := CreationPage{
+			Lobby: LobbyData,
+		}
+
+		err = ts.Execute(w, data)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+	}
+}
+
+func lobbyData(db *sqlx.DB, lobby_id int) ([]*LobbyData, error) {
+
+	query := "	SELECT avatar, nickname, exp FROM users WHERE currLobby_id = " + strconv.Itoa(lobby_id)
+
+	var user []*LobbyData
+
+	err := db.Select(&user, query)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(user)
+
+	return user, nil
 }
 
 func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {

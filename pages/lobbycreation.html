@@ -18,12 +18,13 @@
         <div class="sector">
             <div class="window">
                 <span>party</span>
-                <div class="player">
-                    <img src="..." class="avatar">
-                    <span>Grigoriy</span>
-                    <span>16lvl</span>
-                    <span>host</span>
-                </div>
+                {{ range .Lobby }}
+                    <div class="player">
+                        <img src="{{ .ImgPath }}" class="avatar">
+                        <span>{{ .Nickname }}</span>
+                        <span>{{ .Level }}</span>
+                    </div>
+                {{ end }}
             </div>
             <div class="window">
                 <span>settings</span>
