@@ -12,8 +12,8 @@
 }
 
 .login-box__eye {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
     margin-left: 5px;
 }
 
@@ -35,6 +35,9 @@
     font-family: 'Press Start 2P';
     color: #ffc30e;
     font-size: 30px;
+    height: 40px;
+    padding-left: 10px;
+    outline: none;
 }
 
 .login-box__button {
@@ -47,5 +50,7 @@
     font-family: 'Press Start 2P';
     color: #ffc30e;
     font-size: 30px;
-
+    height: 40px;
+    padding-left: 10px;
+    outline: none;
 }
