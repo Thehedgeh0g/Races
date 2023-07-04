@@ -12,23 +12,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type loginpage struct {
-	Header []headerlogindata
-	Main   []mainlogindata
-}
-
-type headerlogindata struct {
-	Escape string
-	Title  string
-}
-
-type mainlogindata struct {
-	Title  string
-	Email  string
-	Pass   string
-	Button string
-}
-
 type UserRequest struct {
 	Email    string `json:"Email"`
 	Password string `json:"Password"`
@@ -48,35 +31,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return                                      // Не забываем завершить выполнение ф-ии
 	}
 
-	data := loginpage{
-		Header: headerlogin(),
-		Main:   mainlogin(),
-	}
-
-	err = ts.Execute(w, data) // Заставляем шаблонизатор вывести шаблон в тело ответа
+	err = ts.Execute(w, nil) // Заставляем шаблонизатор вывести шаблон в тело ответа
 	if err != nil {
 		http.Error(w, "Internal Server Error", 500)
 		log.Println(err.Error())
 		return
-	}
-}
-func headerlogin() []headerlogindata {
-	return []headerlogindata{
-		{
-			Escape: "../static/sources/login-logo.svg",
-			Title:  "Log in to start creating",
-		},
-	}
-}
-
-func mainlogin() []mainlogindata {
-	return []mainlogindata{
-		{
-			Title:  "Log In",
-			Email:  "Email",
-			Pass:   "Password",
-			Button: "Log In",
-		},
 	}
 }
 

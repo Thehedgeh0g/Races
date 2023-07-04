@@ -14,23 +14,20 @@
         <script defer src="../static/js/login.js"></script>
     </head>
     <body class="main" id="container">
-        {{ range .Header}}
         <div class="title">
             <img src="{{ .Escape }}" alt="Escape Author">
-            <p class="title__subtitle">{{ .Title }}</p>
+            <p class="title__subtitle">fdg</p>
         </div> 
-        {{ end }}
-        {{ range .Main }}
         <div  class="login-box">
-            <h1 class="login-box__title" >{{ .Title }}</h1>
+            <h1 class="login-box__title" >dsf</h1>
             <form class="login-box__form">
                 <div id="message"></div>
                 <div id="login-block" class="login-box__email">
-                    <p class="login-box__comment">{{ .Email }}</p>
+                    <p class="login-box__comment">sdf</p>
                     <input id="login-field" class="login-box__field" type="email" onfocus="Select('login')" onblur="NotSelect('login')" type="email">
                 </div>
                 <div id="password-block" class="login-box__pass">
-                    <p class="login-box__comment">{{ .Pass }}</p>
+                    <p class="login-box__comment">sdf</p>
                     <div>
                         <input id="password-field" class="login-box__field" onfocus="Select('password')" onblur="NotSelect('password')" type="password">
                         <img onclick="password_visibility()" class="login-box__eye" src="../static/sources/eye.svg" alt="eye">
@@ -40,6 +37,5 @@
             </form>
             <button class="login-box__button" onclick="Click()">{{ .Button }}</button>
         </div>
-        {{ end }}
     </body>
 </html>
