@@ -40,6 +40,7 @@ function drawFrame() {
     framesCountHandler();
     requestAnimationFrame(drawFrame);
     initEventsListeners();
+    drawFrame();
 }
 
 function initEventsListeners() {
@@ -47,7 +48,7 @@ function initEventsListeners() {
 }
 
 function framesCountHandler() {
-    if (GAME.framesCnt === 120) {
+    if (GAME.framesCnt === 100000) {
         GAME.framesCnt = 0;
     }
     ++GAME.framesCnt;
