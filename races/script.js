@@ -58,7 +58,7 @@ function onCanvasKeyDown(event) {
         CarPosY -= speed;
         if (speed < 10)
         {
-            speed += 1;
+            speed += 0.1;
         }
         drawFrame();
     }
@@ -66,7 +66,7 @@ function onCanvasKeyDown(event) {
         CarPosY += speed;
         if (speed < 10)
         {
-            speed += 1;
+            speed += 0.1;
         }
         drawFrame();
     }
