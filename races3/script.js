@@ -39,9 +39,9 @@ function drawCar(image, x, y) {
 function UpdatePosition() {
     //CarPosY -= xspeed;
     //CarPosX -= yspeed;
-    canvasContext.rotate(-angle);
-    canvasContext.translate(xspeed, yspeed);
     canvasContext.rotate(angle);
+    canvasContext.translate(xspeed, yspeed);
+    canvasContext.rotate(-angle);
 }
 
 
