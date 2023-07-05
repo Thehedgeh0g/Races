@@ -6,6 +6,7 @@ var GAME = {
 
 }
 
+var dial = document.getElementById('dial')
 var canvas = document.getElementById('canvas');
 canvas.width = GAME.width;
 canvas.height = GAME.height;
@@ -43,7 +44,7 @@ function drawFrame() {
     framesCountHandler();
     requestAnimationFrame(drawFrame);
     
-    setTimeout(100);
+
 }
 
 function initEventsListeners() {
@@ -60,17 +61,19 @@ function framesCountHandler() {
 function onCanvasKeyDown(event) {
     if ((event.key === 'w') || (event.key === 'ц')) {
         
-        if (speed < 10)
+        if (speed < 0.5)
         {
-            speed += 0.1;
+            speed += 0.0625;
+            dial.innerHTML = speed;
         }
         drawFrame();
     }
     if ((event.key === 's') || (event.key === 'ы')) {
         
-        if (speed < 10)
+        if (speed > -0.5)
         {
-            speed -= 0.1;
+            speed -= 0.0625;
+            dial.innerHTML = speed;
         }
         drawFrame();
     }
