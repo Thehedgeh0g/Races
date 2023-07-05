@@ -18,6 +18,8 @@ var CarPosY = 300;
 var speed = 0;
 var angle = 0;
 
+initEventsListeners();
+
 function drawBackground() {
     canvasContext.fillStyle = GAME.background;
     canvasContext.fillRect(0, 0, GAME.width, GAME.height);
@@ -29,6 +31,7 @@ function drawCar(image, x, y) {
 
 function UpdateSpeed() {
     CarPosY -= speed;
+
 }
 
 
@@ -39,9 +42,8 @@ function drawFrame() {
     drawCar(Car, CarPosX, CarPosY);
     framesCountHandler();
     requestAnimationFrame(drawFrame);
-    initEventsListeners();
+    
     setTimeout(100);
-    drawFrame();
 }
 
 function initEventsListeners() {
@@ -83,5 +85,4 @@ function onCanvasKeyDown(event) {
     }
 
 }
-
 drawFrame();
