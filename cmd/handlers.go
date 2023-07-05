@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -26,6 +27,10 @@ type Userdata struct {
 
 type CreationPage struct {
 	Lobby []*LobbyData
+}
+
+type GameArea struct {
+	Map []string
 }
 
 type LobbyData struct {
@@ -98,7 +103,7 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		LobbyData, err := lobbyData(db, 1)
+		MapData, err := mapData(db, 1)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)
@@ -112,8 +117,8 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		data := CreationPage{
-			Lobby: LobbyData,
+		data := GameArea{
+			Map: MapData,
 		}
 
 		err = ts.Execute(w, data)
@@ -139,6 +144,19 @@ func lobbyData(db *sqlx.DB, lobby_id int) ([]*LobbyData, error) {
 	fmt.Println(user)
 
 	return user, nil
+}
+
+func mapData(db *sqlx.DB, map_id int) ([]string, error) {
+
+	query := "SELECT map_data FROM users WHERE map_id =  ?"
+	pathes := db.QueryRow(query, map_id)
+	var Path string
+	err := pathes.Scan(Path)
+	if err != nil {
+		return nil, err
+	}
+	mapData := strings.Split(Path, " ")
+	return mapData, nil
 }
 
 func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
