@@ -13,7 +13,7 @@ canvas.height = GAME.height;
 const image = document.getElementById('img');
 var canvasContext = canvas.getContext('2d');
 var Car = new Image(); //изображение
-Car.src = 'car.png';//подключение изображения
+Car.src = '../static/sprites/abm_blue.png';//подключение изображения
 var CarPosX = 100;
 var CarPosY = 300;
 var speed = 0;
@@ -27,7 +27,7 @@ function drawBackground() {
 }
 
 function drawCar(image, x, y) {
-    canvasContext.drawImage(image, x, y);
+    canvasContext.drawImage(image, x, y, 17*4, 24*4);
 }
 
 function UpdateSpeed() {
