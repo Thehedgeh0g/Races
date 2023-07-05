@@ -15,8 +15,10 @@ var canvasContext = canvas.getContext('2d');
 var Car = new Image(); //изображение
 Car.src = '../static/sprites/abm_blue.png';//подключение изображения
 var CarPosX = 100;
-var CarPosY = 300;
+var CarPosY = 800;
 var speed = 0;
+var xspeed = 0;
+var yspeed = 0;
 var angle = 0;
 
 initEventsListeners();
@@ -30,15 +32,17 @@ function drawCar(image, x, y) {
     canvasContext.drawImage(image, x, y, 17*4, 24*4);
 }
 
-function UpdateSpeed() {
-    CarPosY -= speed;
-
+function UpdatePosition() {
+    CarPosY -= xspeed;
+    CarPosX -= yspeed;
 }
 
 
 function drawFrame() {
     if (speed > 0) {
         speed -= 0.015625;
+        xspeed = Math.cos(angle)*speed;
+        yspeed = Math.sin(angle)*speed;
         dial.innerHTML = speed;
     }
     if (speed < 0) {
@@ -47,7 +51,7 @@ function drawFrame() {
     }
     canvasContext.clearRect(0, 0, GAME.width, GAME.height);
     drawBackground();
-    UpdateSpeed();
+    UpdatePosition();
     drawCar(Car, CarPosX, CarPosY);
     framesCountHandler();
     requestAnimationFrame(drawFrame);
@@ -70,6 +74,8 @@ function onCanvasKeyDown(event) {
         if (speed < 5)
         {
             speed += 0.0625;
+            xspeed = Math.cos(angle)*speed;
+            yspeed = Math.sin(angle)*speed;
             dial.innerHTML = speed;
         }
     }
@@ -78,17 +84,17 @@ function onCanvasKeyDown(event) {
         if (speed > -5)
         {
             speed -= 0.0625;
+            xspeed = Math.cos(angle)*speed;
+            yspeed = Math.sin(angle)*speed;
             dial.innerHTML = speed;
         }
     }
-    if ((event.key === 'd') || (event.key === 'в')) {
-        angle += 1;
-        image.style.transform = `rotate(${angle}deg)`;
-        drawFrame();
+    if (((event.key === 'd') || (event.key === 'в')) && (speed != 0)) {
+        angle -= 0.03;
+        
     }
-    if ((event.key === 'a') || (event.key === 'ф')) {
-        CarPosX -= 5;
-        drawFrame();
+    if (((event.key === 'a') || (event.key === 'ф')) && (speed != 0)) {
+        angle += 0.03;
     }
 
 }
