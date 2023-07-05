@@ -37,14 +37,20 @@ function UpdateSpeed() {
 
 
 function drawFrame() {
+    if (speed > 0) {
+        speed -= 0.015625;
+        dial.innerHTML = speed;
+    }
+    if (speed < 0) {
+        speed += 0.015625;
+        dial.innerHTML = speed;
+    }
     canvasContext.clearRect(0, 0, GAME.width, GAME.height);
     drawBackground();
     UpdateSpeed();
     drawCar(Car, CarPosX, CarPosY);
     framesCountHandler();
     requestAnimationFrame(drawFrame);
-    
-
 }
 
 function initEventsListeners() {
@@ -61,21 +67,19 @@ function framesCountHandler() {
 function onCanvasKeyDown(event) {
     if ((event.key === 'w') || (event.key === 'ц')) {
         
-        if (speed < 0.5)
+        if (speed < 5)
         {
             speed += 0.0625;
             dial.innerHTML = speed;
         }
-        drawFrame();
     }
     if ((event.key === 's') || (event.key === 'ы')) {
         
-        if (speed > -0.5)
+        if (speed > -5)
         {
             speed -= 0.0625;
             dial.innerHTML = speed;
         }
-        drawFrame();
     }
     if ((event.key === 'd') || (event.key === 'в')) {
         angle += 1;
