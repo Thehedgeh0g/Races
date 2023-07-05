@@ -8,9 +8,10 @@
     <title>Location_1_1</title>
 </head>
 <body>
+    {{ range .GameArea}}
     <div class="map">
         <div class="tile">
-            <img src="{{ }}" width="94px" height="94px">
+            <img src="{{ .Map }}.png" width="94px" height="94px">
         </div>
     </div>
 </body>
