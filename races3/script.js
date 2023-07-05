@@ -24,6 +24,9 @@ var xspeed = 0;
 var yspeed = 0;
 var angle = 0;
 
+var xcanvas = 0;
+var ycanvas = 0;
+
 initEventsListeners();
 
 function drawBackground() {
@@ -32,7 +35,11 @@ function drawBackground() {
 }
 
 function drawCar(image, x, y) {
+    canvasContext.rotate(angle);
+    canvasContext.translate(-xcanvas, -ycanvas);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.translate(xcanvas, ycanvas);
+    canvasContext.rotate(-angle);
     canvasContext.drawImage(image, x, y, 17*4, 24*4);
 }
 
@@ -42,6 +49,8 @@ function UpdatePosition() {
     canvasContext.rotate(angle);
     canvasContext.translate(xspeed, yspeed);
     canvasContext.rotate(-angle);
+    xcanvas += xspeed;
+    ycanvas += yspeed;
 }
 
 
