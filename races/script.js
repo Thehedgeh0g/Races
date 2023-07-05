@@ -40,6 +40,7 @@ function drawFrame() {
     framesCountHandler();
     requestAnimationFrame(drawFrame);
     initEventsListeners();
+
 }
 
 function initEventsListeners() {
@@ -58,15 +59,15 @@ function onCanvasKeyDown(event) {
         CarPosY -= speed;
         if (speed < 10)
         {
-            speed += 1;
+            speed += 0.1;
         }
         drawFrame();
     }
     if ((event.key === 's') || (event.key === 'ы')) {
-        CarPosY += speed;
+        CarPosY -= speed;
         if (speed < 10)
         {
-            speed += 1;
+            speed -= 0.1;
         }
         drawFrame();
     }
