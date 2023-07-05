@@ -29,8 +29,21 @@ type CreationPage struct {
 	Lobby []*LobbyData
 }
 
-type GameArea struct {
-	Map []string
+type GameMap struct {
+	GameArea [625]CellsData
+}
+
+type CellsData struct {
+	CellInfo string
+}
+
+type SpriteData struct {
+	SpriteId   string `db:"sprite_id"`
+	SpritePath string `db:"sprite_path"`
+}
+
+type MapData struct {
+	MapKey string `db:"map_data"`
 }
 
 type LobbyData struct {
@@ -103,22 +116,49 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		MapData, err := mapData(db, 1)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err)
-			return
-		}
-
-		ts, err := template.ParseFiles("pages/lobbycreation.html")
+		ts, err := template.ParseFiles("pages/location_1_1.html")
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		data := GameArea{
-			Map: MapData,
+		mapData, err := getMapData(db, 1)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err)
+			return
+		}
+
+		var cells [625]CellsData
+
+		a := strings.Split(mapData.MapKey, " ")
+
+		for i, element := range a {
+			id, err := strconv.Atoi(element)
+			if err != nil {
+				http.Error(w, "hehehe", 500)
+				log.Println(err)
+				return
+			}
+			sprite, err := getSprite(db, id+1)
+
+			if err != nil {
+				http.Error(w, "hehe", 500)
+				log.Println(err)
+				return
+			}
+
+			newTile := CellsData{
+				CellInfo: sprite.SpritePath,
+			}
+
+			cells[i] = newTile
+			log.Println(newTile)
+		}
+
+		data := GameMap{
+			GameArea: cells,
 		}
 
 		err = ts.Execute(w, data)
@@ -132,7 +172,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func lobbyData(db *sqlx.DB, lobby_id int) ([]*LobbyData, error) {
 
-	query := "	SELECT avatar, nickname, exp FROM users WHERE currLobby_id = " + strconv.Itoa(lobby_id)
+	query := "SELECT avatar, nickname, exp FROM users WHERE currLobby_id = " + strconv.Itoa(lobby_id)
 
 	var user []*LobbyData
 
@@ -146,17 +186,36 @@ func lobbyData(db *sqlx.DB, lobby_id int) ([]*LobbyData, error) {
 	return user, nil
 }
 
-func mapData(db *sqlx.DB, map_id int) ([]string, error) {
+func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
+	const query = `SELECT
+	  sprite_path
+	FROM
+	  sprites
+	WHERE
+	  sprite_id = ?    
+	`
 
-	query := "SELECT map_data FROM users WHERE map_id =  ?"
-	pathes := db.QueryRow(query, map_id)
-	var Path string
-	err := pathes.Scan(Path)
+	row := db.QueryRow(query, spriteId)
+
+	newSprite := new(SpriteData)
+	err := row.Scan(&newSprite.SpritePath)
 	if err != nil {
 		return nil, err
 	}
-	mapData := strings.Split(Path, " ")
-	return mapData, nil
+
+	return newSprite, err
+}
+
+func getMapData(db *sqlx.DB, mapId int) (*MapData, error) {
+	query := "SELECT map_data FROM maps WHERE map_id = ?"
+	row := db.QueryRow(query, mapId)
+	key := new(MapData)
+	err := row.Scan(&key.MapKey)
+
+	if err != nil {
+		return nil, err
+	}
+	return key, nil
 }
 
 func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -181,7 +240,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		//log.Println(user.Email, ' ', user.Password)
 
 		if err != nil {
-			http.Error(w, "Incorect email or password", 401)
+			http.Error(w, "Incorect email or password", 500)
 			log.Println("Incorect email or password")
 			return
 		}
@@ -202,7 +261,7 @@ func AuthByCookie(db *sqlx.DB, w http.ResponseWriter, r *http.Request) error {
 
 	if err != nil {
 		if err == http.ErrNoCookie {
-			http.Error(w, "No auth cookie passed", 401)
+			http.Error(w, "No auth cookie passed", 400)
 			log.Println(err)
 			return err
 		}
