@@ -96,6 +96,35 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		LobbyData, err := lobbyData(db, 1)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err)
+			return
+		}
+
+		ts, err := template.ParseFiles("pages/lobbycreation.html")
+		if err != nil {
+			http.Error(w, "Internal Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		data := CreationPage{
+			Lobby: LobbyData,
+		}
+
+		err = ts.Execute(w, data)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+	}
+}
+
 func lobbyData(db *sqlx.DB, lobby_id int) ([]*LobbyData, error) {
 
 	query := "	SELECT avatar, nickname, exp FROM users WHERE currLobby_id = " + strconv.Itoa(lobby_id)
