@@ -27,9 +27,10 @@ func main() {
 	mux := mux.NewRouter()
 	mux.HandleFunc("/login", login)
 	mux.HandleFunc("/menu", menu)
-	mux.HandleFunc("/lobby", lobbyCreation(dbx))
+	mux.HandleFunc("/lobby/{lobbyID}", lobbyCreation(dbx))
 	mux.HandleFunc("/race", gameArea(dbx))
 
+	mux.HandleFunc("/api/create", createLobby(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/login", searchUser(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/logout", deleteUser(dbx)).Methods(http.MethodPost)
 

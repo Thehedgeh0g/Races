@@ -4,16 +4,26 @@
     padding: 0;
 }
 
+.main
+{
+    background-image: url("../map tiles sprites/game-area-background.png");
+}
+
 .map
 {
     display: grid;
-    grid-template-columns: repeat(25, 94px);
+    grid-template-columns: repeat(25, 282px);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
 }
 
 .tile
 {
-    width: 94px;
-    height: 94px;
+    width: 282px;
+    height: 282px;
+}
+
+.tile__pic {
+    width: 282px;
+    height: 282px;
 }
