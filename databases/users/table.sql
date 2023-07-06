@@ -9,7 +9,7 @@
     nickname VARCHAR(255) NOT NULL,
     friends text,
     cars text,
-    PRIMARY KEY (user_id)d
+    PRIMARY KEY (user_id)
 ) ENGINE InnoDB,
 DEFAULT CHARACTER SET = utf8mb4,
 COLLATE utf8mb4_unicode_ci;
