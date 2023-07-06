@@ -4,12 +4,24 @@
 	<meta charset="UTF-8" />
 	<title>больше не Osu!</title>
 	<style>
-		#canvas {
+		#move {
 			position: absolute;
 			top: 750px;
 			left: 750px;
+			width: 1410px;
+			height: 1410px;
 			background-image: url('track.png');
 			background-size: cover;
+		}
+		#canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		#trash-car {
+			position: absolute;
+			top: 0;
+			left: 0;
 		}
 		#coloss {
 			height: 3000px;
@@ -21,7 +33,10 @@
 
 <body>
 	<div id="coloss">
+	  <div id="move">
 		<canvas id="canvas"></canvas>
+		<canvas id="trash-car"></canvas>
+	  </div>
 	</div>
 	<script src="./script-const.js" type="application/javascript" async></script>
 </body>

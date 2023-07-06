@@ -6,15 +6,31 @@ var GAME = {
  
 }
 
-const mspeed = 15;
-const accel = mspeed / 160;
-const resist = accel / 4;
+let mspeed = 15;
+let accel = mspeed / 160;
+let resist = accel / 4;
 //const pi1 = Math.PI*(mspeed/5);
 const pi1 = Math.PI
 //const pi2 = 5/mspeed/2;
 const pi2 = 1/2;
 
-var canvas = document.getElementById('canvas'); 
+var canvas = document.getElementById('canvas');
+var trashcar = document.getElementById('trash-car');
+
+trashcar.width = GAME.width; 
+trashcar.height = GAME.height; 
+var TrashPosX = 450; 
+var TrashPosY = 400;
+var TrashSX = 40; 
+var TrashSY = 40;
+var TContext = trashcar.getContext('2d');
+TContext.imageSmoothingEnabled = false;
+var TCar = new Image();
+TCar.src = '../static/sprites/debuff.png';
+
+
+
+var move = document.getElementById('move')
 canvas.width = GAME.width; 
 canvas.height = GAME.height; 
 var canvasContext = canvas.getContext('2d');
@@ -50,7 +66,8 @@ function drawCar(image, x, y) {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
     canvasContext.translate(xcanvas, ycanvas);
     canvasContext.rotate(-angle);
-    canvasContext.drawImage(image, x, y, 17, 24); 
+    canvasContext.drawImage(image, x, y, 17, 24);
+    TContext.drawImage(TCar, TrashPosX, TrashPosY , TrashSX, TrashSY); 
 } 
  
 function UpdatePosition() { 
@@ -58,16 +75,21 @@ function UpdatePosition() {
     canvasContext.rotate(angle); 
     canvasContext.translate(xspeed, yspeed); 
     canvasContext.rotate(-angle);
-    y = window.getComputedStyle(canvas).top;
-    x = window.getComputedStyle(canvas).left;
+    y = window.getComputedStyle(move).top;
+    x = window.getComputedStyle(move).left;
     y = y.slice(0, -2);
     x = x.slice(0, -2);
     y = Number(y);
     x = Number(x);
-    canvas.style.top = String(- yspeed + y) + 'px';
-    canvas.style.left =  String(- xspeed + x) + 'px';
+    move.style.top = String(- yspeed + y) + 'px';
+    move.style.left =  String(- xspeed + x) + 'px';
     xcanvas += xspeed;
     ycanvas += yspeed;
+    if((xcanvas < (TrashPosX + TrashSX)) && (xcanvas > (TrashPosX)) && (ycanvas < (TrashPosY+TrashSY)) && (ycanvas > (TrashPosY))) {
+        mspeed = 2;
+        accel = mspeed / 160;
+        resist = accel / 4;
+    }
 } 
  
  
