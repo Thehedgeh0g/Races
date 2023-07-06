@@ -41,6 +41,7 @@
 }
 
 .window {
+    box-sizing: border-box;
     width: 40vw;
     height: 70vh;
     border-radius: 0;
@@ -49,6 +50,35 @@
     border-color: #ffc30e;
     background-color: #ffdb7f;
     padding: 10px;
+}
+
+.settings {
+    box-sizing: border-box;
+    width: 40vw;
+    height: 50vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 10px;
+}
+
+.button {
+    box-sizing: border-box;
+    margin-top: 5vh;
+    width: 40vw;
+    height: 15vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color:#d2ffc8;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
 }
 
 .sector {

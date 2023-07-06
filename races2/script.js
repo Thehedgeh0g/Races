@@ -6,17 +6,20 @@ var GAME = {
 
 }
 
+var dial = document.getElementById('dial')
 var canvas = document.getElementById('canvas');
 canvas.width = GAME.width;
 canvas.height = GAME.height;
 const image = document.getElementById('img');
 var canvasContext = canvas.getContext('2d');
 var Car = new Image(); //изображение
-Car.src = 'car.png';//подключение изображения
+Car.src = '../static/sprites/abm_blue.png';//подключение изображения
 var CarPosX = 100;
 var CarPosY = 300;
 var speed = 0;
 var angle = 0;
+
+initEventsListeners();
 
 function drawBackground() {
     canvasContext.fillStyle = GAME.background;
@@ -24,24 +27,30 @@ function drawBackground() {
 }
 
 function drawCar(image, x, y) {
-    canvasContext.drawImage(image, x, y);
+    canvasContext.drawImage(image, x, y, 17*4, 24*4);
 }
 
 function UpdateSpeed() {
     CarPosY -= speed;
+
 }
 
 
 function drawFrame() {
+    if (speed > 0) {
+        speed -= 0.015625;
+        dial.innerHTML = speed;
+    }
+    if (speed < 0) {
+        speed += 0.015625;
+        dial.innerHTML = speed;
+    }
     canvasContext.clearRect(0, 0, GAME.width, GAME.height);
     drawBackground();
     UpdateSpeed();
     drawCar(Car, CarPosX, CarPosY);
     framesCountHandler();
     requestAnimationFrame(drawFrame);
-    initEventsListeners();
-    setTimeout(100);
-    drawFrame();
 }
 
 function initEventsListeners() {
@@ -58,19 +67,19 @@ function framesCountHandler() {
 function onCanvasKeyDown(event) {
     if ((event.key === 'w') || (event.key === 'ц')) {
         
-        if (speed < 10)
+        if (speed < 5)
         {
-            speed += 0.1;
+            speed += 0.0625;
+            dial.innerHTML = speed;
         }
-        drawFrame();
     }
     if ((event.key === 's') || (event.key === 'ы')) {
         
-        if (speed < 10)
+        if (speed > -5)
         {
-            speed -= 0.1;
+            speed -= 0.0625;
+            dial.innerHTML = speed;
         }
-        drawFrame();
     }
     if ((event.key === 'd') || (event.key === 'в')) {
         angle += 1;
@@ -83,5 +92,4 @@ function onCanvasKeyDown(event) {
     }
 
 }
-
 drawFrame();
