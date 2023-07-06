@@ -1,0 +1,2 @@
+INSERT into users(email, password, avatar, boss_count, exp, money, nickname, friends, cars, host, currLobby_id)
+values ("1234@123.com", "123", "../static/img/27TvI3DZa_s.jpg", 0, 0, 0, "ChertilaGorohovaya", '0', 'a', '0', '0')

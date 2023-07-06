@@ -32,7 +32,7 @@ type CreationPage struct {
 }
 
 type GameMap struct {
-	GameArea [625]CellsData
+	GameArea [225]CellsData
 }
 
 type CellsData struct {
@@ -154,7 +154,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var cells [625]CellsData
+		var cells [225]CellsData
 
 		a := strings.Split(mapData.MapKey, " ")
 
