@@ -4,8 +4,14 @@ var GAME = {
     background: 'grey', 
     framesCnt: 0, 
  
-} 
- 
+}
+
+const mspeed = 8;
+const accel = mspeed / 160;
+const resist = accel / 4;
+const pi1 = Math.PI*(mspeed/5);
+const pi2 = Math.PI*(5/mspeed);
+
 var canvas = document.getElementById('canvas'); 
 canvas.width = GAME.width; 
 canvas.height = GAME.height; 
@@ -65,12 +71,12 @@ function UpdatePosition() {
  
 function drawFrame() { 
     if (speed > 0) { 
-        speed -= 0.015625/4; 
+        speed -= resist; 
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
     } 
     if (speed < 0) { 
-        speed += 0.015625/4; 
+        speed += resist; 
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
     } 
@@ -99,88 +105,88 @@ function framesCountHandler() {
 function onCanvasKey() { 
     if (wasd.w == 1) { 
          
-        if (speed < 10/4) 
+        if (speed < mspeed) 
         { 
-            speed += 0.0625/4; 
+            speed += accel; 
             xspeed = Math.sin(angle)*speed; 
             yspeed = Math.cos(angle)*speed; 
         } 
     } 
     if (wasd.s == 1) { 
          
-        if (speed > -10/4) 
+        if (speed > -mspeed) 
         { 
-            speed -= 0.0625/4; 
+            speed -= accel; 
             xspeed = Math.sin(angle)*speed; 
             yspeed = Math.cos(angle)*speed; 
         } 
     } 
     if ((wasd.d == 1) && (speed > 0)) { 
-        if (speed >= Math.PI/4) {
+        if (speed >= pi1) {
             angle -= 0.03; 
             canvasContext.rotate(0.03);          
         } else {
-            angle -= 0.03 * Math.sin(speed*2); 
-            canvasContext.rotate(0.03 * Math.sin(speed*2));
+            angle -= 0.03 * Math.sin(pi2); 
+            canvasContext.rotate(0.03 * Math.sin(pi2));
         } 
         if (speed > 0) {
-            speed -= 0.0625/2/4;
+            speed -= resist;
         }
         if (speed < 0) {
-            speed += 0.0625/2/4;
+            speed += resist;
         }
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
          
     } 
     if ((wasd.a == 1) && (speed > 0)) { 
-        if (speed >= Math.PI/4) {
+        if (speed >= pi1) {
             angle += 0.03; 
             canvasContext.rotate(-0.03);        
         } else {
-            angle += 0.03 * Math.sin(speed*2); 
-            canvasContext.rotate(-0.03 * Math.sin(speed*2));
+            angle += 0.03 * Math.sin(pi2); 
+            canvasContext.rotate(-0.03 * Math.sin(pi2));
         }
         if (speed > 0) {
-            speed -= 0.0625/2/4;
+            speed -= resist;
         }
         if (speed < 0) {
-            speed += 0.0625/2/4;
+            speed += resist;
         }
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
     } 
     if ((wasd.d == 1) && (speed < 0)) { 
-        if (speed <= -Math.PI/4) {
+        if (speed <= -pi1) {
             angle += 0.03; 
             canvasContext.rotate(-0.03);          
         } else {
-            angle += 0.03 * Math.sin(-speed*2); 
-            canvasContext.rotate(-0.03 * Math.sin(-speed*2)); 
+            angle += 0.03 * Math.sin(-pi2); 
+            canvasContext.rotate(-0.03 * Math.sin(-pi2)); 
         }
         if (speed > 0) {
-            speed -= 0.0625/2/4;
+            speed -= resist;
         }
         if (speed < 0) {
-            speed += 0.0625/2/4;
+            speed += resist;
         }
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
          
     } 
     if ((wasd.a == 1) && (speed < 0)) { 
-        if (speed <= -Math.PI/4) {
+        if (speed <= -pi1) {
             angle -= 0.03; 
             canvasContext.rotate(0.03);          
         } else {
-            angle -= 0.03 * Math.sin(-speed*2); 
-            canvasContext.rotate(0.03 * Math.sin(-speed*2)); 
+            angle -= 0.03 * Math.sin(-pi2); 
+            canvasContext.rotate(0.03 * Math.sin(-pi2)); 
         }
         if (speed > 0) {
-            speed -= 0.0625/2/4;
+            speed -= resist;
         }
         if (speed < 0) {
-            speed += 0.0625/2/4;
+            speed += resist;
         }
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
