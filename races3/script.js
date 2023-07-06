@@ -18,7 +18,7 @@ var canvasContext = canvas.getContext('2d');
 var Car = new Image();
 Car.src = '../static/sprites/abm_blue.png';
 var CarPosX = -17*2; 
-var CarPosY = -24*2; 
+var CarPosY = (-24*2); 
 var speed = 0; 
 var xspeed = 0; 
 var yspeed = 0; 
@@ -33,7 +33,7 @@ var wasd = {
     s: 0, 
     d: 0, 
 } 
-initEventsListeners(); 
+
  
 function drawBackground() { 
     canvasContext.fillStyle = GAME.background; 
@@ -79,6 +79,7 @@ function drawFrame() {
     canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
     drawBackground(); 
     UpdatePosition(); 
+    initEventsListeners(); 
     drawCar(Car, CarPosX, CarPosY); 
     framesCountHandler(); 
     requestAnimationFrame(drawFrame); 
@@ -87,6 +88,7 @@ function drawFrame() {
 function initEventsListeners() { 
     window.addEventListener('keydown', onCanvasKeyDown); 
     window.addEventListener('keyup', onCanvasKeyUp); 
+    onCanvasKey(); 
 } 
  
 function framesCountHandler() { 
@@ -97,23 +99,10 @@ function framesCountHandler() {
 } 
  
 function onCanvasKey() { 
-    if ((wasd.w == 1) && (wasd.d == 1) && (speed != 0)) { 
-        if (speed < 5) 
-        { 
-            speed += 0.0625; 
-            xspeed = Math.sin(angle)*speed; 
-            yspeed = Math.cos(angle)*speed; 
-            dial.innerHTML = speed; 
-            xdial.innerHTML = xspeed; 
-            ydial.innerHTML = yspeed; 
-        } 
-        angle -= 0.03; 
-        anglehtml.innerHTML = angle; 
-        canvasContext.rotate(0.03); 
-    } 
+    console.log(wasd.w);
     if (wasd.w == 1) { 
          
-        if (speed < 5) 
+        if (speed < 10) 
         { 
             speed += 0.0625; 
             xspeed = Math.sin(angle)*speed; 
@@ -125,7 +114,7 @@ function onCanvasKey() {
     } 
     if (wasd.s == 1) { 
          
-        if (speed > -5) 
+        if (speed > -10) 
         { 
             speed -= 0.0625; 
             xspeed = Math.sin(angle)*speed; 
@@ -138,18 +127,40 @@ function onCanvasKey() {
     if ((wasd.d == 1) && (speed != 0)) { 
         angle -= 0.03; 
         anglehtml.innerHTML = angle; 
-        canvasContext.rotate(0.03); 
+        canvasContext.rotate(0.03);
+        if (speed > 0) {
+            speed -= 0.0625/2;
+        }
+        if (speed < 0) {
+            speed += 0.0625/2;
+        }
+        xspeed = Math.sin(angle)*speed; 
+        yspeed = Math.cos(angle)*speed; 
+        dial.innerHTML = speed; 
+        xdial.innerHTML = xspeed; 
+        ydial.innerHTML = yspeed;
          
     } 
     if ((wasd.a == 1) && (speed != 0)) { 
         angle += 0.03; 
         anglehtml.innerHTML = angle; 
-        canvasContext.rotate(-0.03); 
+        canvasContext.rotate(-0.03);
+        if (speed > 0) {
+            speed -= 0.0625/2;
+        }
+        if (speed < 0) {
+            speed += 0.0625/2;
+        }
+        xspeed = Math.sin(angle)*speed; 
+        yspeed = Math.cos(angle)*speed; 
+        dial.innerHTML = speed; 
+        xdial.innerHTML = xspeed; 
+        ydial.innerHTML = yspeed;
     } 
  
 } 
  
-function onCanvasKeyUp(event) { 
+function onCanvasKeyUp(event) {
     if (event.code === 'KeyW') { 
         wasd.w = 0; 
     } 
@@ -165,9 +176,9 @@ function onCanvasKeyUp(event) {
     onCanvasKey(); 
 } 
  
-function onCanvasKeyDown(event) { 
+function onCanvasKeyDown(event) {
     if (event.code === 'KeyW') {
-wasd.w = 1; 
+        wasd.w = 1; 
     } 
     if (event.code === 'KeyA') { 
         wasd.a = 1; 
