@@ -6,11 +6,13 @@ var GAME = {
  
 }
 
-const mspeed = 8;
+const mspeed = 15;
 const accel = mspeed / 160;
 const resist = accel / 4;
-const pi1 = Math.PI*(mspeed/5);
-const pi2 = Math.PI*(5/mspeed);
+//const pi1 = Math.PI*(mspeed/5);
+const pi1 = Math.PI
+//const pi2 = 5/mspeed/2;
+const pi2 = 1/2;
 
 var canvas = document.getElementById('canvas'); 
 canvas.width = GAME.width; 
@@ -126,8 +128,8 @@ function onCanvasKey() {
             angle -= 0.03; 
             canvasContext.rotate(0.03);          
         } else {
-            angle -= 0.03 * Math.sin(pi2); 
-            canvasContext.rotate(0.03 * Math.sin(pi2));
+            angle -= 0.03 * Math.sin(pi2 * speed); 
+            canvasContext.rotate(0.03 * Math.sin(pi2 * speed));
         } 
         if (speed > 0) {
             speed -= resist;
@@ -144,8 +146,8 @@ function onCanvasKey() {
             angle += 0.03; 
             canvasContext.rotate(-0.03);        
         } else {
-            angle += 0.03 * Math.sin(pi2); 
-            canvasContext.rotate(-0.03 * Math.sin(pi2));
+            angle += 0.03 * Math.sin(pi2 * speed); 
+            canvasContext.rotate(-0.03 * Math.sin(pi2 * speed));
         }
         if (speed > 0) {
             speed -= resist;
@@ -161,8 +163,8 @@ function onCanvasKey() {
             angle += 0.03; 
             canvasContext.rotate(-0.03);          
         } else {
-            angle += 0.03 * Math.sin(-pi2); 
-            canvasContext.rotate(-0.03 * Math.sin(-pi2)); 
+            angle += 0.03 * Math.sin(-pi2 * speed); 
+            canvasContext.rotate(-0.03 * Math.sin(-pi2 * speed)); 
         }
         if (speed > 0) {
             speed -= resist;
@@ -179,8 +181,8 @@ function onCanvasKey() {
             angle -= 0.03; 
             canvasContext.rotate(0.03);          
         } else {
-            angle -= 0.03 * Math.sin(-pi2); 
-            canvasContext.rotate(0.03 * Math.sin(-pi2)); 
+            angle -= 0.03 * Math.sin(-pi2 * speed); 
+            canvasContext.rotate(0.03 * Math.sin(-pi2 * speed)); 
         }
         if (speed > 0) {
             speed -= resist;
