@@ -13,11 +13,11 @@
         
     <script defer src="../js/login.js"></script>
 </head>
-<body>
+<body class="main">
     <div class="map">
         {{ range .GameArea }}
             <div class="tile">
-                <img src="../static/map tiles sprites/{{ .CellInfo }}.png" width="94px" height="94px">
+                <img class="tile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
             </div>
         {{ end }}
     </div>
