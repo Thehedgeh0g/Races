@@ -480,13 +480,13 @@ func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
 func search(db *sqlx.DB, UserID string) error {
 	const query = `
 	SELECT
-	  post_id,
+	  user_id,
 	  email,
 	  password
 	FROM
 	  users
 	WHERE
-	  post_id = ?
+	  user_id = ?
 	`
 
 	row := db.QueryRow(query, UserID)
