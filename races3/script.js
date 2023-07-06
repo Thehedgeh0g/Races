@@ -124,10 +124,17 @@ function onCanvasKey() {
             ydial.innerHTML = yspeed; 
         } 
     } 
-    if ((wasd.d == 1) && (speed != 0)) { 
-        angle -= 0.03; 
+    if ((wasd.d == 1) && (speed > 0)) { 
+        if (speed >= Math.PI/2) {
+            angle -= 0.03; 
+            canvasContext.rotate(0.03);
+            anglehtml.innerHTML = angle;           
+        } else {
+            angle -= 0.03 * Math.sin(speed); 
+            canvasContext.rotate(0.03 * Math.sin(speed));
+            anglehtml.innerHTML = angle;  
+        }
         anglehtml.innerHTML = angle; 
-        canvasContext.rotate(0.03);
         if (speed > 0) {
             speed -= 0.0625/2;
         }
@@ -141,10 +148,17 @@ function onCanvasKey() {
         ydial.innerHTML = yspeed;
          
     } 
-    if ((wasd.a == 1) && (speed != 0)) { 
-        angle += 0.03; 
+    if ((wasd.a == 1) && (speed > 0)) { 
+        if (speed >= Math.PI/2) {
+            angle += 0.03; 
+            canvasContext.rotate(-0.03);
+            anglehtml.innerHTML = angle;           
+        } else {
+            angle += 0.03 * Math.sin(speed); 
+            canvasContext.rotate(-0.03 * Math.sin(speed));
+            anglehtml.innerHTML = angle;  
+        }
         anglehtml.innerHTML = angle; 
-        canvasContext.rotate(-0.03);
         if (speed > 0) {
             speed -= 0.0625/2;
         }
@@ -157,7 +171,53 @@ function onCanvasKey() {
         xdial.innerHTML = xspeed; 
         ydial.innerHTML = yspeed;
     } 
- 
+    if ((wasd.d == 1) && (speed < 0)) { 
+        if (speed <= -Math.PI/2) {
+            angle += 0.03; 
+            canvasContext.rotate(-0.03);
+            anglehtml.innerHTML = angle;           
+        } else {
+            angle += 0.03 * Math.sin(speed); 
+            canvasContext.rotate(-0.03 * Math.sin(speed));
+            anglehtml.innerHTML = angle;  
+        }
+        anglehtml.innerHTML = angle; 
+        if (speed > 0) {
+            speed -= 0.0625/2;
+        }
+        if (speed < 0) {
+            speed += 0.0625/2;
+        }
+        xspeed = Math.sin(angle)*speed; 
+        yspeed = Math.cos(angle)*speed; 
+        dial.innerHTML = speed; 
+        xdial.innerHTML = xspeed; 
+        ydial.innerHTML = yspeed;
+         
+    } 
+    if ((wasd.a == 1) && (speed < 0)) { 
+        if (speed <= -Math.PI/2) {
+            angle -= 0.03; 
+            canvasContext.rotate(0.03);
+            anglehtml.innerHTML = angle;           
+        } else {
+            angle -= 0.03 * Math.sin(speed); 
+            canvasContext.rotate(0.03 * Math.sin(speed));
+            anglehtml.innerHTML = angle;  
+        }
+        anglehtml.innerHTML = angle; 
+        if (speed > 0) {
+            speed -= 0.0625/2;
+        }
+        if (speed < 0) {
+            speed += 0.0625/2;
+        }
+        xspeed = Math.sin(angle)*speed; 
+        yspeed = Math.cos(angle)*speed; 
+        dial.innerHTML = speed; 
+        xdial.innerHTML = xspeed; 
+        ydial.innerHTML = yspeed;
+    } 
 } 
  
 function onCanvasKeyUp(event) {
