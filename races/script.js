@@ -1,6 +1,6 @@
 var GAME = { 
-    width: 1890 * 2, 
-    height: 950 * 4, 
+    width: 1410, 
+    height: 1410, 
     background: 'grey', 
     framesCnt: 0, 
  
@@ -9,11 +9,12 @@ var GAME = {
 var canvas = document.getElementById('canvas'); 
 canvas.width = GAME.width; 
 canvas.height = GAME.height; 
-var canvasContext = canvas.getContext('2d'); 
+var canvasContext = canvas.getContext('2d');
+canvasContext.imageSmoothingEnabled = false;
 var Car = new Image();
 Car.src = 'car.png';
-var CarPosX = -17*2; 
-var CarPosY = (-24*2); 
+var CarPosX = -17*0.5; 
+var CarPosY = (-24*2)*0; 
 var speed = 0; 
 var xspeed = 0; 
 var yspeed = 0; 
@@ -41,7 +42,7 @@ function drawCar(image, x, y) {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
     canvasContext.translate(xcanvas, ycanvas);
     canvasContext.rotate(-angle);
-    canvasContext.drawImage(image, x, y, 17*4, 24*4); 
+    canvasContext.drawImage(image, x, y, 17, 24); 
 } 
  
 function UpdatePosition() { 
@@ -55,7 +56,6 @@ function UpdatePosition() {
     x = x.slice(0, -2);
     y = Number(y);
     x = Number(x);
-    console.log(String(yspeed + y) + 'px', String(xspeed + x) + 'px');
     canvas.style.top = String(- yspeed + y) + 'px';
     canvas.style.left =  String(- xspeed + x) + 'px';
     xcanvas += xspeed;
@@ -155,7 +155,8 @@ function onCanvasKey() {
             angle += 0.03; 
             canvasContext.rotate(-0.03);          
         } else {
-            angle += 0.03 * Math.sin(speed/2); 
+            angle += 0.03 * Math.sin(-speed/2); 
+            canvasContext.rotate(-0.03 * Math.sin(-speed/2)); 
         }
         if (speed > 0) {
             speed -= 0.0625/2;
@@ -172,8 +173,8 @@ function onCanvasKey() {
             angle -= 0.03; 
             canvasContext.rotate(0.03);          
         } else {
-            angle -= 0.03 * Math.sin(speed/2); 
-            canvasContext.rotate(0.03 * Math.sin(speed/2)); 
+            angle -= 0.03 * Math.sin(-speed/2); 
+            canvasContext.rotate(0.03 * Math.sin(-speed/2)); 
         }
         if (speed > 0) {
             speed -= 0.0625/2;
