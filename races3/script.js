@@ -125,13 +125,13 @@ function onCanvasKey() {
         } 
     } 
     if ((wasd.d == 1) && (speed > 0)) { 
-        if (speed >= Math.PI/2) {
+        if (speed >= Math.PI) {
             angle -= 0.03; 
             canvasContext.rotate(0.03);
             anglehtml.innerHTML = angle;           
         } else {
-            angle -= 0.03 * Math.sin(speed); 
-            canvasContext.rotate(0.03 * Math.sin(speed));
+            angle -= 0.03 * Math.sin(speed/2); 
+            canvasContext.rotate(0.03 * Math.sin(speed/2));
             anglehtml.innerHTML = angle;  
         }
         anglehtml.innerHTML = angle; 
@@ -149,13 +149,13 @@ function onCanvasKey() {
          
     } 
     if ((wasd.a == 1) && (speed > 0)) { 
-        if (speed >= Math.PI/2) {
+        if (speed >= Math.PI) {
             angle += 0.03; 
             canvasContext.rotate(-0.03);
             anglehtml.innerHTML = angle;           
         } else {
-            angle += 0.03 * Math.sin(speed); 
-            canvasContext.rotate(-0.03 * Math.sin(speed));
+            angle += 0.03 * Math.sin(speed/2); 
+            canvasContext.rotate(-0.03 * Math.sin(speed/2));
             anglehtml.innerHTML = angle;  
         }
         anglehtml.innerHTML = angle; 
@@ -172,13 +172,13 @@ function onCanvasKey() {
         ydial.innerHTML = yspeed;
     } 
     if ((wasd.d == 1) && (speed < 0)) { 
-        if (speed <= -Math.PI/2) {
+        if (speed <= -Math.PI) {
             angle += 0.03; 
             canvasContext.rotate(-0.03);
             anglehtml.innerHTML = angle;           
         } else {
-            angle += 0.03 * Math.sin(speed); 
-            canvasContext.rotate(-0.03 * Math.sin(speed));
+            angle += 0.03 * Math.sin(speed/2); 
+            canvasContext.rotate(-0.03 * Math.sin(speed/2));
             anglehtml.innerHTML = angle;  
         }
         anglehtml.innerHTML = angle; 
@@ -196,13 +196,13 @@ function onCanvasKey() {
          
     } 
     if ((wasd.a == 1) && (speed < 0)) { 
-        if (speed <= -Math.PI/2) {
+        if (speed <= -Math.PI) {
             angle -= 0.03; 
             canvasContext.rotate(0.03);
             anglehtml.innerHTML = angle;           
         } else {
-            angle -= 0.03 * Math.sin(speed); 
-            canvasContext.rotate(0.03 * Math.sin(speed));
+            angle -= 0.03 * Math.sin(speed/2); 
+            canvasContext.rotate(0.03 * Math.sin(speed/2));
             anglehtml.innerHTML = angle;  
         }
         anglehtml.innerHTML = angle; 
