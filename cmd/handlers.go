@@ -93,7 +93,7 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		lobbyID, err := strconv.Atoi(lobbyIDstr)
 		if err != nil {
-			http.Error(w, "Invalid order id", 403)
+			http.Error(w, "Invalid order id", http.StatusForbidden)
 			log.Println(err)
 			return
 		}
@@ -281,7 +281,7 @@ func getMapData(db *sqlx.DB, mapId int) (*MapData, error) {
 
 func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		hostId, err := getHostId(db, r)
+		hostId, err := getUserID(db, r)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -303,13 +303,28 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		const query = `
+			UPDATE
+			  brainless_races.users
+			SET
+			  curLobby_id = ?
+			WHERE
+			  user_id = ?    
+		`
+		userId, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
 		reqData, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 		}
 
-		var req UserRequest
+		var req string
 
 		err = json.Unmarshal(reqData, &req)
 		if err != nil {
@@ -318,8 +333,9 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println(req.Email, ' ', req.Password)
-		user, err := getUser(db, req)
+		db.Exec(query, req, userId)
+
+		http.Redirect(w, r, "/post/"+req, 400)
 	}
 }
 
@@ -355,7 +371,7 @@ func generateLobbyId() string {
 	return id
 }
 
-func getHostId(db *sqlx.DB, r *http.Request) (string, error) {
+func getUserID(db *sqlx.DB, r *http.Request) (string, error) {
 	cookie, err := r.Cookie("authCookieName")
 
 	if err != nil {
@@ -464,13 +480,13 @@ func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
 func search(db *sqlx.DB, UserID string) error {
 	const query = `
 	SELECT
-	  post_id,
+	  user_id,
 	  email,
 	  password
 	FROM
 	  users
 	WHERE
-	  post_id = ?
+	  user_id = ?
 	`
 
 	row := db.QueryRow(query, UserID)
