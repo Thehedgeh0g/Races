@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script src="/js/menu-script.js" async></script>
     <meta charset="UTF-8" />
     <title>menu</title>
     <link rel="stylesheet" type="text/css" href="../static/css/menustyle.css" />
@@ -14,11 +13,17 @@
       <span>BRAINLESS RACES</span>
     </div>
     <div class="button-list">
-      <a href=""><img class="button" src="../static/menu-buttons/create-button.png" alt="create"></a>
-      <a href=""><img class="button" src="../static/menu-buttons/join-button.png" alt="join"></a>
-      <a href=""><img class="button" src="../static/menu-buttons/garage-button.png" alt="garage"></a>
-      <a href=""><img class="button" src="../static/menu-buttons/account-button.png" alt="account"></a>
-      <a href=""><img class="button" src="../static/menu-buttons/config-button.png" alt="config"></a>
+      <div><img class="button" id="CreateLobby" src="../static/menu-buttons/create-button.png" alt="create"></div>
+      <div><img class="button" id="JoinButton" src="../static/menu-buttons/join-button.png" alt="join"></div>
+      <div><img class="button" id="GarageButton" src="../static/menu-buttons/garage-button.png" alt="garage"></div>
+      <div><img class="button" id="AccountButton" src="../static/menu-buttons/account-button.png" alt="account"></div>
+      <div><img class="button" id="ConfigButton" src="../static/menu-buttons/config-button.png" alt="config"></div>
     </div>
+    <div class="input-join-lobby" id="JoinLobbyBox">
+        <form class="input-join-lobby__form" id="formJoinLobby">
+            <input type="text" id="tokenInput" name="join_lobby">
+        </form>
+    </div>
+    <script src="../static/js/joinlobby.js"></script>
   </body>
 </html>

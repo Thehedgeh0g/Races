@@ -29,3 +29,27 @@
 .button {
     width: 15vw;
 }
+
+.input-join-lobby
+{
+    width: 300px;
+    height: 320px;
+    background: url('../img/tocken.png') no-repeat;
+    background-size: 300px 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+ 
+}
+
+.input-join-lobby__form
+{
+}
+
+#JoinLobbyBox
+{
+    position: absolute;
+    top: 40%;
+    left: 43%;
+}
