@@ -28,11 +28,11 @@ type Userdata struct {
 }
 
 type CreationPage struct {
-	Lobby []*LobbyData
+	Lobby []LobbyData
 }
 
 type GameMap struct {
-	GameArea [225]CellsData
+	GameArea [625]CellsData
 }
 
 type CellsData struct {
@@ -147,14 +147,14 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapData, err := getMapData(db, 2)
+		mapData, err := getMapData(db, 1)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)
 			return
 		}
 
-		var cells [225]CellsData
+		var cells [625]CellsData
 
 		a := strings.Split(mapData.MapKey, " ")
 
@@ -178,7 +178,6 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			}
 
 			cells[i] = newTile
-			log.Println(newTile)
 		}
 
 		data := GameMap{
@@ -198,26 +197,31 @@ func lobbyByID(db *sqlx.DB, lobbyID int) ([]string, error) {
 	const query = `
 		SELECT
 		  host_id,
-		  player1_id,
-		  player1_id,
-		  player1_id
+		  player2_id,
+		  player3_id,
+		  player4_id
 		FROM
 		  sessions
 	    WHERE
 		  session_id = ?
 	`
 
+	row := db.QueryRow(query, lobbyID)
+
+	var id1, id2, id3, id4 string
 	var sessions []string
 
-	err := db.Select(&sessions, query, lobbyID)
+	err := row.Scan(&id1, &id2, &id3, &id4)
 	if err != nil {
 		return nil, err
 	}
 
+	sessions = append(sessions, id1, id2, id3, id4)
+
 	return sessions, nil
 }
 
-func lobbyData(db *sqlx.DB, players []string) ([]*LobbyData, error) {
+func lobbyData(db *sqlx.DB, players []string) ([]LobbyData, error) {
 
 	query := `
 		SELECT 
@@ -227,22 +231,23 @@ func lobbyData(db *sqlx.DB, players []string) ([]*LobbyData, error) {
 		FROM 
 		  users 
 		WHERE 
-		  currLobby_id = ?
+		  user_id = ?
 		`
 
-	var user *LobbyData
-	var users []*LobbyData
+	var user LobbyData
+	var users []LobbyData
 
 	for _, element := range players {
-		row := db.QueryRow(query, element)
-		err := row.Scan(user)
-		if err != nil {
-			return nil, err
+		if element != "0" {
+			row := db.QueryRow(query, element)
+			err := row.Scan(&user.ImgPath, &user.Nickname, &user.Level)
+			if err != nil {
+				return nil, err
+			}
+			users = append(users, user)
 		}
-		users = append(users, user)
-	}
 
-	fmt.Println(user)
+	}
 
 	return users, nil
 }
@@ -282,6 +287,7 @@ func getMapData(db *sqlx.DB, mapId int) (*MapData, error) {
 func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostId, err := getUserID(db, r)
+		log.Println(hostId, "host")
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -289,7 +295,7 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		lobbyId := generateLobbyId()
-
+		log.Println(lobbyId)
 		_, err = insert(db, lobbyId, hostId, "0", "0", "0")
 		if err != nil {
 			http.Error(w, "Server Error", 500)
@@ -297,7 +303,10 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, "/post/"+lobbyId, 400)
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Location", "/lobby/"+lobbyId)
+		http.Redirect(w, r, "/lobby/"+lobbyId, http.StatusFound)
+
 	}
 }
 
@@ -335,45 +344,34 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		db.Exec(query, req, userId)
 
-		http.Redirect(w, r, "/post/"+req, 400)
 	}
 }
 
 func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id string) (int, error) {
-	stmt := `INSERT INTO sessions (session_id, host_id, player1_id, player2_id, player3_id)
+	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id)
     VALUES(?, ?, ?, ?, ?)`
 
-	// Используем метод Exec() из встроенного пула подключений для выполнения
-	// запроса. Первый параметр это сам SQL запрос, за которым следует
-	// заголовок заметки, содержимое и срока жизни заметки. Этот
-	// метод возвращает объект sql.Result, который содержит некоторые основные
-	// данные о том, что произошло после выполнении запроса.
 	result, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id)
 	if err != nil {
 		return 0, err
 	}
 
-	// Используем метод LastInsertId(), чтобы получить последний ID
-	// созданной записи из таблицу snippets.
 	id, err := result.LastInsertId()
 	if err != nil {
 		return 0, err
 	}
 
-	// Возвращаемый ID имеет тип int64, поэтому мы конвертируем его в тип int
-	// перед возвратом из метода.
 	return int(id), nil
 }
 
 func generateLobbyId() string {
 	CreationTime := time.Now()
-	id := strconv.FormatInt(int64(CreationTime.Hour()+CreationTime.Second()+CreationTime.Minute()), 10)
+	id := strconv.FormatInt(int64(CreationTime.Hour()*10000+CreationTime.Second()+CreationTime.Minute()*100), 10)
 	return id
 }
 
 func getUserID(db *sqlx.DB, r *http.Request) (string, error) {
 	cookie, err := r.Cookie("authCookieName")
-
 	if err != nil {
 		if err == http.ErrNoCookie {
 			return "", err
@@ -384,7 +382,6 @@ func getUserID(db *sqlx.DB, r *http.Request) (string, error) {
 	userIDStr := cookie.Value
 
 	err = search(db, userIDStr)
-	log.Println(err)
 	if err != nil {
 		return "", err
 	}
@@ -492,13 +489,13 @@ func search(db *sqlx.DB, UserID string) error {
 	row := db.QueryRow(query, UserID)
 	user := new(Userdata)
 	err := row.Scan(&user.UserId, &user.Email, &user.Password)
-	fmt.Println(user, UserID)
+	//fmt.Println(user, UserID)
 	if err != nil {
 		fmt.Println("fdf")
 		return err
 	}
 
-	fmt.Println(UserID)
+	//fmt.Println(UserID)
 	return nil
 }
 
