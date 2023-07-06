@@ -302,9 +302,23 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-		http.Get("/lobby/" + lobbyId)
+		response := struct {
+			LobbyID string `json:"lobbyId"`
+		}{
+			LobbyID: lobbyId,
+		}
 
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
 	}
 }
 
