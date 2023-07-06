@@ -6,11 +6,13 @@ var GAME = {
  
 }
 
-const mspeed = 5;
+const mspeed = 15;
 const accel = mspeed / 160;
 const resist = accel / 4;
-const pi1 = Math.PI*(mspeed/5);
-const pi2 = 5/mspeed;
+//const pi1 = Math.PI*(mspeed/5);
+const pi1 = Math.PI
+//const pi2 = 5/mspeed/2;
+const pi2 = 1/2;
 
 var canvas = document.getElementById('canvas'); 
 canvas.width = GAME.width; 
