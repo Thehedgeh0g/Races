@@ -148,14 +148,14 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-
+		log.Println(lobbyID)
 		mapID, err := getMapID(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
-
+		log.Println(mapID)
 		ts, err := template.ParseFiles("pages/location_1_1.html")
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
@@ -169,7 +169,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-
+		log.Println(mapData)
 		var cells [225]CellsData
 
 		a := strings.Split(mapData.MapKey, " ")
@@ -181,7 +181,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 				return
 			}
-			sprite, err := getSprite(db, id+1)
+			sprite, err := getSprite(db, id)
 
 			if err != nil {
 				http.Error(w, "hehe", 500)
@@ -383,6 +383,7 @@ func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
 
 	newSprite := new(SpriteData)
 	err := row.Scan(&newSprite.SpritePath)
+	log.Println(newSprite.SpritePath, spriteId)
 	if err != nil {
 		return nil, err
 	}
@@ -487,12 +488,19 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		db.Exec(query, lobbyId, userId)
+		var servResponse bool
+
+		_, err = db.Exec(query, lobbyId, userId)
+		if err != nil {
+			servResponse = false
+		} else {
+			servResponse = true
+		}
 
 		response := struct {
-			LobbyID string `json:"lobbyId"`
+			response bool
 		}{
-			LobbyID: lobbyId,
+			response: servResponse,
 		}
 
 		jsonResponse, err := json.Marshal(response)
