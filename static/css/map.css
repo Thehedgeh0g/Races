@@ -18,6 +18,7 @@
     grid-template-columns: repeat(15, 94px);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
+    z-index: -1;
 }
 
 #move {
