@@ -22,7 +22,7 @@ let GAME = {
  
 }
 
-let rspeed = 0.01;
+let rspeed = 0.03;
 let mspeed = 15;
 let accel = mspeed / 160;
 let resist = accel / 4;
