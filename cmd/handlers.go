@@ -149,7 +149,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapKey, err := getMapID(db, lobbyID)
+		mapID, err := getMapID(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
@@ -163,7 +163,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapData, err := getMapData(db, mapKey)
+		mapData, err := getMapData(db, mapID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)
@@ -207,6 +207,89 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userIdstr, err := getUserID(db, r)
+		//log.Println(userId, "host")
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		userID, err := strconv.Atoi(userIdstr)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		lobbyID, err := getLobbyID(db, userID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		mapID, err := getMapID(db, lobbyID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err)
+			return
+		}
+
+		mapData, err := getMapData(db, mapID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err)
+			return
+		}
+
+		mapKey := mapData.MapKey
+
+		response := struct {
+			MapKey string `json:"MapKey"`
+		}{
+			MapKey: mapKey,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
+	}
+}
+
+func getLobbyID(db *sqlx.DB, userID int) (int, error) {
+	const query = `SELECT
+	  map_id
+	FROM
+	  users
+	WHERE
+	  user_id = ?    
+	`
+
+	row := db.QueryRow(query, userID)
+	var IDstr string
+	err := row.Scan(&IDstr)
+	if err != nil {
+		return 0, err
+	}
+
+	ID, err := strconv.Atoi(IDstr)
+	if err != nil {
+		return 0, err
+	}
+
+	return ID, nil
 }
 
 func lobbyByID(db *sqlx.DB, lobbyID int) ([]string, error) {
