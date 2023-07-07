@@ -28,7 +28,7 @@ type Userdata struct {
 }
 
 type CreationPage struct {
-	Lobby []LobbyData
+	Lobby1 []LobbyData
 }
 
 type GameMap struct {
