@@ -20,6 +20,14 @@
     grid-row-gap: 0px;
 }
 
+#move {
+    position: absolute;
+    top: 0px;
+    left: 0x;
+    width: 1410px;
+    height: 1410px;
+}
+
 #canvas {
     position: absolute;
     top: 0;
