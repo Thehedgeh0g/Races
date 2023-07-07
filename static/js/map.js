@@ -1,5 +1,5 @@
 const xhr = new XMLHttpRequest();
-xhr.open('GET', 'api/getKey');
+xhr.open('POST', '/api/getKey');
 xhr.addEventListener('load', () => {
     console.log(xhr.responseText);
     //let arr = [];
