@@ -4,18 +4,13 @@
     padding: 0;
 }
 
-.main
-{
-    background-image: url("../map tiles sprites/game-area-background.png");
-}
-
 .map
 {
     position: absolute;
     top: 0px;
     left: 0px;
     display: grid;
-    grid-template-columns: repeat(15, 94px);
+    grid-template-columns: repeat(15, 96px);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     z-index: -1;
@@ -23,8 +18,8 @@
 
 #move {
     position: absolute;
-    top: 0px;
-    left: 0x;
+    top: 750px;
+    left: 750px;
     width: 1410px;
     height: 1410px;
 }
@@ -43,11 +38,17 @@
 
 .tile
 {
-    width: 94px;
-    height: 94px;
+    width: 96px;
+    height: 96px;
 }
 
 .tile__pic {
     width: 96px;
     height: 96px;
+}
+
+.main {
+    background-image: url("../map tiles sprites/game-area-background.png");
+    width: 3000px;
+    height: 3000px;
 }
