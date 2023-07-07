@@ -270,7 +270,7 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func getLobbyID(db *sqlx.DB, userID int) (int, error) {
 	const query = `SELECT
-	  map_id
+	  currLobby_id
 	FROM
 	  users
 	WHERE
@@ -278,13 +278,8 @@ func getLobbyID(db *sqlx.DB, userID int) (int, error) {
 	`
 
 	row := db.QueryRow(query, userID)
-	var IDstr string
-	err := row.Scan(&IDstr)
-	if err != nil {
-		return 0, err
-	}
-
-	ID, err := strconv.Atoi(IDstr)
+	var ID int
+	err := row.Scan(&ID)
 	if err != nil {
 		return 0, err
 	}
@@ -425,6 +420,21 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+
+		ID, err := strconv.Atoi(lobbyId)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		_, err = UPDATE(db, hostId, ID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
 		response := struct {
 			LobbyID string `json:"lobbyId"`
 		}{
@@ -488,6 +498,23 @@ func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id st
 
 	result, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id)
 	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func UPDATE(db *sqlx.DB, userID string, lobbyID int) (int, error) {
+	stmt := `UPDATE users SET currLobby_id = ? WHERE user_id = ?`
+
+	result, err := db.Exec(stmt, lobbyID, userID)
+	if err != nil {
+		log.Println("tut")
 		return 0, err
 	}
 
