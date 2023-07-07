@@ -11,10 +11,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         
-    <script defer src="../js/login.js"></script>
+    <script defer src="../js/map.js"></script>
 </head>
 <body class="main">
-    <div class="map">
+    <canvas id="canvas"></canvas>
+    <canvas id="trash-car"></canvas>
+    <div class="map" id="move">
         {{ range .GameArea }}
             <div class="tile">
                 <img class="tile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
