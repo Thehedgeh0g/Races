@@ -489,11 +489,6 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_, err = db.Exec(query, lobbyId, userId)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
 	}
 }
 
