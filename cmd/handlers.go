@@ -458,11 +458,11 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		const query = `
+		query := `
 			UPDATE
 			  brainless_races.users
 			SET
-			  curLobby_id = ?
+			  currLobby_id = ?
 			WHERE
 			  user_id = ?    
 		`
@@ -489,6 +489,40 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_, err = db.Exec(query, lobbyId, userId)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		query = `SELECT
+			  player2_id,
+			  player3_id,
+			  player4_id
+	  		FROM
+			  sessions
+	  		WHERE
+	  		  session_id = ?    
+	  	`
+
+		ID, err := strconv.Atoi(lobbyId)
+		var UserId2, UserId3, UserId4 string
+		row := db.QueryRow(query, ID)
+		log.Println(row)
+		err = row.Scan(&UserId2, &UserId3, &UserId4)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		if UserId2 == "0" {
+			_, err = db.Exec("UPDATE sessions SET player2_id = ? WHERE session_id = ?", userId, lobbyId)
+		} else if UserId3 == "0" {
+			_, err = db.Exec("UPDATE sessions SET player3_id = ? WHERE session_id = ?", userId, lobbyId)
+		} else if UserId4 == "0" {
+			_, err = db.Exec("UPDATE sessions SET player4_id = ? WHERE session_id = ?", userId, lobbyId)
+		}
+
 	}
 }
 
@@ -568,7 +602,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println(req.Email, ' ', req.Password)
+		log.Println(req.Email, req.Password)
 		user, err := getUser(db, req)
 		//log.Println(user.Email, ' ', user.Password)
 
@@ -629,6 +663,7 @@ func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
 	row := db.QueryRow(query, req.Email, req.Password)
 	user := new(Userdata)
 	err := row.Scan(&user.UserId, &user.Email, &user.Password)
+	log.Println(user)
 	if err != nil {
 		return nil, err
 	}
