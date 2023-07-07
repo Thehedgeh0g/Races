@@ -68,8 +68,7 @@ function getIdLobby(idLobby) {
   const xhr = new XMLHttpRequest();
   xhr.open('POST', "/api/join");
   xhr.addEventListener('load', () => {
-    const response = JSON.parse(xhr.responseText);
-    cb(response);
+    window.location.href = "/lobby/" + idLobby.substring(1, 7)
   });
 
 

@@ -488,32 +488,12 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var servResponse bool
-
 		_, err = db.Exec(query, lobbyId, userId)
 		if err != nil {
-			servResponse = false
-		} else {
-			servResponse = true
-		}
-
-		response := struct {
-			response bool
-		}{
-			response: servResponse,
-		}
-
-		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
+			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResponse)
-
 	}
 }
 
