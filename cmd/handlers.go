@@ -478,16 +478,33 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
-		var req string
+		var lobbyId string
 
-		err = json.Unmarshal(reqData, &req)
+		err = json.Unmarshal(reqData, &lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		db.Exec(query, req, userId)
+		db.Exec(query, lobbyId, userId)
+
+		response := struct {
+			LobbyID string `json:"lobbyId"`
+		}{
+			LobbyID: lobbyId,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 
 	}
 }
