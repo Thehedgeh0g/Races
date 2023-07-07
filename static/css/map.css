@@ -18,10 +18,10 @@
 
 #move {
     position: absolute;
-    top: 750px;
-    left: 750px;
-    width: 1410px;
-    height: 1410px;
+    top: 720px;
+    left: 720px;
+    width: 1440px;
+    height: 1440px;
 }
 
 #canvas {
@@ -49,6 +49,6 @@
 
 .main {
     background-image: url("../map tiles sprites/game-area-background.png");
-    width: 3000px;
-    height: 3000px;
+    width: 2880px;
+    height: 2880px;
 }

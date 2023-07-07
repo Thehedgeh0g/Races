@@ -1,10 +1,14 @@
+let isLoaded = false;
+let tiles = [];
+
 const xhr = new XMLHttpRequest();
 xhr.open('POST', '/api/getKey');
 xhr.addEventListener('load', () => {
     mapping = xhr.responseText.slice(11, -2);
     console.log(mapping);
-    const tiles = mapping.split(' ');
+    tiles = mapping.split(' ');
     console.log(tiles);
+    isLoaded = true;
     //for (let y = 0,)
     
 })
@@ -19,14 +23,20 @@ let GAME = {
  
 }
 
+
+const mcarspeed = 4;
+
 let rspeed = 0.03;
-let mspeed = 10;
+let mspeed = mcarspeed;
 let accel = mspeed / 160;
 let resist = accel / 4;
 //const pi1 = Math.PI*(mspeed/5);
 const pi1 = Math.PI
 //const pi2 = 5/mspeed/2;
 const pi2 = 1/2;
+
+const ga = 0.1;
+const gs = mspeed/5;
 
 let canvas = document.getElementById('canvas');
 let trashcar = document.getElementById('trash-car');
@@ -83,7 +93,11 @@ function drawCar(image, x, y) {
     canvasContext.drawImage(image, x, y, 17, 24);
     TContext.drawImage(TCar, TrashPosX, TrashPosY , TrashSX, TrashSY); 
 } 
- 
+
+function divme(a, b){
+    return (a - a%b)/b
+}
+
 function UpdatePosition() { 
 
     canvasContext.rotate(angle); 
@@ -95,6 +109,23 @@ function UpdatePosition() {
     x = x.slice(0, -2);
     y = Number(y);
     x = Number(x);
+    if (isLoaded) {
+        console.log(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
+        if (tiles[(224-(divme(x, 96) + divme(y, 96) * 15))] in [1, 2, 3, 4]) {
+            rspeed = 0.03;
+        
+            mspeed = gs;
+            accel = mspeed / 160;
+            resist = accel / 4;
+        } else {
+            rspeed = 0.03;
+            mspeed = mcarspeed;
+           
+            accel = mspeed / 160;
+            resist = accel / 4;
+        }
+    }
+    //if (tiles[divme(x, 96) + divme(y, 96) * 15])
     move.style.top = String(- yspeed + y) + 'px';
     move.style.left =  String(- xspeed + x) + 'px';
     xcanvas += xspeed;
@@ -108,15 +139,36 @@ function UpdatePosition() {
  
  
 function drawFrame() { 
-    if (speed > 0) { 
-        speed -= resist; 
-        xspeed = Math.sin(angle)*speed; 
-        yspeed = Math.cos(angle)*speed; 
+    if (speed > 0) {
+        if (speed-accel <= mspeed) {
+            speed -= resist; 
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
+        } else {
+            if ((speed - ga) > 0){
+                speed -= ga; 
+            } else {
+                speed = 0;
+            }
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
+        }
+
     } 
     if (speed < 0) { 
-        speed += resist; 
-        xspeed = Math.sin(angle)*speed; 
-        yspeed = Math.cos(angle)*speed; 
+        if (speed+accel >= -mspeed) {
+            speed += resist; 
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
+        } else {
+            if ((speed + ga) < 0){
+                speed += ga; 
+            } else {
+                speed = 0;
+            }
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
+        }
     } 
     canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
     drawBackground(); 
