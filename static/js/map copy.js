@@ -2,14 +2,8 @@ const xhr = new XMLHttpRequest();
 xhr.open('POST', '/api/getKey');
 xhr.addEventListener('load', () => {
     console.log(xhr.responseText);
-    let roadtype = [];
-    let j = 0;
-    for (let i = 0; i < 225*3-1; i+3) {
-        roadtype[j] = xhr.responseText[i];
-        tiletype[j] = xhr.responseText[i + 1];
-        j += 1;
-        
-    }
+    //let arr = [];
+   // for (let i = 0 i < 224, i++)
 })
 xhr.send();
 
