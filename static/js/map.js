@@ -1,6 +1,16 @@
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'api/getKey');
+xhr.addEventListener('load', () => {
+    console.log(xhr.responseText);
+    //let arr = [];
+   // for (let i = 0 i < 224, i++)
+})
+xhr.send();
+
+
 let GAME = { 
-    width: 1410, 
-    height: 1410, 
+    width: 1440, 
+    height: 1440, 
     background: 'grey', 
     framesCnt: 0, 
  
