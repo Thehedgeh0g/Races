@@ -5,7 +5,7 @@ xhr.addEventListener('load', () => {
     console.log(mapping);
     const tiles = mapping.split(' ');
     console.log(tiles);
-    for (let y = 0,)
+    //for (let y = 0,)
     
 })
 xhr.send();
