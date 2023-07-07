@@ -11,19 +11,43 @@
 
 .map
 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     display: grid;
-    grid-template-columns: repeat(25, 282px);
+    grid-template-columns: repeat(15, 94px);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
+    z-index: -1;
+}
+
+#move {
+    position: absolute;
+    top: 0px;
+    left: 0x;
+    width: 1410px;
+    height: 1410px;
+}
+
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#trash-car {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .tile
 {
-    width: 282px;
-    height: 282px;
+    width: 94px;
+    height: 94px;
 }
 
 .tile__pic {
-    width: 282px;
-    height: 282px;
+    width: 94px;
+    height: 94px;
 }

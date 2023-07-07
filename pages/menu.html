@@ -20,11 +20,14 @@
       <div><img class="button" id="ConfigButton" src="../static/menu-buttons/config-button.png" alt="config"></div>
     </div>
     <div class="input-join-lobby" id="JoinLobbyBox">
+        <div class="close-button" id="CloseButtonJoinLobby"> 
+            <img src="../static/img/close_button.png" alt="X" height="30px" width="30px">
+        </div>
+        <div><p class="input-join-lobby__description">ENTER ID:</p></div>
         <form class="input-join-lobby__form" id="formJoinLobby">
             <input type="text" id="tokenInput" name="join_lobby">
         </form>
     </div>
     <script src="../static/js/joinlobby.js"></script>
-    <script src="../static/js/createlobby.js"></script>
   </body>
 </html>
