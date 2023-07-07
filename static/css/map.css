@@ -15,7 +15,7 @@
     top: 0px;
     left: 0px;
     display: grid;
-    grid-template-columns: repeat(15, 94px);
+    grid-template-columns: repeat(15, 96px);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     z-index: -1;
@@ -43,8 +43,8 @@
 
 .tile
 {
-    width: 94px;
-    height: 94px;
+    width: 96px;
+    height: 96px;
 }
 
 .tile__pic {
