@@ -26,7 +26,7 @@ let TrashSY = 40;
 let TContext = trashcar.getContext('2d');
 TContext.imageSmoothingEnabled = false;
 let TCar = new Image();
-TCar.src = '../sprites/debuff.png';
+TCar.src = '../static/sprites/debuff.png';
 
 
 
@@ -36,7 +36,7 @@ canvas.height = GAME.height;
 let canvasContext = canvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
-Car.src = '../sprites/abm_blue.png';
+Car.src = '../static//sprites/abm_blue.png';
 let CarPosX = -17*0.5; 
 let CarPosY = (-24*2)*0; 
 let speed = 0; 
