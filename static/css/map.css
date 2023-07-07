@@ -4,11 +4,6 @@
     padding: 0;
 }
 
-.main
-{
-    background-image: url("../map tiles sprites/game-area-background.png");
-}
-
 .map
 {
     position: absolute;
@@ -23,8 +18,8 @@
 
 #move {
     position: absolute;
-    top: 0px;
-    left: 0x;
+    top: 750px;
+    left: 750px;
     width: 1410px;
     height: 1410px;
 }
@@ -50,4 +45,10 @@
 .tile__pic {
     width: 96px;
     height: 96px;
+}
+
+.main {
+    background-image: url("../map tiles sprites/game-area-background.png");
+    width: 3000px;
+    height: 3000px;
 }

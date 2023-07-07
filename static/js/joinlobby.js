@@ -25,6 +25,10 @@ formJoinLobby.addEventListener("submit", function() {
   handleTokenInputSubmit(event);
 })
 
+ConnectLobbyButton.addEventListener("click", function() {
+  handleTokenInputSubmit(event);
+})
+
 function showButtonAndDarkScreen() {
   handleJoinButtonClick();
   darkenScreen();
@@ -38,17 +42,10 @@ function handleJoinButtonClick() {
 
 function handleTokenInputSubmit(event) {
 
-  const token = document.getElementById("tokenInput").value;
+  let token = document.getElementById("tokenInput").value;
   event.preventDefault();
   const tokenData = JSON.stringify(token);
   getIdLobby(tokenData);
-
-  if (token === "124") {
-    window.location.href = "___.html";
-  } else {
-      alert("Неверный токен. Пожалуйста, попробуйте еще раз.");
-      document.getElementById("tokenInput").value = '';
-  }
 }
 
 let overlay = document.createElement("div");
@@ -61,14 +58,14 @@ function darkenScreen() {
 CloseButtonJoinLobby.addEventListener("click", function() {
   document.body.removeChild(overlay);
   document.querySelector(".input-join-lobby").style.visibility = "hidden";
-  //JoinButton.removeEventListener("click", showButtonAndDarkScreen)
 })
 
 function getIdLobby(idLobby) {
   const xhr = new XMLHttpRequest();
   xhr.open('POST', "/api/join");
   xhr.addEventListener('load', () => {
-    window.location.href = "/lobby/" + idLobby.substring(1, 7)
+    const response = JSON.parse(xhr.responseText);
+    cb(response);
   });
 
 
