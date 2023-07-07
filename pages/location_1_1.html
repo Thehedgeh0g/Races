@@ -14,14 +14,16 @@
     <script defer src="../static/js/map.js"></script>
 </head>
 <body class="main">
-    <canvas id="canvas"></canvas>
-    <canvas id="trash-car"></canvas>
-    <div class="map" id="move">
-        {{ range .GameArea }}
-            <div class="tile">
-                <img class="tile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
-            </div>
-        {{ end }}
+    <div class="move">
+        <canvas id="canvas"></canvas>
+        <canvas id="trash-car"></canvas>
+        <div class="map">
+            {{ range .GameArea }}
+                <div class="tile">
+                    <img class="tile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
+                </div>
+            {{ end }}
+        </div>
     </div>
 </body>
 </html>
