@@ -28,7 +28,7 @@ func main() {
 	mux.HandleFunc("/login", login)
 	mux.HandleFunc("/menu", menu)
 	mux.HandleFunc("/lobby/{lobbyID}", lobbyCreation(dbx))
-	mux.HandleFunc("/race", gameArea(dbx))
+	mux.HandleFunc("/race/{lobbyID}", gameArea(dbx))
 
 	mux.HandleFunc("/api/join", joinLobby(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/create", createLobby(dbx)).Methods(http.MethodPost)
