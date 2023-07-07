@@ -1,4 +1,4 @@
-var GAME = { 
+let GAME = { 
     width: 1410, 
     height: 1410, 
     background: 'grey', 
@@ -14,40 +14,40 @@ const pi1 = Math.PI
 //const pi2 = 5/mspeed/2;
 const pi2 = 1/2;
 
-var canvas = document.getElementById('canvas');
-var trashcar = document.getElementById('trash-car');
+let canvas = document.getElementById('canvas');
+let trashcar = document.getElementById('trash-car');
 
 trashcar.width = GAME.width; 
 trashcar.height = GAME.height; 
-var TrashPosX = 450; 
-var TrashPosY = 400;
-var TrashSX = 40; 
-var TrashSY = 40;
-var TContext = trashcar.getContext('2d');
+let TrashPosX = 450; 
+let TrashPosY = 400;
+let TrashSX = 40; 
+let TrashSY = 40;
+let TContext = trashcar.getContext('2d');
 TContext.imageSmoothingEnabled = false;
-var TCar = new Image();
+let TCar = new Image();
 TCar.src = '../static/sprites/debuff.png';
 
 
 
-var move = document.getElementById('move')
+let move = document.getElementById('move')
 canvas.width = GAME.width; 
 canvas.height = GAME.height; 
-var canvasContext = canvas.getContext('2d');
+let canvasContext = canvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = false;
-var Car = new Image();
+let Car = new Image();
 Car.src = 'car.png';
-var CarPosX = -17*0.5; 
-var CarPosY = (-24*2)*0; 
-var speed = 0; 
-var xspeed = 0; 
-var yspeed = 0; 
-var angle = 0; 
+let CarPosX = -17*0.5; 
+let CarPosY = (-24*2)*0; 
+let speed = 0; 
+let xspeed = 0; 
+let yspeed = 0; 
+let angle = 0; 
 
-var xcanvas = 0;
-var ycanvas = 0;
+let xcanvas = 0;
+let ycanvas = 0;
 
-var wasd = { 
+let wasd = { 
     w: 0, 
     a: 0, 
     s: 0, 
