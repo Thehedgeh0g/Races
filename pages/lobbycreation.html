@@ -36,13 +36,11 @@
                             
                             <div class="list" id="list">
                                 {{ range .Maps}}
-                                    <div id:="{{ .MapID }}" class="map-choose-line">
+                                    <div id="m{{ .MapID }}" class="map-choose-line" onclick="choosen(event)">
                                         <span>{{ .MapID }}</span>
                                         <div class="preview">
                                             {{ range .MapPreview }}
-                                                <div class="tile">
-                                                    <img class="tile__pic" src="../static/map tiles sprites/{{ .CellPath }}.png">
-                                                </div>
+                                                <img class="tile__pic" src="../static/map tiles sprites/{{ .CellPath }}.png">
                                             {{ end }}
                                         </div>
                                     </div>
