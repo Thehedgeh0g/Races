@@ -37,14 +37,18 @@ function choosen(event) {
     }
 }
 
+
+
 document.getElementById("button").addEventListener("click", function() {
+    let id = chosenMap.substring(1, 2)
+    console.log(chosenMap)
     var xhr = new XMLHttpRequest();
    // var lobbyId = response.lobbyId
     xhr.open("POST", "/api/chooseMap");
-    xhr.send(chosenMap.slice(1, 0));
+    xhr.send(JSON.stringify(id));
     
     xhr.addEventListener("load", () =>{
         console.log(xhr.responseText.substring(12, 18))
-        window.location.href = "/lobby/" + xhr.responseText.substring(12, 17)
+        window.location.href = "/race/" + xhr.responseText.substring(12, 18)
     })
 });
