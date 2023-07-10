@@ -101,11 +101,17 @@
 }
 
 .map-choose-line{
+    box-sizing: border-box;
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
-    height: 5vh;
+    height: 70px;
     background-color: #ffe6bf;
+    border-width:  5px;
+    border-style: solid;
+    border-color: #ffc30e;
+    margin-bottom: 5px;
+    margin-right: 5px;
 }
 
 .triangle { 
@@ -142,7 +148,7 @@
     height: 60px;
     width: 60px;
     display: flex;
-    overflow: wrap;
+    flex-wrap: wrap;
 }
 
 .tile {
