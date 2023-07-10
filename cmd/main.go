@@ -30,6 +30,7 @@ func main() {
 	mux.HandleFunc("/lobby/{lobbyID}", lobbyCreation(dbx))
 	mux.HandleFunc("/race/{lobbyID}", gameArea(dbx))
 
+	mux.HandleFunc("/api/chooseMap", chooseMap(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getKey", sendKey(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/join", joinLobby(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/create", createLobby(dbx)).Methods(http.MethodPost)
