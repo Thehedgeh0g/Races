@@ -110,19 +110,23 @@ function UpdatePosition() {
     y = Number(y);
     x = Number(x);
     if (isLoaded) {
-        console.log(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
-        if (tiles[(224-(divme(x, 96) + divme(y, 96) * 15))] in [1, 2, 3, 4]) {
+        curTile = tiles[(224-(divme(x, 96) + divme(y, 96) * 15))];
+        console.log(curTile);
+        if (curTile in [1, 2, 3, 4]) {
             rspeed = 0.03;
-        
             mspeed = gs;
             accel = mspeed / 160;
             resist = accel / 4;
-        } else {
+        } 
+        if (curTile in [11, 10, 9, 8, 7, 6]){
             rspeed = 0.03;
             mspeed = mcarspeed;
            
             accel = mspeed / 160;
             resist = accel / 4;
+        }
+        if (curTile in [12]){
+            speed = -speed;
         }
     }
     //if (tiles[divme(x, 96) + divme(y, 96) * 15])
