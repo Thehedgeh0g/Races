@@ -100,6 +100,12 @@
     flex-direction: column;
 }
 
+.map-choose-line{
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .triangle { 
     height: 30px;
     width: 30px;
@@ -128,4 +134,21 @@
     display: flex;
     margin-top: 20px;
     justify-content: space-around;
+}
+
+.preview {
+    display: grid;
+    grid-template-columns: repeat(15, 4px);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.tile {
+    width: 4px;
+    height: 4px;
+}
+
+.tile__pic {
+    width: 4px;
+    height: 4px;
 }
