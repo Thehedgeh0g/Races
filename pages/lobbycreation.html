@@ -36,7 +36,7 @@
                             
                             <div class="list" id="list">
                                 {{ range .Maps}}
-                                    <div class="map-choose-line">
+                                    <div id:="{{ .MapID }}" class="map-choose-line">
                                         <span>{{ .MapID }}</span>
                                         <div class="preview">
                                             {{ range .MapPreview }}
