@@ -109,24 +109,44 @@ function UpdatePosition() {
     x = x.slice(0, -2);
     y = Number(y);
     x = Number(x);
+
+    //O=[1440-x, 1440-y]
+    //D=[O[0]+cos(angle)]
+    //console.log(O);
+
+    const grassArr = [1, 2, 3, 4];
+    const roadArr = [11, 10, 9, 8, 7, 6];
+    const borderArr = [12];
+    bFlag = false;
+
     if (isLoaded) {
-        curTile = tiles[(224-(divme(x, 96) + divme(y, 96) * 15))];
-        console.log(curTile);
-        if (curTile in [1, 2, 3, 4]) {
+        curTile = Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
+        //console.log(curTile);
+        
+        if (grassArr.includes(curTile)) {
+            //console.log('TRAVA')
             rspeed = 0.03;
             mspeed = gs;
             accel = mspeed / 160;
             resist = accel / 4;
+            bFlag = false;
         } 
-        if (curTile in [11, 10, 9, 8, 7, 6]){
+        if (roadArr.includes(curTile)) {
+            //console.log('ASPHALT')
             rspeed = 0.03;
             mspeed = mcarspeed;
            
             accel = mspeed / 160;
             resist = accel / 4;
+            bFlag = false;
         }
-        if (curTile in [12]){
-            speed = -speed;
+        if (borderArr.includes(curTile) && !bFlag) {
+            //console.log('BORDER');
+            angle += Math.PI;
+            canvasContext.rotate(Math.PI);
+            xspeed *= -1;
+            yspeed *= -1;
+            bFlag = true;
         }
     }
     //if (tiles[divme(x, 96) + divme(y, 96) * 15])
