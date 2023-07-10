@@ -10,4 +10,4 @@ insert INTO sprites (sprite_path) values
 ('NC2'),
 ('NC3'),
 ('NS0'),
-('NS0');
+('NS1');
