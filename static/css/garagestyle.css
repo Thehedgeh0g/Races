@@ -1,0 +1,86 @@
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+
+    height: 96vh;
+    background-color: #ffe6bf;
+    border-style: solid;
+    border-width: 2vh;
+    border-color: #ffc30e;
+    font-family: 'Press Start 2P';
+    color: #ffc30e;
+    font-size: 30px;
+}
+
+.button-list { 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+    margin-bottom: 8%;
+}
+
+.button-back{
+    width: 10vw;
+    cursor: pointer;
+    margin-left: 5vw;
+}
+.button {
+    width: 10vw;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.picture-and-statistics{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%; 
+    margin-top: 5%; 
+    margin-bottom: 8%;
+}
+
+.picture{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 40%; 
+}
+.car {
+    width: 25%; 
+}
+
+.arrow{
+    margin-top: 12%;
+    width: 8%; 
+    height: 26%;
+    cursor: pointer;
+}
+
+.statistics{
+    box-sizing: border-box;
+    width: 40vw;
+    height: 30vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 10px;
+}
+
+.field{
+    box-sizing: border-box;
+    width: 60vw;
+    height: 30vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 10px;
+}
