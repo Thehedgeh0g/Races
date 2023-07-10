@@ -15,6 +15,7 @@
     </head>
     <body class="page centering">
         <span class="title">Lobby</span>
+        <span class="title">{{ .Token }}</span>
         <div class="sector">
             <div class="window">
                 <span>party</span>
@@ -33,31 +34,23 @@
                         <div>
                             <img src="/static/sprites/triangle.png" class="triangle" id="triangle">
                             <span>choose map</span>
+                            
                             <div class="list" id="list">
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
+                                {{ range .Maps}}
+                                    <div id="m{{ .MapID }}" class="map-choose-line" onclick="choosen(event)">
+                                        <span>{{ .MapID }}</span>
+                                        <div class="preview">
+                                            {{ range .MapPreview }}
+                                                <img class="tile__pic" src="../static/map tiles sprites/{{ .CellPath }}.png">
+                                            {{ end }}
+                                        </div>
+                                    </div>
+                                {{ end }}
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="button">
+                <div id="button" class="button">
                     <span>START</span>
                 </div>
             </div>

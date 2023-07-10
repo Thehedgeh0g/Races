@@ -49,6 +49,10 @@
     width: 40px;
 }
 
+#m1 {
+    background-color: #ffdb7f;
+}
+
 .title {
     font-size: 50px;
     margin: 0 auto;
@@ -100,6 +104,21 @@
     flex-direction: column;
 }
 
+.map-choose-line{
+    box-sizing: border-box;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    background-color: #ffe6bf;
+    border-width:  5px;
+    border-style: solid;
+    border-color: #ffc30e;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
 .triangle { 
     height: 30px;
     width: 30px;
@@ -128,4 +147,21 @@
     display: flex;
     margin-top: 20px;
     justify-content: space-around;
+}
+
+.preview {
+    height: 60px;
+    width: 60px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tile {
+    width: 4px;
+    height: 4px;
+}
+
+.tile__pic {
+    width: 4px;
+    height: 4px;
 }

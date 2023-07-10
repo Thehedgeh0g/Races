@@ -28,7 +28,18 @@ type Userdata struct {
 }
 
 type CreationPage struct {
+	Token string
 	Lobby []LobbyData
+	Maps  []MapsData
+}
+
+type MapsData struct {
+	MapID      string `db:"sprite_id"`
+	MapPreview []PreviewData
+}
+
+type PreviewData struct {
+	CellPath string `db:"sprite_path"`
 }
 
 type GameMap struct {
@@ -125,8 +136,17 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		mapsData, err := mapPreview(db)
+		if err != nil {
+			http.Error(w, "Internal Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
 		data := CreationPage{
+			Token: lobbyIDstr,
 			Lobby: LobbyData,
+			Maps:  mapsData,
 		}
 
 		err = ts.Execute(w, data)
@@ -136,6 +156,71 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func mapPreview(db *sqlx.DB) ([]MapsData, error) {
+	query := `
+	SELECT
+	  map_id
+  	FROM
+	  maps   
+  	`
+	var IDs []string
+	err := db.Select(&IDs, query)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	var data []MapsData
+
+	for _, element := range IDs {
+		id, err := strconv.Atoi(element)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		preview, err := getPreview(db, id)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		mapData := MapsData{
+			MapID:      element,
+			MapPreview: preview,
+		}
+		data = append(data, mapData)
+	}
+	return data, nil
+}
+
+func getPreview(db *sqlx.DB, mapID int) ([]PreviewData, error) {
+
+	mapData, err := getMapData(db, mapID)
+	if err != nil {
+		log.Println(err)
+	}
+	//log.Println(mapData)
+	var cells []PreviewData
+	var cell PreviewData
+
+	cellArr := strings.Split(mapData.MapKey, " ")
+
+	for _, element := range cellArr {
+		id, err := strconv.Atoi(element)
+		if err != nil {
+			log.Println(err)
+		}
+		sprite, err := getSprite(db, id)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		cell.CellPath = sprite.SpritePath
+		cells = append(cells, cell)
+	}
+	return cells, nil
 }
 
 func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -148,14 +233,14 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		log.Println(lobbyID)
+
 		mapID, err := getMapID(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
-		log.Println(mapID)
+
 		ts, err := template.ParseFiles("pages/location_1_1.html")
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
@@ -169,12 +254,12 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		log.Println(mapData)
+
 		var cells [225]CellsData
 
-		a := strings.Split(mapData.MapKey, " ")
+		pathes := strings.Split(mapData.MapKey, " ")
 
-		for i, element := range a {
+		for i, element := range pathes {
 			id, err := strconv.Atoi(element)
 			if err != nil {
 				http.Error(w, "hehehe", 500)
@@ -206,6 +291,79 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+	}
+}
+
+func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userIDstr, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		userID, err := strconv.Atoi(userIDstr)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		lobbyId, err := getLobbyID(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		var mapID string
+
+		err = json.Unmarshal(reqData, &mapID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		log.Println(mapID)
+
+		query := `
+			UPDATE
+			  brainless_races.sessions
+			SET
+			  map_id = ?
+			WHERE
+			  session_id = ?    
+		`
+		_, err = db.Exec(query, mapID, lobbyId)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		response := struct {
+			LobbyID string `json:"lobbyId"`
+		}{
+			LobbyID: strconv.Itoa(lobbyId),
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 	}
 }
 
@@ -383,7 +541,6 @@ func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
 
 	newSprite := new(SpriteData)
 	err := row.Scan(&newSprite.SpritePath)
-	log.Println(newSprite.SpritePath, spriteId)
 	if err != nil {
 		return nil, err
 	}
@@ -506,6 +663,12 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	  	`
 
 		ID, err := strconv.Atoi(lobbyId)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
 		var UserId2, UserId3, UserId4 string
 		row := db.QueryRow(query, ID)
 		log.Println(row)
@@ -515,12 +678,47 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+
 		if UserId2 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player2_id = ? WHERE session_id = ?", userId, lobbyId)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
 		} else if UserId3 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player3_id = ? WHERE session_id = ?", userId, lobbyId)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
 		} else if UserId4 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player4_id = ? WHERE session_id = ?", userId, lobbyId)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
+		} else {
+			Error := "This lobby is full"
+
+			response := struct {
+				Error string `json:"error"`
+			}{
+				Error: Error,
+			}
+
+			jsonResponse, err := json.Marshal(response)
+			if err != nil {
+				http.Error(w, "Server Error", 500)
+				log.Println(err.Error())
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write(jsonResponse)
 		}
 
 	}
