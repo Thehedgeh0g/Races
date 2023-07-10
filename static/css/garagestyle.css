@@ -82,5 +82,24 @@
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffdb7f;
-    padding: 10px;
+    padding: 0px;
 }
+.shop-field{
+    box-sizing: border-box;
+    width: 60vw;
+    height: 30vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 10px;
+    visibility: hidden;
+    position: relative;
+    top: -6px;
+    left: -6px;
+}
+
+/* .field-text{
+    margin: 10%;
+} */
