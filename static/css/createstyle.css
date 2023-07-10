@@ -1,3 +1,17 @@
+*::-webkit-scrollbar {
+    width: 12px;               /* ширина всей полосы прокрутки */
+  }
+  
+*::-webkit-scrollbar-track {
+    background: #ffc30e;        /* цвет зоны отслеживания */
+  }
+  
+*::-webkit-scrollbar-thumb {
+    background-color: #ffc30e;    /* цвет бегунка */
+    border-radius: 20px;       /* округлось бегунка */
+    border: 3px solid #ffdb7f;  /* отступ вокруг бегунка */
+  }
+
 .page {
     margin: 0;
     height: 86vh;
@@ -62,6 +76,34 @@
     border-color: #ffc30e;
     background-color: #ffdb7f;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.maps {
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffe6bf;
+    padding: 10px;
+
+}
+
+.list {
+    overflow-y: scroll;
+    height: 0vh;
+    transition: height 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.triangle { 
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
 }
 
 .button {

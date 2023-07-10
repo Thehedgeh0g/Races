@@ -6,6 +6,6 @@ document.getElementById("CreateLobby").addEventListener("click", function() {
     
     xhr.addEventListener("load", () =>{
         console.log(xhr.responseText.substring(12, 18))
-        window.location.href = "/lobby/" + xhr.responseText.substring(12, 18)
+        window.location.href = "/lobby/" + xhr.responseText.substring(12, 17)
     })
 });
