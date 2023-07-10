@@ -28,6 +28,7 @@ type Userdata struct {
 }
 
 type CreationPage struct {
+	token string
 	Lobby []LobbyData
 	Maps  []MapsData
 }
@@ -143,6 +144,7 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data := CreationPage{
+			token: lobbyIDstr,
 			Lobby: LobbyData,
 			Maps:  mapsData,
 		}
