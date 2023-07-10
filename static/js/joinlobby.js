@@ -10,7 +10,7 @@ ConnectLobbyButton.addEventListener("click", function() {
   handleTokenInputSubmit(event);
 })
 
-function changeBorderColor() {
+function changeBorderColor() { 
   ConnectLobbyButton.style.border = "0.3vh solid yellow";
 }
 
