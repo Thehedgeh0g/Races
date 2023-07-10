@@ -29,6 +29,16 @@ type Userdata struct {
 
 type CreationPage struct {
 	Lobby []LobbyData
+	Maps  []MapsData
+}
+
+type MapsData struct {
+	MapID      string `db:"sprite_id"`
+	MapPreview []PreviewData
+}
+
+type PreviewData struct {
+	CellPath string `db:"sprite_path"`
 }
 
 type GameMap struct {
@@ -125,8 +135,16 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		mapsData, err := mapPreview(db)
+		if err != nil {
+			http.Error(w, "Internal Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
 		data := CreationPage{
 			Lobby: LobbyData,
+			Maps:  mapsData,
 		}
 
 		err = ts.Execute(w, data)
@@ -136,6 +154,72 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func mapPreview(db *sqlx.DB) ([]MapsData, error) {
+	query := `
+	SELECT
+	  map_id
+  	FROM
+	  maps   
+  	`
+	var IDs []string
+	err := db.Select(&IDs, query)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	var data []MapsData
+
+	for _, element := range IDs {
+		id, err := strconv.Atoi(element)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		preview, err := getPreview(db, id)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		mapData := MapsData{
+			MapID:      element,
+			MapPreview: preview,
+		}
+		data = append(data, mapData)
+	}
+	return data, nil
+}
+
+func getPreview(db *sqlx.DB, mapID int) ([]PreviewData, error) {
+
+	mapData, err := getMapData(db, mapID)
+	if err != nil {
+		log.Println(err)
+	}
+	//log.Println(mapData)
+	var cells []PreviewData
+	var cell PreviewData
+
+	cellArr := strings.Split(mapData.MapKey, " ")
+
+	for _, element := range cellArr {
+		id, err := strconv.Atoi(element)
+		if err != nil {
+			log.Println(err)
+		}
+		sprite, err := getSprite(db, id)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		cell.CellPath = sprite.SpritePath
+		cells = append(cells, cell)
+	}
+	//log.Println(cells)
+	return cells, nil
 }
 
 func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -172,9 +256,9 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		log.Println(mapData)
 		var cells [225]CellsData
 
-		a := strings.Split(mapData.MapKey, " ")
+		pathes := strings.Split(mapData.MapKey, " ")
 
-		for i, element := range a {
+		for i, element := range pathes {
 			id, err := strconv.Atoi(element)
 			if err != nil {
 				http.Error(w, "hehehe", 500)

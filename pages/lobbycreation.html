@@ -33,26 +33,20 @@
                         <div>
                             <img src="/static/sprites/triangle.png" class="triangle" id="triangle">
                             <span>choose map</span>
+                            
                             <div class="list" id="list">
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
-                                <span>huy</span>
+                                {{ range .Maps}}
+                                    <div id:="{{ .MapID }}" class="map-choose-line">
+                                        <span>{{ .MapID }}</span>
+                                        <div class="preview">
+                                            {{ range .MapPreview }}
+                                                <div class="tile">
+                                                    <img class="tile__pic" src="../static/map tiles sprites/{{ .CellPath }}.png">
+                                                </div>
+                                            {{ end }}
+                                        </div>
+                                    </div>
+                                {{ end }}
                             </div>
                         </div>
                     </div>
