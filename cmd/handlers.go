@@ -28,7 +28,7 @@ type Userdata struct {
 }
 
 type CreationPage struct {
-	token string
+	Token string
 	Lobby []LobbyData
 	Maps  []MapsData
 }
@@ -144,7 +144,7 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data := CreationPage{
-			token: lobbyIDstr,
+			Token: lobbyIDstr,
 			Lobby: LobbyData,
 			Maps:  mapsData,
 		}
@@ -220,7 +220,6 @@ func getPreview(db *sqlx.DB, mapID int) ([]PreviewData, error) {
 		cell.CellPath = sprite.SpritePath
 		cells = append(cells, cell)
 	}
-	//log.Println(cells)
 	return cells, nil
 }
 
@@ -234,14 +233,14 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		log.Println(lobbyID)
+
 		mapID, err := getMapID(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
-		log.Println(mapID)
+
 		ts, err := template.ParseFiles("pages/location_1_1.html")
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
@@ -255,7 +254,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		log.Println(mapData)
+
 		var cells [225]CellsData
 
 		pathes := strings.Split(mapData.MapKey, " ")
@@ -331,6 +330,8 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+
+		log.Println(mapID)
 
 		query := `
 			UPDATE
@@ -540,7 +541,6 @@ func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
 
 	newSprite := new(SpriteData)
 	err := row.Scan(&newSprite.SpritePath)
-	log.Println(newSprite.SpritePath, spriteId)
 	if err != nil {
 		return nil, err
 	}
