@@ -293,6 +293,60 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userIDstr, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		userID, err := strconv.Atoi(userIDstr)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		lobbyID, err := getLobbyID(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		var mapID string
+
+		err = json.Unmarshal(reqData, &mapID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		query := `
+			UPDATE
+			  brainless_races.sessions
+			SET
+			  map_id = ?
+			WHERE
+			  session_id = ?    
+		`
+		_, err = db.Exec(query, mapID, lobbyID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+	}
+}
+
 func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
@@ -590,6 +644,12 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	  	`
 
 		ID, err := strconv.Atoi(lobbyId)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
 		var UserId2, UserId3, UserId4 string
 		row := db.QueryRow(query, ID)
 		log.Println(row)
@@ -599,12 +659,47 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+
 		if UserId2 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player2_id = ? WHERE session_id = ?", userId, lobbyId)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
 		} else if UserId3 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player3_id = ? WHERE session_id = ?", userId, lobbyId)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
 		} else if UserId4 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player4_id = ? WHERE session_id = ?", userId, lobbyId)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
+		} else {
+			Error := "This lobby is full"
+
+			response := struct {
+				Error string `json:"error"`
+			}{
+				Error: Error,
+			}
+
+			jsonResponse, err := json.Marshal(response)
+			if err != nil {
+				http.Error(w, "Server Error", 500)
+				log.Println(err.Error())
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write(jsonResponse)
 		}
 
 	}
