@@ -28,6 +28,7 @@ type Userdata struct {
 }
 
 type CreationPage struct {
+	token string
 	Lobby []LobbyData
 	Maps  []MapsData
 }
@@ -143,6 +144,7 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data := CreationPage{
+			token: lobbyIDstr,
 			Lobby: LobbyData,
 			Maps:  mapsData,
 		}
@@ -308,7 +310,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
-		lobbyID, err := getLobbyID(db, userID)
+		lobbyId, err := getLobbyID(db, userID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
@@ -338,12 +340,29 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			WHERE
 			  session_id = ?    
 		`
-		_, err = db.Exec(query, mapID, lobbyID)
+		_, err = db.Exec(query, mapID, lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
+
+		response := struct {
+			LobbyID string `json:"lobbyId"`
+		}{
+			LobbyID: strconv.Itoa(lobbyId),
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 	}
 }
 
