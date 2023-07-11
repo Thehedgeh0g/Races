@@ -60,19 +60,37 @@
     height: 26%;
     cursor: pointer;
 }
-
 .statistics{
-    box-sizing: border-box;
     width: 40vw;
     height: 30vh;
+}
+
+.stats{
+    box-sizing: border-box;
     border-radius: 0;
     border-width:  6px;
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffdb7f;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 40vw;
+    height: 20vh;
 }
 
+.money{
+    box-sizing: border-box;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 3%;
+    width: 40vw;
+    margin-top: 3%;
+}
 .field{
     box-sizing: border-box;
     width: 60vw;
