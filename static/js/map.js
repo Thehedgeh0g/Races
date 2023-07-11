@@ -341,4 +341,23 @@ function onCanvasKeyDown(event) {
 canvasContext.translate(GAME.width/2, GAME.height/2);
 xcanvas += GAME.width/2;
 ycanvas += GAME.height/2;
+
+function scrollToCenter() {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const documentWidth = document.documentElement.scrollWidth;
+    const documentHeight = document.documentElement.scrollHeight;
+  
+    const scrollHorizontalTo = Math.max(0, (documentWidth - windowWidth) / 2);
+    const scrollVerticalTo = Math.max(0, (documentHeight - windowHeight) / 2);
+  
+    window.scrollTo({
+      left: scrollHorizontalTo,
+      top: scrollVerticalTo,
+      behavior: 'smooth'
+    });
+  }
+  
+scrollToCenter();
+
 drawFrame();
