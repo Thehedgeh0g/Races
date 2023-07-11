@@ -1,50 +1,22 @@
+
 let isLoaded = false;
 let tiles = [];
-
-const xhr = new XMLHttpRequest();
-xhr.open('POST', '/api/getKey');
-xhr.addEventListener('load', () => {
-    mapping = xhr.responseText.slice(11, -2);
-    console.log(mapping);
-    tiles = mapping.split(' ');
-    console.log(tiles);
-    isLoaded = true;
-    //for (let y = 0,)
-    
-})
-xhr.send();
-
-
 let GAME = { 
     width: 1440, 
     height: 1440, 
     background: 'grey', 
     framesCnt: 0, 
- 
 }
-
-
 const mcarspeed = 4;
-
 let rspeed = 0.03;
 let mspeed = mcarspeed;
 let accel = mspeed / 160;
 let resist = accel / 4;
-//const pi1 = Math.PI*(mspeed/5);
 const pi1 = Math.PI
-//const pi2 = 5/mspeed/2;
 const pi2 = 1/2;
-
 const ga = 0.1;
 const gs = mspeed/5;
-
 let canvas = document.getElementById('canvas');
-
-
-
-
-
-
 let move = document.getElementById('move')
 canvas.width = GAME.width; 
 canvas.height = GAME.height; 
@@ -52,12 +24,16 @@ let canvasContext = canvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
 Car.src = '../static//sprites/abm_blue.png';
-let CarPosX = -17*0.5; 
-let CarPosY = (-24*2)*0; 
+
+const carW = 17;
+const carH = 24;
+
+let CarPosX = -carW*0.5; 
+let CarPosY = (-carH*2)*0; 
 let speed = 0; 
 let xspeed = 0; 
 let yspeed = 0; 
-let angle = 0; 
+let angle = 0;
 
 let xcanvas = 0;
 let ycanvas = 0;
@@ -67,35 +43,34 @@ let wasd = {
     a: 0, 
     s: 0, 
     d: 0, 
-} 
-
- 
-
- 
-function drawCar(image, x, y) { 
-    canvasContext.rotate(angle);
-    canvasContext.translate(-xcanvas, -ycanvas);
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
-    canvasContext.translate(xcanvas, ycanvas);
-    canvasContext.rotate(-angle);
-    canvasContext.drawImage(image, x, y, 17, 24);
-} 
-
-function divme(a, b){
-    return (a - a%b)/b
 }
-
 const r1 = document.getElementById('r1');
 const r2 = document.getElementById('r2');
 const r3 = document.getElementById('r3');
 const r4 = document.getElementById('r4');
 
+const grassArr = [1, 2, 3, 4];
+const roadArr = [11, 10, 9, 8, 7, 6];
+const borderArr = [12];
 
-function UpdatePosition() { 
+function drawFrame() {
+    onCanvasKey();
+    UpdatePosition();
+
+    drawCar(Car, CarPosX, CarPosY); 
+    framesCountHandler(); 
+    requestAnimationFrame(drawFrame);
+}
+
+function UpdatePosition() {
+    bFlag = false;
+    updateReduce();
+    reduceSpeed();
 
     canvasContext.rotate(angle); 
     canvasContext.translate(xspeed, yspeed); 
     canvasContext.rotate(-angle);
+
     y = window.getComputedStyle(move).top;
     x = window.getComputedStyle(move).left;  
     y = y.slice(0, -2);
@@ -103,13 +78,82 @@ function UpdatePosition() {
     y = Number(y);
     x = Number(x);
 
+    move.style.top = String(- yspeed + y) + 'px';
+    move.style.left =  String(- xspeed + x) + 'px';
 
+    displayDots();
 
-    const grassArr = [1, 2, 3, 4];
-    const roadArr = [11, 10, 9, 8, 7, 6];
-    const borderArr = [12];
-    bFlag = false;
+    xcanvas += xspeed;
+    ycanvas += yspeed;
 
+} 
+
+function initEventsListeners() { 
+    window.addEventListener('keydown', onCanvasKeyDown); 
+    window.addEventListener('keyup', onCanvasKeyUp); 
+}
+
+function framesCountHandler() { 
+    if (GAME.framesCnt === 120) { 
+        GAME.framesCnt = 0; 
+    } 
+    ++GAME.framesCnt; 
+} 
+
+function drawCar(image, x, y) { 
+    canvasContext.rotate(angle);
+    canvasContext.translate(-xcanvas, -ycanvas);
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
+    canvasContext.translate(xcanvas, ycanvas);
+    canvasContext.rotate(-angle);
+    canvasContext.drawImage(image, x, y, carW, carH);
+} 
+
+function divme(a, b){
+    return (a - a%b)/b
+}
+
+function reduceSpeed() {
+    if (speed > 0) {
+        if (speed-accel <= mspeed) {
+            if ((speed - resist) > 0){
+                speed -= resist; 
+            } else {
+                speed = 0;
+            }
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
+        } else {
+            if ((speed - ga) > 0){
+                speed -= ga; 
+            } else {
+                speed = 0;
+            }
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
+        }
+
+    } 
+    if (speed < 0) { 
+        if (speed+accel >= -mspeed) {
+            if ((speed + resist) < 0){
+                speed += resist; 
+            } else {
+                speed = 0;
+            }
+        } else {
+            if ((speed + ga) < 0){
+                speed += ga; 
+            } else {
+                speed = 0;
+            }
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
+        }
+    } 
+}
+
+function updateReduce() {
     if (isLoaded) {
         curTile = Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
         //console.log(curTile);
@@ -140,83 +184,8 @@ function UpdatePosition() {
             bFlag = true;
         }
     }
-    //if (tiles[divme(x, 96) + divme(y, 96) * 15])
-    move.style.top = String(- yspeed + y) + 'px';
-    move.style.left =  String(- xspeed + x) + 'px';
+}
 
-    y = window.getComputedStyle(move).top;
-    x = window.getComputedStyle(move).left;  
-    y = y.slice(0, -2);
-    x = x.slice(0, -2);
-    y = Number(y);
-    x = Number(x);
-
-
-
-    displayDots();
-
-
-
-    xcanvas += xspeed;
-    ycanvas += yspeed;
-
-} 
- 
- 
-function drawFrame() { 
-    if (speed > 0) {
-        if (speed-accel <= mspeed) {
-            speed -= resist; 
-            xspeed = Math.sin(angle)*speed; 
-            yspeed = Math.cos(angle)*speed; 
-        } else {
-            if ((speed - ga) > 0){
-                speed -= ga; 
-            } else {
-                speed = 0;
-            }
-            xspeed = Math.sin(angle)*speed; 
-            yspeed = Math.cos(angle)*speed; 
-        }
-
-    } 
-    if (speed < 0) { 
-        if (speed+accel >= -mspeed) {
-            speed += resist; 
-            xspeed = Math.sin(angle)*speed; 
-            yspeed = Math.cos(angle)*speed; 
-        } else {
-            if ((speed + ga) < 0){
-                speed += ga; 
-            } else {
-                speed = 0;
-            }
-            xspeed = Math.sin(angle)*speed; 
-            yspeed = Math.cos(angle)*speed; 
-        }
-    } 
-    canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
-    UpdatePosition(); 
-    initEventsListeners(); 
-    drawCar(Car, CarPosX, CarPosY); 
-    framesCountHandler(); 
-    requestAnimationFrame(drawFrame);
-    onCanvasKey();
-} 
- 
-function initEventsListeners() { 
-    window.addEventListener('keydown', onCanvasKeyDown); 
-    window.addEventListener('keyup', onCanvasKeyUp); 
-     
-} 
- 
-function framesCountHandler() { 
-    if (GAME.framesCnt === 120) { 
-        GAME.framesCnt = 0; 
-    } 
-    ++GAME.framesCnt; 
-} 
- 
 function onCanvasKey() { 
     if (wasd.w == 1) { 
          
@@ -307,7 +276,7 @@ function onCanvasKey() {
         yspeed = Math.cos(angle)*speed; 
     } 
 } 
- 
+
 function onCanvasKeyUp(event) {
     if (event.code === 'KeyW') { 
         wasd.w = 0; 
@@ -338,10 +307,7 @@ function onCanvasKeyDown(event) {
         wasd.d = 1; 
     } 
     onCanvasKey(); 
-} 
-canvasContext.translate(GAME.width/2, GAME.height/2);
-xcanvas += GAME.width/2;
-ycanvas += GAME.height/2;
+}
 
 function scrollToCenter() {
     const windowWidth = window.innerWidth;
@@ -359,7 +325,8 @@ function scrollToCenter() {
     });
   }
 
-function displayDots() {
+  function displayDots() {
+
     y = window.getComputedStyle(move).top;
     x = window.getComputedStyle(move).left;  
     y = y.slice(0, -2);
@@ -368,10 +335,10 @@ function displayDots() {
     x = Number(x);
 
     O=[1440-x, 1440-y];
-    D=[O[0]+Math.cos(angle)*8.5, O[1]-Math.sin(angle)*8.5];
-    A=[O[0]-Math.cos(angle)*8.5, O[1]+Math.sin(angle)*8.5];
-    C=[D[0]+Math.sin(angle)*24, D[1]+Math.cos(angle)*24];
-    B=[A[0]+Math.sin(angle)*24, A[1]+Math.cos(angle)*24];
+    D=[O[0]+Math.cos(angle)*(carW/2), O[1]-Math.sin(angle)*(carW/2)];
+    A=[O[0]-Math.cos(angle)*(carW/2), O[1]+Math.sin(angle)*(carW/2)];
+    C=[D[0]+Math.sin(angle)*carH, D[1]+Math.cos(angle)*carH];
+    B=[A[0]+Math.sin(angle)*carH, A[1]+Math.cos(angle)*carH];
     console.log(A, B, C, D);
     r1.style.top = String(A[1]) + 'px';
     r1.style.left = String(A[0]) + 'px';
@@ -382,7 +349,28 @@ function displayDots() {
     r4.style.top = String(D[1]) + 'px';
     r4.style.left = String(D[0]) + 'px';
 }
-  
-scrollToCenter();
 
+function getTiles() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/getKey');
+    xhr.addEventListener('load', () => {
+        mapping = xhr.responseText.slice(11, -2);
+        console.log(mapping);
+        tiles = mapping.split(' ');
+        console.log(tiles);
+        isLoaded = true;
+    })
+    xhr.send();
+}
+
+function prepareCanvas() {
+    canvasContext.translate(GAME.width/2, GAME.height/2);
+    xcanvas += GAME.width/2;
+    ycanvas += GAME.height/2;
+}
+
+getTiles();
+initEventsListeners(); 
+prepareCanvas();
+scrollToCenter();
 drawFrame();
