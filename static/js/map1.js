@@ -61,6 +61,29 @@ function framesCountHandler() {
 } 
 
 function drawFrame() { 
+    canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
+    UpdatePosition(); 
+    initEventsListeners(); 
+    drawCar(Car, CarPosX, CarPosY); 
+    framesCountHandler(); 
+    requestAnimationFrame(drawFrame);
+    onCanvasKey();
+}
+
+function drawCar(image, x, y) { 
+    canvasContext.rotate(angle);
+    canvasContext.translate(-xcanvas, -ycanvas);
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
+    canvasContext.translate(xcanvas, ycanvas);
+    canvasContext.rotate(-angle);
+    canvasContext.drawImage(image, x, y, 17, 24);
+} 
+
+function divme(a, b){
+    return (a - a%b)/b
+}
+
+function reduceSpeed() {
     if (speed > 0) {
         if (speed-accel <= mspeed) {
             speed -= resist; 
@@ -92,43 +115,9 @@ function drawFrame() {
             yspeed = Math.cos(angle)*speed; 
         }
     } 
-    canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
-    UpdatePosition(); 
-    initEventsListeners(); 
-    drawCar(Car, CarPosX, CarPosY); 
-    framesCountHandler(); 
-    requestAnimationFrame(drawFrame);
-    onCanvasKey();
 }
 
-function drawCar(image, x, y) { 
-    canvasContext.rotate(angle);
-    canvasContext.translate(-xcanvas, -ycanvas);
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
-    canvasContext.translate(xcanvas, ycanvas);
-    canvasContext.rotate(-angle);
-    canvasContext.drawImage(image, x, y, 17, 24);
-} 
-
-function divme(a, b){
-    return (a - a%b)/b
-}
-
-function UpdatePosition() { 
-
-    canvasContext.rotate(angle); 
-    canvasContext.translate(xspeed, yspeed); 
-    canvasContext.rotate(-angle);
-    y = window.getComputedStyle(move).top;
-    x = window.getComputedStyle(move).left;  
-    y = y.slice(0, -2);
-    x = x.slice(0, -2);
-    y = Number(y);
-    x = Number(x);
-
-
-    bFlag = false;
-
+function updateReduce() {
     if (isLoaded) {
         curTile = Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
         //console.log(curTile);
@@ -159,9 +148,11 @@ function UpdatePosition() {
             bFlag = true;
         }
     }
-
-    move.style.top = String(- yspeed + y) + 'px';
-    move.style.left =  String(- xspeed + x) + 'px';
+}
+function UpdatePosition() { 
+    canvasContext.rotate(angle); 
+    canvasContext.translate(xspeed, yspeed); 
+    canvasContext.rotate(-angle);
 
     y = window.getComputedStyle(move).top;
     x = window.getComputedStyle(move).left;  
@@ -169,6 +160,13 @@ function UpdatePosition() {
     x = x.slice(0, -2);
     y = Number(y);
     x = Number(x);
+
+    bFlag = false;
+    updateReduce();
+    reduceSpeed();
+
+    move.style.top = String(- yspeed + y) + 'px';
+    move.style.left =  String(- xspeed + x) + 'px';
 
     displayDots();
 
@@ -315,3 +313,54 @@ function scrollToCenter() {
       behavior: 'smooth'
     });
   }
+
+  function displayDots() {
+
+    y = window.getComputedStyle(move).top;
+    x = window.getComputedStyle(move).left;  
+    y = y.slice(0, -2);
+    x = x.slice(0, -2);
+    y = Number(y);
+    x = Number(x);
+
+    O=[1440-x, 1440-y];
+    D=[O[0]+Math.cos(angle)*8.5, O[1]-Math.sin(angle)*8.5];
+    A=[O[0]-Math.cos(angle)*8.5, O[1]+Math.sin(angle)*8.5];
+    C=[D[0]+Math.sin(angle)*24, D[1]+Math.cos(angle)*24];
+    B=[A[0]+Math.sin(angle)*24, A[1]+Math.cos(angle)*24];
+    console.log(A, B, C, D);
+    r1.style.top = String(A[1]) + 'px';
+    r1.style.left = String(A[0]) + 'px';
+    r2.style.top = String(B[1]) + 'px';
+    r2.style.left = String(B[0]) + 'px';
+    r3.style.top = String(C[1]) + 'px';
+    r3.style.left = String(C[0]) + 'px';
+    r4.style.top = String(D[1]) + 'px';
+    r4.style.left = String(D[0]) + 'px';
+}
+
+function getTiles() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/getKey');
+    xhr.addEventListener('load', () => {
+        mapping = xhr.responseText.slice(11, -2);
+        console.log(mapping);
+        tiles = mapping.split(' ');
+        console.log(tiles);
+        isLoaded = true;
+        //for (let y = 0,)
+    
+    })
+    xhr.send();
+}
+
+function prepareCanvas() {
+    canvasContext.translate(GAME.width/2, GAME.height/2);
+    xcanvas += GAME.width/2;
+    ycanvas += GAME.height/2;
+}
+
+getTiles();
+prepareCanvas();
+scrollToCenter();
+drawFrame();
