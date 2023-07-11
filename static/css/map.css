@@ -3,12 +3,8 @@
     margin: 0;
     padding: 0;
     scroll-margin-left: 50%;
+    overflow: hidden;
 }
-
-.scrollable-div::-webkit-scrollbar {
-    position: absolute;
-    left: 50%;
- }
 
 .map
 {
@@ -57,5 +53,5 @@
     background-image: url("../map tiles sprites/game-area-background.png");
     width: 2880px;
     height: 2880px;
-    zoom: 500%
+    zoom: 500%;
 }
