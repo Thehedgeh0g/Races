@@ -335,11 +335,39 @@ function scrollToCenter() {
     x = Number(x);
 
     O=[1440-x, 1440-y];
-    D=[O[0]+Math.cos(angle)*(carW/2), O[1]-Math.sin(angle)*(carW/2)];
-    A=[O[0]-Math.cos(angle)*(carW/2), O[1]+Math.sin(angle)*(carW/2)];
-    C=[D[0]+Math.sin(angle)*carH, D[1]+Math.cos(angle)*carH];
-    B=[A[0]+Math.sin(angle)*carH, A[1]+Math.cos(angle)*carH];
+    D=[O[0]+Math.cos(angle)*8.5, O[1]-Math.sin(angle)*8.5];
+    A=[O[0]-Math.cos(angle)*8.5, O[1]+Math.sin(angle)*8.5];
+    C=[D[0]+Math.sin(angle)*24, D[1]+Math.cos(angle)*24];
+    B=[A[0]+Math.sin(angle)*24, A[1]+Math.cos(angle)*24];
     console.log(A, B, C, D);
+
+    carBorder = {
+        O: O,
+        A: A,
+        B: B,
+        C: C,
+        D: D,
+
+        AB: {
+            k: getK(A[0], B[0], A[1], B[1]),
+            b: getB(B[0], B[1], getK(A[0], B[0], A[1], B[1])),
+        },
+        BC: {
+            k: getK(B[0], C[0], B[1], C[1]),
+            b: getB(C[0], C[1], getK(B[0], C[0], B[1], C[1])),
+        },
+        CD: {
+            k: getK(C[0], D[0], C[1], D[1]),
+            b: getB(D[0], D[1], getK(C[0], D[0], C[1], D[1])),
+        },
+        DA: {
+            k: getK(D[0], A[0], D[1], A[1]),
+            b: getB(A[0], A[1], getK(D[0], A[0], D[1], A[1])),
+        }
+    }
+
+    console.log(carBorder.A, carBorder.B, carBorder.C, carBorder.D);
+
     r1.style.top = String(A[1]) + 'px';
     r1.style.left = String(A[0]) + 'px';
     r2.style.top = String(B[1]) + 'px';
@@ -348,6 +376,14 @@ function scrollToCenter() {
     r3.style.left = String(C[0]) + 'px';
     r4.style.top = String(D[1]) + 'px';
     r4.style.left = String(D[0]) + 'px';
+}
+
+function getK(x1, x2, y1, y2) {
+    return ((y1-y2)/(x1-x2));
+}
+
+function getB(x2, y2, k) {
+    return (y2 - k*x2);
 }
 
 function getTiles() {
