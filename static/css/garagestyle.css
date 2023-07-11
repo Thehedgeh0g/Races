@@ -50,7 +50,7 @@
     justify-content: space-evenly;
     width: 40%; 
 }
-.car {
+.currentCar {
     width: 25%; 
 }
 
@@ -98,8 +98,33 @@
     position: relative;
     top: -6px;
     left: -6px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 
 /* .field-text{
     margin: 10%;
 } */
+
+.shop-field-car{
+    width: 5vw;
+    margin-top: 1vh;
+    margin-left: 3vw;
+}
+
+.shop-field-button{
+    box-sizing: border-box;
+    width: 12vw;
+    height: 8vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #d4f9bc;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    padding-top: 10%;
+    margin-top: 2vh;
+}
