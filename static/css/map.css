@@ -55,3 +55,12 @@
     height: 2880px;
     zoom: 500%;
 }
+
+.red {
+    width: 1px;
+    height: 1px;
+    background-color: crimson;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}

@@ -8,7 +8,7 @@ triangle.addEventListener('click', mapList);
 function mapList() {
     if (!flag) {
         list.style.height = '35vh';
-        triangle.src="/static/sprites/triangle.png"
+        triangle.src="/static/sprites/triangle2.png"
         flag = true;
     } else {
         list.style.height = '0vh';
