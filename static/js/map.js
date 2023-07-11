@@ -98,21 +98,25 @@ function divme(a, b){
     return (a - a%b)/b
 }
 
+const r1 = document.getElementById('r1');
+const r2 = document.getElementById('r2');
+const r3 = document.getElementById('r3');
+const r4 = document.getElementById('r4');
+
+
 function UpdatePosition() { 
 
     canvasContext.rotate(angle); 
     canvasContext.translate(xspeed, yspeed); 
     canvasContext.rotate(-angle);
     y = window.getComputedStyle(move).top;
-    x = window.getComputedStyle(move).left;
+    x = window.getComputedStyle(move).left;  
     y = y.slice(0, -2);
     x = x.slice(0, -2);
     y = Number(y);
     x = Number(x);
 
-    //O=[1440-x, 1440-y]
-    //D=[O[0]+cos(angle)]
-    //console.log(O);
+
 
     const grassArr = [1, 2, 3, 4];
     const roadArr = [11, 10, 9, 8, 7, 6];
@@ -152,6 +156,20 @@ function UpdatePosition() {
     //if (tiles[divme(x, 96) + divme(y, 96) * 15])
     move.style.top = String(- yspeed + y) + 'px';
     move.style.left =  String(- xspeed + x) + 'px';
+
+    y = window.getComputedStyle(move).top;
+    x = window.getComputedStyle(move).left;  
+    y = y.slice(0, -2);
+    x = x.slice(0, -2);
+    y = Number(y);
+    x = Number(x);
+
+
+
+    displayDots();
+
+
+
     xcanvas += xspeed;
     ycanvas += yspeed;
     if((xcanvas < (TrashPosX + TrashSX)) && (xcanvas > (TrashPosX)) && (ycanvas < (TrashPosY+TrashSY)) && (ycanvas > (TrashPosY))) {
@@ -357,6 +375,30 @@ function scrollToCenter() {
       behavior: 'smooth'
     });
   }
+
+function displayDots() {
+    y = window.getComputedStyle(move).top;
+    x = window.getComputedStyle(move).left;  
+    y = y.slice(0, -2);
+    x = x.slice(0, -2);
+    y = Number(y);
+    x = Number(x);
+
+    O=[1440-x, 1440-y];
+    D=[O[0]+Math.cos(angle)*8.5, O[1]-Math.sin(angle)*8.5];
+    A=[O[0]-Math.cos(angle)*8.5, O[1]+Math.sin(angle)*8.5];
+    C=[D[0]+Math.sin(angle)*24, D[1]+Math.cos(angle)*24];
+    B=[A[0]+Math.sin(angle)*24, A[1]+Math.cos(angle)*24];
+    console.log(A, B, C, D);
+    r1.style.top = String(A[1]) + 'px';
+    r1.style.left = String(A[0]) + 'px';
+    r2.style.top = String(B[1]) + 'px';
+    r2.style.left = String(B[0]) + 'px';
+    r3.style.top = String(C[1]) + 'px';
+    r3.style.left = String(C[0]) + 'px';
+    r4.style.top = String(D[1]) + 'px';
+    r4.style.left = String(D[0]) + 'px';
+}
   
 scrollToCenter();
 
