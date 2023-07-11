@@ -496,6 +496,14 @@ func lobbyData(db *sqlx.DB, players []string) ([]LobbyData, error) {
 			if err != nil {
 				return nil, err
 			}
+
+			LVL, err := strconv.Atoi(user.Level)
+			if err != nil {
+				return nil, err
+			}
+
+			user.Level = strconv.Itoa(LVL / 100)
+
 			users = append(users, user)
 		}
 
