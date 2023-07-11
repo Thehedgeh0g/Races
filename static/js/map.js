@@ -39,18 +39,9 @@ const ga = 0.1;
 const gs = mspeed/5;
 
 let canvas = document.getElementById('canvas');
-let trashcar = document.getElementById('trash-car');
 
-trashcar.width = GAME.width; 
-trashcar.height = GAME.height; 
-let TrashPosX = 450; 
-let TrashPosY = 400;
-let TrashSX = 40; 
-let TrashSY = 40;
-let TContext = trashcar.getContext('2d');
-TContext.imageSmoothingEnabled = false;
-let TCar = new Image();
-TCar.src = '../static/sprites/debuff.png';
+
+
 
 
 
@@ -79,10 +70,7 @@ let wasd = {
 } 
 
  
-function drawBackground() { 
-    canvasContext.fillStyle = GAME.background; 
-    canvasContext.fillRect(0, 0, GAME.width, GAME.height); 
-} 
+
  
 function drawCar(image, x, y) { 
     canvasContext.rotate(angle);
@@ -91,7 +79,6 @@ function drawCar(image, x, y) {
     canvasContext.translate(xcanvas, ycanvas);
     canvasContext.rotate(-angle);
     canvasContext.drawImage(image, x, y, 17, 24);
-    TContext.drawImage(TCar, TrashPosX, TrashPosY , TrashSX, TrashSY); 
 } 
 
 function divme(a, b){
@@ -172,11 +159,7 @@ function UpdatePosition() {
 
     xcanvas += xspeed;
     ycanvas += yspeed;
-    if((xcanvas < (TrashPosX + TrashSX)) && (xcanvas > (TrashPosX)) && (ycanvas < (TrashPosY+TrashSY)) && (ycanvas > (TrashPosY))) {
-        mspeed = 2;
-        accel = mspeed / 160;
-        resist = accel / 4;
-    }
+
 } 
  
  
@@ -213,18 +196,18 @@ function drawFrame() {
         }
     } 
     canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
-    drawBackground(); 
     UpdatePosition(); 
     initEventsListeners(); 
     drawCar(Car, CarPosX, CarPosY); 
     framesCountHandler(); 
-    requestAnimationFrame(drawFrame); 
+    requestAnimationFrame(drawFrame);
+    onCanvasKey();
 } 
  
 function initEventsListeners() { 
     window.addEventListener('keydown', onCanvasKeyDown); 
     window.addEventListener('keyup', onCanvasKeyUp); 
-    onCanvasKey(); 
+     
 } 
  
 function framesCountHandler() { 
