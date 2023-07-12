@@ -275,7 +275,9 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				  user_id = ?    
 			`
 			var player Player
-			err = db.Select(&player, query, element)
+
+			row := db.QueryRow(query, element)
+			err := row.Scan(&player.ImgPath, &player.Nickname, &player.ImgPath)
 			if err != nil {
 				http.Error(w, "Server Error", 500)
 				log.Println(err.Error())
