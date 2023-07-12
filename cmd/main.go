@@ -34,6 +34,7 @@ func main() {
 	mux.HandleFunc("/ws", handleWebSocket)
 	go handleMessages()
 
+	mux.HandleFunc("/api/getHost", hostCheck(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/getPlayers", sendPlayers(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/getLobbyID", sendLobbyID(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/chooseMap", chooseMap(dbx)).Methods(http.MethodPost)
@@ -53,5 +54,5 @@ func main() {
 
 func OpenDB() (*sql.DB, error) {
 	// Здесь прописываем соединение к базе данных
-	return sql.Open(dbDriverName, "root:BaStInDa06081981!@tcp(localhost:3306)/brainless_races?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true")
+	return sql.Open(dbDriverName, "root:student@tcp(localhost:3306)/brainless_races?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true")
 }
