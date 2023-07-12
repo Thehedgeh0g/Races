@@ -244,11 +244,11 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		const query = `
+		query := `
 			SELECT
-			  host_id
-			  player2_id
-			  player3_id
+			  host_id,
+			  player2_id,
+			  player3_id,
 			  player4_id
 			FROM
 			  sessions
@@ -256,12 +256,36 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			  session_id = ?   
 		`
 		var players []Player
-		err = db.Select(&players, query, lobbyID)
+		var IDs []string
+		err = db.Select(&IDs, query, lobbyID)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
+
+		for _, element := range IDs {
+			query = `
+				SELECT
+				  avatar,
+				  nickname,
+				  exp
+				FROM
+				  users
+				WHERE
+				  user_id = ?    
+			`
+			var player Player
+			err = db.Select(&player, query, element)
+			if err != nil {
+				http.Error(w, "Server Error", 500)
+				log.Println(err.Error())
+				return
+			}
+
+			players = append(players, player)
+		}
+
 		response := struct {
 			Players []Player `json:"MapKey"`
 		}{
@@ -796,7 +820,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			w.Write(jsonResponse)
 		}
-
+		broadcast <- "joined into lobby"
 	}
 }
 
