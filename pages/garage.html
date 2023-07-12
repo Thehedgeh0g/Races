@@ -24,10 +24,17 @@
           </div>
           <div class="stats-drawing">
             <div class="graph">
+              <div class="FutureMaxSpeedGraph" id=""></div>
               <div class="MaxSpeedGraph" id=""></div>
             </div>
-            <div class="graph"></div>
-            <div class="graph"></div>
+            <div class="graph">
+              <div class="FutureAccelerationGraph" id=""></div>
+              <div class="AccelerationGraph" id=""></div>
+            </div>
+            <div class="graph">
+              <div class="FutureManeuverabilityGraph" id=""></div>
+              <div class="ManeuverabilityGraph" id=""></div>
+            </div>
           </div>
         </div>
         <div class="money">
@@ -79,31 +86,32 @@
             <div>
               <div><img class="tuning-field-icon" id="transmissionIcon"  src="../static/garage-sprites/transmission.png" alt="transmission"></div>
               <div class="tuning-field-button" id="">
-                <img class="tuningArrow" src="../static/garage-sprites/left.png" alt="X">
-                <span>1</span>
-                <img class="tuningArrow" src="../static/garage-sprites/right.png" alt="X">
+                <img class="tuningArrow" id="transmissionArrowLeft" src="../static/garage-sprites/left.png" alt="X">
+                <span><div id="transmissionCnt"></div></span>
+                <img class="tuningArrow" id="transmissionArrowRight" src="../static/garage-sprites/right.png" alt="X">
               </div>
             </div>
             <div>
               <div><img class="tuning-field-icon" id="breaksIcon"  src="../static/garage-sprites/breaks.png" alt="breaks"></div>
               <div class="tuning-field-button" id="">
-                <img class="tuningArrow" src="../static/garage-sprites/left.png" alt="X">
-                <span>1</span>
-                <img class="tuningArrow" src="../static/garage-sprites/right.png" alt="X">
+                <img class="tuningArrow" id="breaksArrowLeft" src="../static/garage-sprites/left.png" alt="X">
+                <span><div id="breaksCnt"></div></span>
+                <img class="tuningArrow" id="breaksArrowRight" src="../static/garage-sprites/right.png" alt="X">
               </div>
             </div>
             <div>
               <div><img class="tuning-field-icon" id="suspensionIcon"  src="../static/garage-sprites/suspension.png" alt="suspension"></div>
               <div class="tuning-field-button" id="">
-                <img class="tuningArrow" src="../static/garage-sprites/left.png" alt="X">
-                <span>1</span>
-                <img class="tuningArrow" src="../static/garage-sprites/right.png" alt="X">
+                <img class="tuningArrow" id="suspensionArrowLeft" src="../static/garage-sprites/left.png" alt="X">
+                <span><div id="suspensionCnt"></div></span>
+                <img class="tuningArrow" id="suspensionArrowRight" src="../static/garage-sprites/right.png" alt="X">
               </div>
             </div>
           </div>
 
-          <div class="tuning-field-apply">
-
+          <div>
+            <div class="tuning-upgradecost" id=""><span>Upgrade cost: </span></div>
+            <div class="tuning-field-Purchasebutton" id="tuningPurchase">Purchase</div>
           </div>
         </div>
 
