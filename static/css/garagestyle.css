@@ -146,3 +146,45 @@
     padding-top: 10%;
     margin-top: 2vh;
 }
+
+.style-field{
+    box-sizing: border-box;
+    width: 60vw;
+    height: 30vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 10px;
+    visibility: hidden;
+    position: relative;
+    margin-top: -6px;
+    top: -30vh;
+    left: -6px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.style-field-car{
+    width: 5vw;
+    margin-top: 1vh;
+    margin-left: 3vw;
+}
+
+.style-field-button{
+    box-sizing: border-box;
+    width: 12vw;
+    height: 8vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #d4f9bc;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    padding-top: 10%;
+    margin-top: 2vh;
+}

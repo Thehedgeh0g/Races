@@ -35,8 +35,8 @@ let xspeed = 0;
 let yspeed = 0; 
 let angle = 0;
 
-let xcanvas = 0;
-let ycanvas = 0;
+let xcanvas = 200;
+let ycanvas = 200;
 
 let wasd = { 
     w: 0, 
@@ -50,8 +50,16 @@ const r3 = document.getElementById('r3');
 const r4 = document.getElementById('r4');
 
 const grassArr = [1, 2, 3, 4];
-const roadArr = [11, 10, 9, 8, 7, 6];
+const roadArr = [11, 10, 9, 8, 7, 6, 31];
+const bRoadArr = [13, 14, 15, 16, 17, 18];
 const borderArr = [12];
+
+const startArr = ['31'];
+
+let startingTile = 1;
+
+let startX = 0;
+let startY = 0;
 
 function drawFrame() {
     onCanvasKey();
@@ -141,6 +149,8 @@ function reduceSpeed() {
             } else {
                 speed = 0;
             }
+            xspeed = Math.sin(angle)*speed; 
+            yspeed = Math.cos(angle)*speed; 
         } else {
             if ((speed + ga) < 0){
                 speed += ga; 
@@ -154,6 +164,12 @@ function reduceSpeed() {
 }
 
 function updateReduce() {
+    y = window.getComputedStyle(move).top;
+    x = window.getComputedStyle(move).left;  
+    y = y.slice(0, -2);
+    x = x.slice(0, -2);
+    y = Number(y);
+    x = Number(x);
     if (isLoaded) {
         curTile = Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
         //console.log(curTile);
@@ -170,6 +186,15 @@ function updateReduce() {
             //console.log('ASPHALT')
             rspeed = 0.03;
             mspeed = mcarspeed;
+           
+            accel = mspeed / 160;
+            resist = accel / 4;
+            bFlag = false;
+        }
+        if (bRoadArr.includes(curTile)) {
+            //console.log('ASPHALT')
+            rspeed = 0.03;
+            mspeed = mcarspeed/2;
            
             accel = mspeed / 160;
             resist = accel / 4;
@@ -335,11 +360,39 @@ function scrollToCenter() {
     x = Number(x);
 
     O=[1440-x, 1440-y];
-    D=[O[0]+Math.cos(angle)*(carW/2), O[1]-Math.sin(angle)*(carW/2)];
-    A=[O[0]-Math.cos(angle)*(carW/2), O[1]+Math.sin(angle)*(carW/2)];
-    C=[D[0]+Math.sin(angle)*carH, D[1]+Math.cos(angle)*carH];
-    B=[A[0]+Math.sin(angle)*carH, A[1]+Math.cos(angle)*carH];
-    console.log(A, B, C, D);
+    D=[O[0]+Math.cos(angle)*8.5, O[1]-Math.sin(angle)*8.5];
+    A=[O[0]-Math.cos(angle)*8.5, O[1]+Math.sin(angle)*8.5];
+    C=[D[0]+Math.sin(angle)*24, D[1]+Math.cos(angle)*24];
+    B=[A[0]+Math.sin(angle)*24, A[1]+Math.cos(angle)*24];
+    //console.log(A, B, C, D);
+
+    carBorder = {
+        O: O,
+        A: A,
+        B: B,
+        C: C,
+        D: D,
+
+        AB: {
+            k: getK(A[0], B[0], A[1], B[1]),
+            b: getB(B[0], B[1], getK(A[0], B[0], A[1], B[1])),
+        },
+        BC: {
+            k: getK(B[0], C[0], B[1], C[1]),
+            b: getB(C[0], C[1], getK(B[0], C[0], B[1], C[1])),
+        },
+        CD: {
+            k: getK(C[0], D[0], C[1], D[1]),
+            b: getB(D[0], D[1], getK(C[0], D[0], C[1], D[1])),
+        },
+        DA: {
+            k: getK(D[0], A[0], D[1], A[1]),
+            b: getB(A[0], A[1], getK(D[0], A[0], D[1], A[1])),
+        }
+    }
+
+    //console.log(carBorder.A, carBorder.B, carBorder.C, carBorder.D);
+
     r1.style.top = String(A[1]) + 'px';
     r1.style.left = String(A[0]) + 'px';
     r2.style.top = String(B[1]) + 'px';
@@ -348,6 +401,14 @@ function scrollToCenter() {
     r3.style.left = String(C[0]) + 'px';
     r4.style.top = String(D[1]) + 'px';
     r4.style.left = String(D[0]) + 'px';
+}
+
+function getK(x1, x2, y1, y2) {
+    return ((y1-y2)/(x1-x2));
+}
+
+function getB(x2, y2, k) {
+    return (y2 - k*x2);
 }
 
 function getTiles() {
@@ -359,18 +420,34 @@ function getTiles() {
         tiles = mapping.split(' ');
         console.log(tiles);
         isLoaded = true;
+        findStartTile();
+        console.log(startingTile);
+        startY = divme(startingTile, 15) * 96;
+        startX = (startingTile % 15) * 96;
+        console.log(startX, startY);
+        xcanvas = startX;
+        ycanvas = startY;
+        prepareCanvas();
+        initEventsListeners();
+        scrollToCenter();
+        drawFrame();
     })
     xhr.send();
 }
 
 function prepareCanvas() {
-    canvasContext.translate(GAME.width/2, GAME.height/2);
-    xcanvas += GAME.width/2;
-    ycanvas += GAME.height/2;
+    canvasContext.translate(startX, startY);
+    move.style.top = String(GAME.width-startY) + 'px';
+    move.style.left =  String(GAME.height-startX) + 'px';
+
+}
+
+function findStartTile() {
+    for (let i=0; i<225; i++) {
+        if (startArr.includes(tiles[i])) {
+            startingTile = i;
+        }
+    }
 }
 
 getTiles();
-initEventsListeners(); 
-prepareCanvas();
-scrollToCenter();
-drawFrame();
