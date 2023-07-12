@@ -1,4 +1,6 @@
 
+let curCar = 1;
+
 let isLoaded = false;
 let tiles = [];
 let GAME = { 
@@ -55,6 +57,7 @@ const bRoadArr = [13, 14, 15, 16, 17, 18];
 const borderArr = [12];
 
 const startArr = ['31'];
+const startStraightArr = ['31'];
 
 let startingTile = 1;
 
@@ -436,18 +439,26 @@ function getTiles() {
 }
 
 function prepareCanvas() {
-    canvasContext.translate(startX, startY);
-    move.style.top = String(GAME.width-startY) + 'px';
-    move.style.left =  String(GAME.height-startX) + 'px';
-
+    if (angle = Math.PI/2) {
+        if (curCar = 1) {
+            canvasContext.translate(startX+50, startY+5+carW/2);
+            canvasContext.rotate(-angle);
+            move.style.top = String(GAME.width-startY-5-carW/2) + 'px';
+            move.style.left =  String(GAME.height-startX-50) + 'px';
+        }
+    } 
 }
 
 function findStartTile() {
     for (let i=0; i<225; i++) {
         if (startArr.includes(tiles[i])) {
             startingTile = i;
+            if (startStraightArr.includes(tiles[i])) {
+                angle = Math.PI/2;
+            }
         }
     }
+    
 }
 
 getTiles();
