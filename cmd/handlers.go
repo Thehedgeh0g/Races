@@ -142,7 +142,6 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
 		data := CreationPage{
 			Token: lobbyIDstr,
 			Lobby: LobbyData,
@@ -171,7 +170,7 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 		log.Println(err)
 		return nil, err
 	}
-
+	log.Println("tut")
 	var data []MapsData
 
 	for _, element := range IDs {
@@ -256,7 +255,6 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var cells [225]CellsData
-
 		pathes := strings.Split(mapData.MapKey, " ")
 
 		for i, element := range pathes {
