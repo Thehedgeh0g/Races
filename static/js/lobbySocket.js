@@ -22,8 +22,22 @@ socket.onmessage = function(event) {
       xhr.send();
       
       xhr.addEventListener("load", () =>{
-          console.log(JSON.parse(xhr.responseText))
-        
+          
+          let players = JSON.parse(xhr.responseText);
+          console.log(players);
+          console.log(players.User);
+          avatar1.src = players.User[0].ImgPath;
+          nickName1.innerHTML = players.User[0].Nickname;
+          lvl1.innerHTML = players.User[0].Level + 'lvl';
+          avatar2.src = players.User[1].ImgPath;
+          nickName2.innerHTML = players.User[1].Nickname;
+          lvl2.innerHTML = players.User[1].Level + 'lvl';
+          avatar3.src = players.User[2].ImgPath;
+          nickName3.innerHTML = players.User[2].Nickname;
+          lvl3.innerHTML = players.User[2].Level + 'lvl';
+          avatar4.src = players.User[3].ImgPath;
+          nickName4.innerHTML = players.User[3].Nickname;
+          lvl4.innerHTML = players.User[3].Level + 'lvl';
       });
   }
 
