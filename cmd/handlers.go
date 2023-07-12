@@ -62,7 +62,6 @@ type Player struct {
 	ImgPath  string `db:"avatar"`
 	Nickname string `db:"nickname"`
 	Level    string `db:"exp"`
-	Host     bool
 }
 
 var clients = make(map[*websocket.Conn]bool) // Сохраняем подключенных клиентов
