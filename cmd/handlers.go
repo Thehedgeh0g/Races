@@ -220,6 +220,74 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 	return data, nil
 }
 
+func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userIdstr, err := getUserID(db, r)
+		//log.Println(userId, "host")
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		userID, err := strconv.Atoi(userIdstr)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		lobbyID, err := getLobbyID(db, userID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		query := `
+			SELECT
+			  host_id
+			FROM
+			  brainless_races.sessions
+			WHERE
+			  session_id = ?   
+		`
+
+		var hostID string
+		row := db.QueryRow(query, lobbyID)
+		err = row.Scan(&hostID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		//log.Println(UserId1, UserId2, UserId3, UserId4)
+		var isHost bool
+		if hostID == userIdstr {
+			isHost = true
+		} else {
+			isHost = false
+		}
+
+		response := struct {
+			Host bool `json:"Host"`
+		}{
+			Host: isHost,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
+	}
+}
+
 func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
