@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -13,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -29,7 +29,6 @@ type Userdata struct {
 
 type CreationPage struct {
 	Token string
-	Lobby []LobbyData
 	Maps  []MapsData
 }
 
@@ -59,11 +58,68 @@ type MapData struct {
 	MapKey string `db:"map_data"`
 }
 
-type LobbyData struct {
+type Player struct {
 	ImgPath  string `db:"avatar"`
 	Nickname string `db:"nickname"`
 	Level    string `db:"exp"`
 	Host     bool
+}
+
+var clients = make(map[*websocket.Conn]bool) // Сохраняем подключенных клиентов
+var broadcast = make(chan string)
+
+func handleWebSocket(w http.ResponseWriter, r *http.Request) {
+
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+
+	conn, err := upgrader.Upgrade(w, r, nil)
+	//log.Println(conn)
+	if err != nil {
+		log.Println("Ошибка при обновлении соединения WebSocket:", err)
+		return
+	}
+
+	clients[conn] = true
+
+	for {
+		var message string
+		err := conn.ReadJSON(&message)
+		log.Println(message)
+		if err != nil {
+			log.Println("Ошибка чтения JSON:", err)
+			//delete(clients, conn) // Удаляем клиента из списка при ошибке чтения
+			break
+			log.Println(message)
+		}
+
+		broadcast <- message
+	}
+
+	conn.Close()
+
+}
+
+func handleMessages() {
+	for {
+		// Получаем сообщение из канала broadcast
+		message := <-broadcast
+
+		// Отправляем сообщение всем подключенным клиентам
+		for client := range clients {
+			err := client.WriteJSON(message)
+			if err != nil {
+				log.Println("Ошибка записи JSON:", err)
+				client.Close()
+				delete(clients, client) // Удаляем клиента из списка при ошибке записи
+			}
+		}
+	}
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
@@ -102,33 +158,6 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		lobbyIDstr := mux.Vars(r)["lobbyID"]
 
-		lobbyID, err := strconv.Atoi(lobbyIDstr)
-		if err != nil {
-			http.Error(w, "Invalid order id", http.StatusForbidden)
-			log.Println(err)
-			return
-		}
-
-		players, err := lobbyByID(db, lobbyID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				http.Error(w, "Order not found", 404)
-				log.Println(err)
-				return
-			}
-
-			http.Error(w, "Server Error", 500)
-			log.Println(err)
-			return
-		}
-
-		LobbyData, err := lobbyData(db, players)
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
 		ts, err := template.ParseFiles("pages/lobbycreation.html")
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
@@ -145,7 +174,6 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		data := CreationPage{
 			Token: lobbyIDstr,
-			Lobby: LobbyData,
 			Maps:  mapsData,
 		}
 
@@ -192,6 +220,49 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 		data = append(data, mapData)
 	}
 	return data, nil
+}
+
+func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userIdstr, err := getUserID(db, r)
+		//log.Println(userId, "host")
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		userID, err := strconv.Atoi(userIdstr)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		lobbyID, err := getLobbyID(db, userID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		response := struct {
+			LobbyID string `json:"MapKey"`
+		}{
+			LobbyID: strconv.Itoa(lobbyID),
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
+	}
 }
 
 func getPreview(db *sqlx.DB, mapID int) ([]PreviewData, error) {
@@ -367,6 +438,49 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func sendLobbyID(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userIdstr, err := getUserID(db, r)
+		//log.Println(userId, "host")
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		userID, err := strconv.Atoi(userIdstr)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		lobbyID, err := getLobbyID(db, userID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		response := struct {
+			LobbyID string `json:"MapKey"`
+		}{
+			LobbyID: strconv.Itoa(lobbyID),
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
+	}
+}
+
 func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
@@ -457,7 +571,7 @@ func lobbyByID(db *sqlx.DB, lobbyID int) ([]string, error) {
 	    WHERE
 		  session_id = ?
 	`
-	log.Println(lobbyID)
+	//log.Println(lobbyID)
 	row := db.QueryRow(query, lobbyID)
 
 	var id1, id2, id3, id4 string
@@ -471,45 +585,6 @@ func lobbyByID(db *sqlx.DB, lobbyID int) ([]string, error) {
 	sessions = append(sessions, id1, id2, id3, id4)
 
 	return sessions, nil
-}
-
-func lobbyData(db *sqlx.DB, players []string) ([]LobbyData, error) {
-
-	query := `
-		SELECT 
-		  avatar, 
-		  nickname, 
-		  exp 
-		FROM 
-		  users 
-		WHERE 
-		  user_id = ?
-		`
-
-	var user LobbyData
-	var users []LobbyData
-
-	for _, element := range players {
-		if element != "0" {
-			row := db.QueryRow(query, element)
-			err := row.Scan(&user.ImgPath, &user.Nickname, &user.Level)
-			if err != nil {
-				return nil, err
-			}
-
-			LVL, err := strconv.Atoi(user.Level)
-			if err != nil {
-				return nil, err
-			}
-
-			user.Level = strconv.Itoa(LVL / 100)
-
-			users = append(users, user)
-		}
-
-	}
-
-	return users, nil
 }
 
 func getMapID(db *sqlx.DB, lobbyID int) (int, error) {
@@ -679,13 +754,14 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		var UserId2, UserId3, UserId4 string
 		row := db.QueryRow(query, ID)
-		log.Println(row)
+		//log.Println(row)
 		err = row.Scan(&UserId2, &UserId3, &UserId4)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
+		//log.Println(UserId2, UserId3, UserId4)
 
 		if UserId2 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player2_id = ? WHERE session_id = ?", userId, lobbyId)
@@ -694,6 +770,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				log.Println(err.Error())
 				return
 			}
+			return
 		} else if UserId3 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player3_id = ? WHERE session_id = ?", userId, lobbyId)
 			if err != nil {
@@ -701,6 +778,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				log.Println(err.Error())
 				return
 			}
+			return
 		} else if UserId4 == "0" {
 			_, err = db.Exec("UPDATE sessions SET player4_id = ? WHERE session_id = ?", userId, lobbyId)
 			if err != nil {
@@ -708,6 +786,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				log.Println(err.Error())
 				return
 			}
+			return
 		} else {
 			Error := "This lobby is full"
 
@@ -810,7 +889,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		log.Println(req.Email, req.Password)
 		user, err := getUser(db, req)
-		//log.Println(user.Email, ' ', user.Password)
+		log.Println(user.Email, ' ', user.Password)
 
 		if err != nil {
 			http.Error(w, "Incorect email or password", 500)
