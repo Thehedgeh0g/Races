@@ -40,8 +40,8 @@ function choosen(event) {
 
 
 document.getElementById("button").addEventListener("click", function() {
-    let id = chosenMap.substring(1, 2)
-    console.log(chosenMap)
+    let id = chosenMap.slice(1);
+    console.log(id);
     var xhr = new XMLHttpRequest();
    // var lobbyId = response.lobbyId
     xhr.open("POST", "/api/chooseMap");
@@ -49,7 +49,19 @@ document.getElementById("button").addEventListener("click", function() {
     
     xhr.addEventListener("load", () =>{
         console.log(xhr.responseText.substring(12, 18))
-        window.location.href = "/race/" + xhr.responseText.substring(12, 18)
+        //window.location.href = "/race/" + xhr.responseText.substring(12, 18)
     })
 });
 
+var xhr1 = new XMLHttpRequest();
+// var lobbyId = response.lobbyId
+xhr1.open("GET", "/api/getHost");
+xhr1.send();
+
+xhr1.addEventListener("load", () =>{ 
+    let response = JSON.parse(xhr1.responseText);
+    console.log(response);
+    if (response) {
+
+    }
+});

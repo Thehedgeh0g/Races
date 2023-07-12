@@ -54,12 +54,3 @@ socket.addEventListener("open", (event) => {
   socket.send(JSON.stringify(data.Message));
 });
 
-var xhr1 = new XMLHttpRequest();
-// var lobbyId = response.lobbyId
-xhr1.open("GET", "/api/getHost");
-xhr1.send();
-
-xhr1.addEventListener("load", () =>{ 
-    let response = JSON.parse(xhr.responseText);
-    console.log(response);
-});
