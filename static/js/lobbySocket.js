@@ -15,15 +15,29 @@ var socket = new WebSocket("ws:/localhost:3000/ws");
 
 socket.onmessage = function(event) {
   var message = JSON.parse(event.data);
-  if (message == window.location.pathname.split('/')[1]) {
+  if (message == window.location.pathname.split('/')[2]) {
       var xhr = new XMLHttpRequest();
       // var lobbyId = response.lobbyId
       xhr.open("GET", "/api/getPlayers");
       xhr.send();
       
       xhr.addEventListener("load", () =>{
-          console.log(JSON.parse(xhr.responseText))
-        
+          
+          let players = JSON.parse(xhr.responseText);
+          console.log(players);
+          console.log(players.User);
+          avatar1.src = players.User[0].ImgPath;
+          nickName1.innerHTML = players.User[0].Nickname;
+          lvl1.innerHTML = players.User[0].Level + 'lvl';
+          avatar2.src = players.User[1].ImgPath;
+          nickName2.innerHTML = players.User[1].Nickname;
+          lvl2.innerHTML = players.User[1].Level + 'lvl';
+          avatar3.src = players.User[2].ImgPath;
+          nickName3.innerHTML = players.User[2].Nickname;
+          lvl3.innerHTML = players.User[2].Level + 'lvl';
+          avatar4.src = players.User[3].ImgPath;
+          nickName4.innerHTML = players.User[3].Nickname;
+          lvl4.innerHTML = players.User[3].Level + 'lvl';
       });
   }
 
@@ -31,7 +45,7 @@ socket.onmessage = function(event) {
 
 socket.addEventListener("open", (event) => {
 
-  var message = window.location.pathname.split('/')[1]
+  var message = window.location.pathname.split('/')[2]
 
   var data = {
     Message: message
