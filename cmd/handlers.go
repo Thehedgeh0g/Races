@@ -256,7 +256,7 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		`
 		var players []Player
 		var IDs []string
-		log.Println(query, lobbyID)
+		//log.Println(query, lobbyID)
 
 		var UserId1, UserId2, UserId3, UserId4 string
 		row := db.QueryRow(query, lobbyID)
@@ -266,7 +266,7 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-		log.Println(UserId1, UserId2, UserId3, UserId4)
+		//log.Println(UserId1, UserId2, UserId3, UserId4)
 		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
 		var player Player
 		for _, element := range IDs {
@@ -291,9 +291,15 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				}
 				lvl, err := strconv.Atoi(player.Level)
 				player.Level = strconv.Itoa(lvl / 100)
-				players = append(players, player)
+
+				//log.Println(player.Level)
+			} else {
+				player.ImgPath = "../static/sprites/ava.png"
+				player.Nickname = "Unknown"
+				player.Level = "0"
 			}
 
+			players = append(players, player)
 		}
 
 		response := struct {
