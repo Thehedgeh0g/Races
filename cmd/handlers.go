@@ -250,41 +250,50 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			  player3_id,
 			  player4_id
 			FROM
-			  sessions
+			  brainless_races.sessions
 			WHERE
 			  session_id = ?   
 		`
 		var players []Player
 		var IDs []string
-		err = db.Select(&IDs, query, lobbyID)
+		log.Println(query, lobbyID)
+
+		var UserId1, UserId2, UserId3, UserId4 string
+		row := db.QueryRow(query, lobbyID)
+		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4)
 		if err != nil {
-			http.Error(w, "Server Error", 500)
+			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
-
+		log.Println(UserId1, UserId2, UserId3, UserId4)
+		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
+		var player Player
 		for _, element := range IDs {
 			query = `
 				SELECT
 				  avatar,
 				  nickname,
-				  exp
+				  exp 
 				FROM
 				  users
 				WHERE
 				  user_id = ?    
 			`
-			var player Player
 
-			row := db.QueryRow(query, element)
-			err := row.Scan(&player.ImgPath, &player.Nickname, &player.ImgPath)
-			if err != nil {
-				http.Error(w, "Server Error", 500)
-				log.Println(err.Error())
-				return
+			if element != "0" {
+				row := db.QueryRow(query, element)
+				err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
+				if err != nil {
+					http.Error(w, "Server Error", 500)
+					log.Println(err.Error())
+					return
+				}
+				lvl, err := strconv.Atoi(player.Level)
+				player.Level = strconv.Itoa(lvl / 100)
+				players = append(players, player)
 			}
 
-			players = append(players, player)
 		}
 
 		response := struct {
