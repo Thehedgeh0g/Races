@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/css/account.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Account</title>
+</head>
+<body class="page">
+    <span class="heading">Account</span>
+    <img src="../static/account-images/racer4.png" alt="" width="88px" height="100px">
+    <div class="data-box">
+        <div class="player-list">
+            <div class="account-data" >
+                <span class="player-list__naming">NickName</span>
+                <span class="player-list__data" id="NickName">{{}}</span>
+            </div>
+            <div class="account-data">
+                <span class="player-list__naming">Avatar</span>
+                <img id="AvatarPhoto" src="{{}}" alt="" width="130px" height="115px">
+            </div>
+            <div class="account-data">
+                <span class="player-list__naming">Level</span>
+                <span class="player-list__data" id="Level">{{}}</span>
+            </div>
+            <div class="account-data">
+                <span class="player-list__naming">Killed bosses</span>
+                <span class="player-list__data" id="KilledBosses">{{}}</span>
+            </div>
+        </div>
+
+        <div class="friends-list" id="ListOfFriends">
+            <div class="friends-list__heading">
+                <div class="friends-list__logo">
+                    <img class="friends-list__toggler" id="FriendsListToggler" src="../static/account-images/toggle2.png" alt="" width="38px" height="38px">
+                    <span class="friends-list__naming">Friends</span>
+                </div>
+                <span class="friends-list__data" id="FriendsCounter">{{}}</span>
+            </div>
+            <div class="friends-data">
+                <ul>
+                    <li class="elstyle">{{}}</li>
+                </ul>
+            </div>
+            <div class="add-friends">
+                <img src="../static/account-images/plus6.png" id="AddFriend" alt="" width="40px" height="40px">
+                <span>Add friends</span>
+            </div>    
+        </div>
+
+    </div>
+    <script src="../static/js/account.js"></script>
+
+</body>
+</html>
