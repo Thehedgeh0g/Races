@@ -1,5 +1,6 @@
 package main
 
+//как подружить хттп сервер и вебсокет
 import (
 	"database/sql"
 	"fmt"
@@ -30,6 +31,11 @@ func main() {
 	mux.HandleFunc("/lobby/{lobbyID}", lobbyCreation(dbx))
 	mux.HandleFunc("/race/{lobbyID}", gameArea(dbx))
 
+	mux.HandleFunc("/ws", handleWebSocket)
+	go handleMessages()
+
+	mux.HandleFunc("/api/getPlayers", sendPlayers(dbx)).Methods(http.MethodGet)
+	mux.HandleFunc("/api/getLobbyID", sendLobbyID(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/chooseMap", chooseMap(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getKey", sendKey(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/join", joinLobby(dbx)).Methods(http.MethodPost)
@@ -47,5 +53,5 @@ func main() {
 
 func OpenDB() (*sql.DB, error) {
 	// Здесь прописываем соединение к базе данных
-	return sql.Open(dbDriverName, "root:student@tcp(localhost:3306)/brainless_races?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true")
+	return sql.Open(dbDriverName, "root:BaStInDa06081981!@tcp(localhost:3306)/brainless_races?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true")
 }

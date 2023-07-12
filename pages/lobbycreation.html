@@ -12,19 +12,32 @@
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <script defer src="../static/js/lobby.js"></script>
     </head>
-    <body class="page centering">
+    <body id="body" class="page centering">
         <span class="title">Lobby</span>
         <span class="title">{{ .Token }}</span>
         <div class="sector">
             <div class="window">
                 <span>party</span>
-                {{ range .Lobby }}
-                    <div class="player">
-                        <img src="{{ .ImgPath }}" class="avatar">
-                        <span>{{ .Nickname }}</span>
-                        <span>{{ .Level }}</span>
-                    </div>
-                {{ end }}
+                <div class="player">
+                    <img src="" class="avatar" id="avatar1">
+                    <span id="nickName1">emty</span>
+                    <span id="lvl1">lvl0</span>
+                </div>
+                <div class="player">
+                    <img src="" class="avatar" id="avatar2">
+                    <span id="nickName2">emty</span>
+                    <span id="lvl2">lvl0</span>
+                </div>
+                <div class="player">
+                    <img src="" class="avatar" id="avatar3">
+                    <span id="nickName3">emty</span>
+                    <span id="lvl3">lvl0</span>
+                </div>
+                <div class="player">
+                    <img src="" class="avatar" id="avatar4">
+                    <span id="nickName4">emty</span>
+                    <span id="lvl4">lvl0</span>
+                </div>
             </div>
             <div>
                 <div class="settings">
