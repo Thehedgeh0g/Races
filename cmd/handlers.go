@@ -303,7 +303,7 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		response := struct {
-			Players []Player `json:"MapKey"`
+			Players []Player `json:"User"`
 		}{
 			Players: players,
 		}
