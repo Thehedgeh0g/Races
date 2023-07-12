@@ -65,7 +65,7 @@ function getIdLobby(idLobby) {
   xhr.open('POST', "/api/join");
   xhr.addEventListener('load', () => {
     
-    window.localStorage.setItem("lobbyID", xhr.responseText.substring(12, 18))
+    window.localStorage.setItem("lobbyID", xhr.responseText.substring(12, 17))
     window.location.href = "/lobby/" + idLobby.substring(1, 7)
   });
 
