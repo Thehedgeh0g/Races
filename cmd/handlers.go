@@ -95,7 +95,6 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			log.Println("Ошибка чтения JSON:", err)
 			//delete(clients, conn) // Удаляем клиента из списка при ошибке чтения
 			break
-			log.Println(message)
 		}
 
 		broadcast <- message
@@ -171,6 +170,7 @@ func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+
 		data := CreationPage{
 			Token: lobbyIDstr,
 			Maps:  mapsData,
@@ -198,7 +198,7 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 		log.Println(err)
 		return nil, err
 	}
-	log.Println("tut")
+
 	var data []MapsData
 
 	for _, element := range IDs {
@@ -244,10 +244,28 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		const query = `
+			SELECT
+			  host_id
+			  player2_id
+			  player3_id
+			  player4_id
+			FROM
+			  sessions
+			WHERE
+			  session_id = ?   
+		`
+		var players []Player
+		err = db.Select(&players, query, lobbyID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
 		response := struct {
-			LobbyID string `json:"MapKey"`
+			Players []Player `json:"MapKey"`
 		}{
-			LobbyID: strconv.Itoa(lobbyID),
+			Players: players,
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -326,6 +344,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var cells [225]CellsData
+
 		pathes := strings.Split(mapData.MapKey, " ")
 
 		for i, element := range pathes {
@@ -555,34 +574,6 @@ func getLobbyID(db *sqlx.DB, userID int) (int, error) {
 	}
 
 	return ID, nil
-}
-
-func lobbyByID(db *sqlx.DB, lobbyID int) ([]string, error) {
-	const query = `
-		SELECT
-		  host_id,
-		  player2_id,
-		  player3_id,
-		  player4_id
-		FROM
-		  sessions
-	    WHERE
-		  session_id = ?
-	`
-	//log.Println(lobbyID)
-	row := db.QueryRow(query, lobbyID)
-
-	var id1, id2, id3, id4 string
-	var sessions []string
-
-	err := row.Scan(&id1, &id2, &id3, &id4)
-	if err != nil {
-		return nil, err
-	}
-
-	sessions = append(sessions, id1, id2, id3, id4)
-
-	return sessions, nil
 }
 
 func getMapID(db *sqlx.DB, lobbyID int) (int, error) {
