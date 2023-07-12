@@ -53,12 +53,3 @@ document.getElementById("button").addEventListener("click", function() {
     })
 });
 
-var xhr = new XMLHttpRequest();
-// var lobbyId = response.lobbyId
- xhr.open("GET", "/api/getPlayers");
- xhr.send();
- 
- xhr.addEventListener("load", () =>{
-     console.log(JSON.stringify(xhr.responseText))
-     
- });
