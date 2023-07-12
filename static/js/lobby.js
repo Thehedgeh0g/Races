@@ -39,26 +39,7 @@ function choosen(event) {
 
 
 
-document.getElementById("button").addEventListener("click", function() {
-    let id = chosenMap.slice(1);
-    console.log(id);
-    var xhr = new XMLHttpRequest();
-   // var lobbyId = response.lobbyId
-    xhr.open("POST", "/api/chooseMap");
-    xhr.send(JSON.stringify(id));
-    
-    xhr.addEventListener("load", () =>{
-        console.log(xhr.responseText.substring(12, 18))
 
-        var message = window.location.pathname.split('/')[2] + ' start'
-
-        var data = {
-          Message: message
-        };
-      
-        socket.send(JSON.stringify(data.Message));
-    })
-});
 
 var xhr1 = new XMLHttpRequest();
 // var lobbyId = response.lobbyId
@@ -69,7 +50,28 @@ xhr1.addEventListener("load", () =>{
     let response = JSON.parse(xhr1.responseText);
     console.log(response);
     if (response) {
-
+        document.getElementById("button").addEventListener("click", function() {
+            let id = chosenMap.slice(1);
+            console.log(id);
+            var xhr = new XMLHttpRequest();
+           // var lobbyId = response.lobbyId
+            xhr.open("POST", "/api/chooseMap");
+            xhr.send(JSON.stringify(id));
+            
+            xhr.addEventListener("load", () =>{
+                console.log(xhr.responseText.substring(12, 18))
+        
+                var message = window.location.pathname.split('/')[2] + ' start'
+        
+                var data = {
+                  Message: message
+                };
+              
+                socket.send(JSON.stringify(data.Message));
+            })
+        });
+    } else {
+        document.getElementById("button").style.backgroundColor = '#6e6a5d';
     }
 });
 
