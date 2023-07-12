@@ -74,10 +74,39 @@
     background-color: #ffdb7f;
     padding: 10px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-around;
     width: 40vw;
     height: 20vh;
+}
+
+.stats-names{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.stats-drawing{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.graph{
+    box-sizing: border-box;
+    border-radius: 0;
+    border-width:  0.33vw;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    width: 10.66vw;
+    height: 3.2vh;
+}
+
+.MaxSpeedGraph{
+    background-color: #d4f9bc;
+    width: 0.34vw;
+    height: 2vh;
 }
 
 .money{
@@ -147,7 +176,7 @@
     margin-top: 2vh;
 }
 
-.style-field{
+.tuning-field{
     box-sizing: border-box;
     width: 60vw;
     height: 30vh;
@@ -161,6 +190,50 @@
     position: relative;
     margin-top: -6px;
     top: -30vh;
+    left: -6px;
+}
+
+.tuning-field-icon{
+    width: 8vw;
+    margin-top: 1vh;
+}
+
+.tuning-field-selection{
+    width: 100%;
+    height: 60%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly; 
+}
+
+.tuning-field-button{
+    width: 8vw;
+    margin-top: 3vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.tuningArrow{
+    padding-bottom: 3%;
+    width: 10%; 
+    height: 30%;
+    cursor: pointer;
+}
+
+.style-field{
+    box-sizing: border-box;
+    width: 60vw;
+    height: 30vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 10px;
+    visibility: hidden;
+    position: relative;
+    top: -60vh;
     left: -6px;
     display: flex;
     flex-direction: row;

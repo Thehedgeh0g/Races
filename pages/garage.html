@@ -17,9 +17,18 @@
       </div>
       <div class="statistics">
         <div class="stats">
-          <div><span>Max speed: </span></div>
-          <div><span>Acceleration: </span></div>
-          <div><span>Maneuverability: </span></div>
+          <div class="stats-names">
+            <div><span>Max speed: </span></div>
+            <div><span>Acceleration: </span></div>
+            <div><span>Maneuverability: </span></div>
+          </div>
+          <div class="stats-drawing">
+            <div class="graph">
+              <div class="MaxSpeedGraph" id=""></div>
+            </div>
+            <div class="graph"></div>
+            <div class="graph"></div>
+          </div>
         </div>
         <div class="money">
           <span>Money: </span>
@@ -40,20 +49,61 @@
 
         <div class="shop-field">
           <div>
-            <div><img class="shop-field-car"  id="greyCar" src="../static/sprites/abm_gray.png" alt="grey"></div>
+            <div><img class="shop-field-car"  id="greyCar" src="../static/sprites/abm_gray.png" alt="car"></div>
             <div class="shop-field-button" id="greyFutureCar"><span>1000$</span></div>
           </div>
           <div>
-            <div><img class="shop-field-car" id="greenCar"  src="../static/sprites/abm_green.png" alt="green"></div>
+            <div><img class="shop-field-car" id="greenCar"  src="../static/sprites/abm_green.png" alt="car"></div>
             <div class="shop-field-button" id="greenFutureCar"><span>10000$</span></div>
           </div>
           <div>
-            <div><img class="shop-field-car" id="redCar"  src="../static/sprites/abm_red.png" alt="red"></div>
+            <div><img class="shop-field-car" id="redCar"  src="../static/sprites/abm_red.png" alt="car"></div>
             <div class="shop-field-button" id="redFutureCar"><span>100000$</span></div>
           </div>
           <div>
-            <div><img class="shop-field-car" id="yellowCar"  src="../static/sprites/abm_yellow.png" alt="yellow"></div>
+            <div><img class="shop-field-car" id="yellowCar"  src="../static/sprites/abm_yellow.png" alt="car"></div>
             <div class="shop-field-button" id="yellowFutureCar"><span>150000$</span></div>
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <div class="tuning-field-selection">
+            <div>
+              <div><img class="tuning-field-icon"  id="engineIcon" src="../static/garage-sprites/engine.png" alt="engine"></div>
+              <div class="tuning-field-button" id="">
+                <img class="tuningArrow" id="engineArrowLeft" src="../static/garage-sprites/left.png" alt="X">
+                <span><div id="engineCnt"></div></span>
+                <img class="tuningArrow" id="engineArrowRight" src="../static/garage-sprites/right.png" alt="X">
+              </div>
+            </div>
+            <div>
+              <div><img class="tuning-field-icon" id="transmissionIcon"  src="../static/garage-sprites/transmission.png" alt="transmission"></div>
+              <div class="tuning-field-button" id="">
+                <img class="tuningArrow" src="../static/garage-sprites/left.png" alt="X">
+                <span>1</span>
+                <img class="tuningArrow" src="../static/garage-sprites/right.png" alt="X">
+              </div>
+            </div>
+            <div>
+              <div><img class="tuning-field-icon" id="breaksIcon"  src="../static/garage-sprites/breaks.png" alt="breaks"></div>
+              <div class="tuning-field-button" id="">
+                <img class="tuningArrow" src="../static/garage-sprites/left.png" alt="X">
+                <span>1</span>
+                <img class="tuningArrow" src="../static/garage-sprites/right.png" alt="X">
+              </div>
+            </div>
+            <div>
+              <div><img class="tuning-field-icon" id="suspensionIcon"  src="../static/garage-sprites/suspension.png" alt="suspension"></div>
+              <div class="tuning-field-button" id="">
+                <img class="tuningArrow" src="../static/garage-sprites/left.png" alt="X">
+                <span>1</span>
+                <img class="tuningArrow" src="../static/garage-sprites/right.png" alt="X">
+              </div>
+            </div>
+          </div>
+
+          <div class="tuning-field-apply">
+
           </div>
         </div>
 
@@ -78,6 +128,6 @@
 
       </div>
     </div>
-    <script src="../static/js/garage-shop.js"></script>
+    <script src="../static/js/garage.js"></script>
   </body>
 </html>

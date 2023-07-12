@@ -1,4 +1,5 @@
 const ShopField = document.getElementById("Shop");
+const TuningField = document.getElementById("Tuning");
 const StyleField = document.getElementById("Style");
 
 const GreyFutureCarField = document.getElementById("greyFutureCar");
@@ -11,7 +12,16 @@ const GreenCarField = document.getElementById("colorGreenCar");
 const RedCarField = document.getElementById("colorRedCar");
 const YellowCarField = document.getElementById("colorYellowCar");
 
+const engineArrowLeft = document.getElementById("engineArrowLeft");
+const engineArrowRight = document.getElementById("engineArrowRight");
+
+var engineCnt = 1;
+document.getElementById("engineCnt").innerHTML = engineCnt;
+
+
+
 ShopField.addEventListener("click", showShop);
+TuningField.addEventListener("click", showTuning);
 StyleField.addEventListener("click", showStyle);
 
 GreyFutureCarField.addEventListener("click", replaceCar);
@@ -24,6 +34,10 @@ GreenCarField.addEventListener("click", replaceCar);
 RedCarField.addEventListener("click", replaceCar);
 YellowCarField.addEventListener("click", replaceCar);
 
+engineArrowLeft.addEventListener("click", engineDec);
+engineArrowRight.addEventListener("click", engineInc);
+
+
 // var xhr = new XMLHttpRequest();
 // xhr.open("GET", "");
 // xhr.send();
@@ -31,11 +45,19 @@ YellowCarField.addEventListener("click", replaceCar);
 
 function showShop() {
   document.querySelector(".style-field").style.visibility = "hidden";
+  document.querySelector(".tuning-field").style.visibility = "hidden";
   document.querySelector(".shop-field").style.visibility = "visible";
+}
+
+function showTuning() {
+  document.querySelector(".shop-field").style.visibility = "hidden";
+  document.querySelector(".style-field").style.visibility = "hidden";
+  document.querySelector(".tuning-field").style.visibility = "visible";
 }
 
 function showStyle() {
   document.querySelector(".shop-field").style.visibility = "hidden";
+  document.querySelector(".tuning-field").style.visibility = "hidden";
   document.querySelector(".style-field").style.visibility = "visible";
 }
 
@@ -65,5 +87,21 @@ function replaceCar() {
   }
   if (this == YellowCarField){
     document.getElementById("currentCar").src = document.getElementById('yellowCar').src;
+  }
+}
+
+function engineDec() {
+  if (engineCnt > 1){
+    document.getElementById("engineCnt").innerHTML = String(engineCnt - 1);
+    document.querySelector(".MaxSpeedGraph").style.width =  String(engineCnt - 1) + "vw";
+    engineCnt -= 1;
+  }
+}
+
+function engineInc() {
+  if (engineCnt < 10){
+    document.getElementById("engineCnt").innerHTML = String(engineCnt + 1);
+    document.querySelector(".MaxSpeedGraph").style.width =  String(engineCnt + 1) + "vw";
+    engineCnt += 1;
   }
 }
