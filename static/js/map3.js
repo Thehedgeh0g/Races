@@ -11,8 +11,9 @@ let GAME = {
     background: 'grey', 
     framesCnt: 0, 
 }
-const mcarspeed = 4;
-let rspeed = 0.03;
+let mcarspeed = 4;
+let mrspeed = 0.03;
+let rspeed = mrspeed;
 let mspeed = mcarspeed;
 let accel = mspeed / 160;
 let resist = accel / 4;
@@ -233,7 +234,7 @@ function updateReduce() {
         
         if (grassArr.includes(curTile)) {
             //console.log('TRAVA')
-            rspeed = 0.03;
+            rspeed = mrspeed;
             mspeed = gs;
             accel = mspeed / 160;
             resist = accel / 4;
@@ -241,7 +242,7 @@ function updateReduce() {
         } 
         if (roadArr.includes(curTile)) {
             //console.log('ASPHALT')
-            rspeed = 0.03;
+            rspeed = mrspeed;
             mspeed = mcarspeed;
            
             accel = mspeed / 160;
@@ -250,7 +251,7 @@ function updateReduce() {
         }
         if (bRoadArr.includes(curTile)) {
             //console.log('ASPHALT')
-            rspeed = 0.03;
+            rspeed = mrspeed;
             mspeed = mcarspeed/2;
            
             accel = mspeed / 160;
@@ -290,12 +291,10 @@ function onCanvasKey() {
     if ((wasd.d == 1) && (speed > 0)) { 
         if (speed >= pi1) {
             angle -= rspeed; 
-            canvasContext.rotate(rspeed);
-            console.log(-rspeed);   
+            canvasContext.rotate(rspeed); 
         } else {
             angle -= rspeed * Math.sin(speed/2); 
             canvasContext.rotate(rspeed * Math.sin(speed/2));
-            console.log(-rspeed * Math.sin(speed/2)); 
         } 
         if (speed > 0) {
             speed -= resist;
@@ -310,12 +309,10 @@ function onCanvasKey() {
     if ((wasd.a == 1) && (speed > 0)) { 
         if (speed >= pi1) {
             angle += rspeed; 
-            canvasContext.rotate(-rspeed); 
-            console.log(rspeed);        
+            canvasContext.rotate(-rspeed);    
         } else {
             angle += rspeed * Math.sin(speed/2); 
-            canvasContext.rotate(-rspeed * Math.sin(speed/2));
-            console.log(rspeed * Math.sin(speed/2)); 
+            canvasContext.rotate(-rspeed * Math.sin(speed/2)); 
         }
         if (speed > 0) {
             if ((speed - resist) > 0){
@@ -337,12 +334,10 @@ function onCanvasKey() {
     if ((wasd.d == 1) && (speed < 0)) { 
         if (speed <= -pi1) {
             angle += rspeed; 
-            canvasContext.rotate(-rspeed);
-            console.log(rspeed);          
+            canvasContext.rotate(-rspeed);         
         } else {
             angle += rspeed * Math.sin(-speed/2); 
-            canvasContext.rotate(-rspeed * Math.sin(-speed/2));
-            console.log(rspeed * Math.sin(speed/2)); 
+            canvasContext.rotate(-rspeed * Math.sin(-speed/2)); 
         }
         if (speed > 0) {
             if ((speed - resist) > 0){
@@ -365,12 +360,10 @@ function onCanvasKey() {
     if ((wasd.a == 1) && (speed < 0)) { 
         if (speed <= -pi1) {
             angle -= rspeed; 
-            canvasContext.rotate(rspeed);
-            console.log(-rspeed);          
+            canvasContext.rotate(rspeed);      
         } else {
             angle -= rspeed * Math.sin(-speed/2); 
             canvasContext.rotate(rspeed * Math.sin(-speed/2));
-            console.log(-rspeed * Math.sin(speed/2)); 
         }
         if (speed > 0) {
             speed -= resist;
@@ -396,7 +389,6 @@ function onCanvasKeyUp(event) {
     if (event.code === 'KeyD') { 
         wasd.d = 0; 
     } 
-    //onCanvasKey(); 
 } 
  
 function onCanvasKeyDown(event) {
@@ -412,7 +404,6 @@ function onCanvasKeyDown(event) {
     if (event.code === 'KeyD') { 
         wasd.d = 1; 
     } 
-    //onCanvasKey(); 
 }
 
 function scrollToCenter() {
@@ -500,6 +491,12 @@ function getTiles() {
         info = JSON.parse(xhr.responseText);
         console.log(info);
         myCar=info.InSessionId;
+        mcarspeed = info.Cars[myCar].split('/')[1];
+        mrspeed = info.Cars[myCar].split('/')[3] * 0.006
+        rspeed = mrspeed;
+        console.log(mcarspeed, mrspeed);
+
+
         mapping = info.MapKey;
         console.log(mapping);
         tiles = mapping.split(' ');
