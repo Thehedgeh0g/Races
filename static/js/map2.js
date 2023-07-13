@@ -27,10 +27,10 @@ canvas.height = GAME.height;
 let canvasContext = canvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
-Car.src = '../static//sprites/abm_blue.png';
+Car.src = '/static//sprites/abm_blue.png';
 
 const carW = 17;
-const carH = 24;
+const carH = 25;
 
 let CarPosX = -carW*0.5; 
 let CarPosY = (-carH*2)*0; 
@@ -116,7 +116,14 @@ function framesCountHandler() {
 function drawCar(image, x, y) { 
     canvasContext.rotate(angle);
     canvasContext.translate(-xcanvas, -ycanvas);
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    // кажись сдесь можно впихнуть отрисовку других машин
+    canvasContext.translate(startX+50, startY+5+carW/2+40);
+    canvasContext.rotate(-Math.PI/2);
+    canvasContext.drawImage(image, x, y, carW, carH);
+    canvasContext.rotate(+Math.PI/2);
+    canvasContext.translate(-(startX+50), -(startY+5+carW/2+40));
+    // конец впихивания
     canvasContext.translate(xcanvas, ycanvas);
     canvasContext.rotate(-angle);
     canvasContext.drawImage(image, x, y, carW, carH);
