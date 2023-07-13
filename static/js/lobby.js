@@ -93,11 +93,12 @@ const avatar4 = document.getElementById("avatar4");
 const nickName4 = document.getElementById("nickName4");
 const lvl4 = document.getElementById("lvl4");
 
-var socket = new WebSocket("ws:/localhost:3000/ws"+ "/" + window.location.pathname.split('/')[2]);
+var socket = new WebSocket("ws:/localhost:3000/ws");
 
 socket.onmessage = function(event) {
   var message = JSON.parse(event.data);
-  if (message == window.location.pathname.split('/')[2]) {
+  console.log(message)
+  if (true) {
       var xhr = new XMLHttpRequest();
       // var lobbyId = response.lobbyId
       xhr.open("GET", "/api/getPlayers");

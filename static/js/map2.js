@@ -11,8 +11,9 @@ let GAME = {
     background: 'grey', 
     framesCnt: 0, 
 }
-const mcarspeed = 4;
-let rspeed = 0.03;
+let mcarspeed = 4;
+let mrspeed = 0.03
+let rspeed = mrspeed;
 let mspeed = mcarspeed;
 let accel = mspeed / 160;
 let resist = accel / 4;
@@ -229,7 +230,7 @@ function updateReduce() {
         
         if (grassArr.includes(curTile)) {
             //console.log('TRAVA')
-            rspeed = 0.03;
+            rspeed = mrspeed;
             mspeed = gs;
             accel = mspeed / 160;
             resist = accel / 4;
@@ -237,7 +238,7 @@ function updateReduce() {
         } 
         if (roadArr.includes(curTile)) {
             //console.log('ASPHALT')
-            rspeed = 0.03;
+            rspeed = mrspeed;
             mspeed = mcarspeed;
            
             accel = mspeed / 160;
@@ -246,7 +247,7 @@ function updateReduce() {
         }
         if (bRoadArr.includes(curTile)) {
             //console.log('ASPHALT')
-            rspeed = 0.03;
+            rspeed = mrspeed;
             mspeed = mcarspeed/2;
            
             accel = mspeed / 160;

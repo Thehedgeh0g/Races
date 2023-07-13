@@ -6,6 +6,8 @@ import (
 	"html/template"
 	"io"
 	"log"
+
+	//"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -64,61 +66,246 @@ type Player struct {
 	Level    string `db:"exp"`
 }
 
-var clients = make(map[*websocket.Conn]bool) // Сохраняем подключенных клиентов
-var broadcast = make(chan string)
+var connections = make(map[*websocket.Conn]string)
+var groups = make(map[string][]*websocket.Conn)
 
-func handleWebSocket(w http.ResponseWriter, r *http.Request) {
+func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-	upgrader := websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	}
-
-	conn, err := upgrader.Upgrade(w, r, nil)
-	//log.Println(conn)
-	if err != nil {
-		log.Println("Ошибка при обновлении соединения WebSocket:", err)
-		return
-	}
-
-	clients[conn] = true
-
-	for {
-		var message string
-		err := conn.ReadJSON(&message)
-		log.Println(message)
-		if err != nil {
-			log.Println("Ошибка чтения JSON:", err)
-			//delete(clients, conn) // Удаляем клиента из списка при ошибке чтения
-			break
+		upgrader := websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
 		}
 
-		broadcast <- message
-	}
+		conn, err := upgrader.Upgrade(w, r, nil)
+		//log.Println(conn)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 
-	conn.Close()
+		userIDstr, err := getUserID(db, r)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("tut")
+		userID, err := strconv.Atoi(userIDstr)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		lobbyID, err := getLobbyID(db, userID)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		clientID := strconv.Itoa(lobbyID) + " " + generateClientID()
+		log.Println("tut 2")
+		connections[conn] = clientID
+		log.Println("tut 3")
+		handleMessages(conn, clientID, lobbyID)
+		log.Println("tut 4")
+		err = conn.Close()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+	}
+}
+
+func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
+	log.Println("tut 5")
+	var message string
+	for {
+		err := conn.ReadJSON(&message)
+		if err != nil {
+			log.Println(err)
+			delete(connections, conn)
+			removeConnectionFromGroups(conn)
+			return
+		}
+		message = "reboot"
+		log.Printf("Received message from client %s: %s", clientID, message)
+
+		// Определение группы клиента
+		group := determineGroup(clientID, strconv.Itoa(lobbyID))
+		addToGroup(conn, group)
+		// Отправка сообщения только определенной группе клиентов
+		sendMessageToGroup(message, group)
+	}
+}
+func sendMessageToGroup(message, group string) {
+	log.Println(groups)
+	for _, conn := range groups[group] {
+
+		err := conn.WriteJSON(message)
+		if err != nil {
+			log.Println(err)
+			delete(connections, conn)
+			removeConnectionFromGroups(conn)
+		}
+	}
+}
+
+func addToGroup(conn *websocket.Conn, groupID string) {
+	if !Contains(groups[groupID], conn) {
+		groups[groupID] = append(groups[groupID], conn)
+	}
 
 }
 
-func handleMessages() {
-	for {
-		// Получаем сообщение из канала broadcast
-		message := <-broadcast
+func Contains(a []*websocket.Conn, x *websocket.Conn) bool {
+	for _, n := range a {
+		if x == n {
+			return true
+		}
+	}
+	return false
+}
 
-		// Отправляем сообщение всем подключенным клиентам
-		for client := range clients {
-			err := client.WriteJSON(message)
-			if err != nil {
-				log.Println("Ошибка записи JSON:", err)
-				client.Close()
-				delete(clients, client) // Удаляем клиента из списка при ошибке записи
+func determineGroup(clientID, groupID string) string {
+	// Реализуйте определение группы клиента на основе его идентификатора
+	// В данном примере используется простое условие
+	log.Println(strings.Split(clientID, " ")[0])
+	for group := range groups {
+		if strings.Split(clientID, " ")[0] == group {
+
+			return group
+		} else {
+			continue
+		}
+	}
+
+	return ""
+}
+
+func removeConnectionFromGroups(conn *websocket.Conn) {
+	delete(connections, conn)
+
+	for group, conns := range groups {
+		for i, c := range conns {
+			if c == conn {
+				groups[group] = append(conns[:i], conns[i+1:]...)
+				break
 			}
 		}
 	}
 }
+
+func createGroup(groupName string) {
+	groups[groupName] = []*websocket.Conn{}
+}
+
+func generateClientID() string {
+	// Реализуйте генерацию уникального идентификатора для клиента
+	// В данном примере используется временная метка
+	return time.Now().Format("20060102150405")
+}
+
+// func handleRaceSocket(w http.ResponseWriter, r *http.Request) {
+
+// 	upgrader := websocket.Upgrader{
+// 		ReadBufferSize:  1024,
+// 		WriteBufferSize: 1024,
+// 		CheckOrigin: func(r *http.Request) bool {
+// 			return true
+// 		},
+// 	}
+
+// 	conn, err := upgrader.Upgrade(w, r, nil)
+// 	//log.Println(conn)
+// 	if err != nil {
+// 		log.Println("Ошибка при обновлении соединения WebSocket:", err)
+// 		return
+// 	}
+
+// 	clients[conn] = true
+
+// 	for {
+// 		var posMessage string
+// 		err := conn.ReadJSON(&posMessage)
+// 		log.Println(posMessage)
+// 		if err != nil {
+// 			log.Println("Ошибка чтения JSON:", err)
+// 			//delete(clients, conn) // Удаляем клиента из списка при ошибке чтения
+// 			break
+// 		}
+
+// 		raceBroadcast <- posMessage
+// 	}
+
+// 	conn.Close()
+
+// }
+
+// func verificatePos() {
+// 	for {
+
+// 		// posMessage = "speed angle y0 x0 y1 x1 id"
+// 		//
+
+// 		// Получаем сообщение из канала broadcast
+// 		posMessage := <-raceBroadcast
+// 		speed := strings.Split(posMessage, " ")[1]
+// 		angle := strings.Split(posMessage, " ")[2]
+// 		V, err := strconv.Atoi(speed)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
+
+// 		deg, err := strconv.Atoi(angle)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
+
+// 		y0 := strings.Split(posMessage, " ")[3]
+// 		yOld, err := strconv.Atoi(y0)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
+
+// 		x0 := strings.Split(posMessage, " ")[4]
+// 		xOld, err := strconv.Atoi(x0)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
+
+// 		y1 := strings.Split(posMessage, " ")[5]
+// 		yNew, err := strconv.Atoi(y1)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
+
+// 		x1 := strings.Split(posMessage, " ")[6]
+// 		xNew, err := strconv.Atoi(x1)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
+
+// 		inSessionId := strings.Split(posMessage, " ")[7]
+
+// 		xSpeed := math.Sin(float64(deg)) * float64(V)
+// 		ySpeed := math.Cos(float64(deg)) * float64(V)
+// 		if (float64(xOld)+xSpeed == float64(xNew)) && (float64(yOld)+ySpeed == float64(yNew)) {
+// 			posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId
+// 		}
+// 		// Отправляем сообщение всем подключенным клиентам
+// 		for client := range clients {
+// 			err := client.WriteJSON(posMessage)
+// 			if err != nil {
+// 				log.Println("Ошибка записи JSON:", err)
+// 				client.Close()
+// 				delete(clients, client) // Удаляем клиента из списка при ошибке записи
+// 			}
+// 		}
+// 	}
+// }
 
 func login(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("pages/login.html")
@@ -358,6 +545,10 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				lvl, err := strconv.Atoi(player.Level)
+				if err != nil {
+					log.Println(err)
+					return
+				}
 				player.Level = strconv.Itoa(lvl / 100)
 
 				//log.Println(player.Level)
@@ -833,6 +1024,8 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+
+		createGroup(lobbyId)
 
 		response := struct {
 			LobbyID string `json:"lobbyId"`
