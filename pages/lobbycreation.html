@@ -41,12 +41,12 @@
                 </div>
             </div>
             <div>
-                <div class="settings">
+                <div class="settings" id="settings">
                     <span>settings</span>
                     <div class="maps" id="maps">
                         <div>
                             <img src="/static/sprites/triangle.png" class="triangle" id="triangle">
-                            <span>choose map</span>
+                            <span id="choose">choose map</span>
                             
                             <div class="list" id="list">
                                 {{ range .Maps}}
@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div id="button" class="button">
-                    <span>START</span>
+                    <span id="button-text">START</span>
                 </div>
             </div>
         </div>
