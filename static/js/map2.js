@@ -494,8 +494,8 @@ function getTiles() {
         console.log(startingTile);
         console.log(startX, startY);
         xcanvas = startX+50;
-        ycanvas = startY+13.5;
-        //ycanvas = startY+5+carW/2+23*info.InSessionId;
+        //ycanvas = startY+13.5;
+        ycanvas = startY+5+carW/2+23*info.InSessionId;
         prepareCanvas();
         initEventsListeners();
         scrollToCenter();
@@ -507,9 +507,9 @@ function getTiles() {
 function prepareCanvas() {
     if (angle = Math.PI/2) {
         if (curCar = 1) {
-            canvasContext.translate(startX+50, startY+5+carW/2);
+            canvasContext.translate(startX+50, startY+5+carW/2+23*info.InSessionId);
             canvasContext.rotate(-angle);
-            move.style.top = String(GAME.width-startY-5-carW/2) + 'px';
+            move.style.top = String(GAME.width-(startY+5+carW/2+23*info.InSessionId)) + 'px';
             move.style.left =  String(GAME.height-startX-50) + 'px';
         }
     } 
