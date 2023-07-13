@@ -74,6 +74,7 @@ let cars = [
     {
     Name: null,
     Img: null,
+    Imag: null,
     X: null,
     Y: null,
     Angle: null,
@@ -81,6 +82,7 @@ let cars = [
     {
     Name: null,
     Img: null,
+    Imag: null,
     X: null,
     Y: null,
     Angle: null,
@@ -88,6 +90,7 @@ let cars = [
     {
     Name: null,
     Img: null,
+    Imag: null,
     X: null,
     Y: null,
     Angle: null,
@@ -95,6 +98,7 @@ let cars = [
     {
     Name: null,
     Img: null,
+    Imag: null,
     X: null,
     Y: null,
     Angle: null,
@@ -157,9 +161,7 @@ function drawCar(image, x, y) {
         if (i != myCar) {
             canvasContext.translate(cars[i].X, cars[i].Y);
             canvasContext.rotate(-cars[i].Angle);
-            Car.src = cars[i].Img;
-            canvasContext.drawImage(image, x, y, carW, carH);
-            Car.src = cars[myCar].Img;
+            canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
             canvasContext.rotate(cars[i].Angle);
             canvasContext.translate(-cars[i].X, -cars[i].Y);
         }
@@ -486,6 +488,8 @@ function getTiles() {
             cars[i].Name = info.Nicknames[i];
             cars[i].Img = '/static/sprites/' + info.Cars[i].split('/')[0] + '.png';
             console.log(cars[i].Img);
+            cars[i].Imag = new Image();
+            cars[i].Imag.src = cars[i].Img;
             cars[i].X = startX+50;
             cars[i].Y = startY+5+carW/2+23*i;
             cars[i].Angle = (Math.PI / 2);
