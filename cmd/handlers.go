@@ -645,10 +645,71 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		mapKey := mapData.MapKey
 
+		query := `
+			SELECT
+			  host_id,
+			  player2_id,
+			  player3_id,
+			  player4_id
+			FROM
+			  brainless_races.sessions
+			WHERE
+			  session_id = ?   
+		`
+
+		//log.Println(query, lobbyID)
+
+		var UserId1, UserId2, UserId3, UserId4 string
+		row := db.QueryRow(query, lobbyID)
+		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		//log.Println(UserId1, UserId2, UserId3, UserId4)
+		var inSessionId, car, nickname string
+		var cars, nicknames []string
+		IDs := []string{UserId1, UserId2, UserId3, UserId4}
+
+		for i, id := range IDs {
+			if id != "0" {
+				if userIdstr == id {
+					inSessionId = strconv.Itoa(i)
+				}
+				query = `
+					SELECT
+					  nickname,
+					  cars
+					FROM
+					  users
+					WHERE
+					  user_id = ?    
+				`
+
+				row = db.QueryRow(query, id)
+				err = row.Scan(&nickname, &car)
+				if err != nil {
+					http.Error(w, "Error", 500)
+					log.Println(err.Error())
+					return
+				}
+				nicknames = append(nicknames, nickname)
+				cars = append(cars, car)
+			}
+
+		}
+
 		response := struct {
-			MapKey string `json:"MapKey"`
+			MapKey      string   `json:"MapKey"`
+			Cars        []string `json:"Cars"`
+			Nicknames   []string `json:"Nicknames"`
+			InSessionId string   `json:"InSessionId"`
 		}{
-			MapKey: mapKey,
+			MapKey:      mapKey,
+			Cars:        cars,
+			Nicknames:   nicknames,
+			InSessionId: inSessionId,
 		}
 
 		jsonResponse, err := json.Marshal(response)
