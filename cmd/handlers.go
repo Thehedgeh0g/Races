@@ -679,7 +679,7 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			query = `
 				SELECT
 				  nickname,
-				  car
+				  cars
 				FROM
 				  users
 				WHERE
