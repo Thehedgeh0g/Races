@@ -494,7 +494,8 @@ function getTiles() {
         console.log(startingTile);
         console.log(startX, startY);
         xcanvas = startX+50;
-        ycanvas = startY+5+carW/2+23*info.InSessionId;
+        ycanvas = startY+13.5;
+        //ycanvas = startY+5+carW/2+23*info.InSessionId;
         prepareCanvas();
         initEventsListeners();
         scrollToCenter();
