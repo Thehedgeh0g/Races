@@ -95,18 +95,51 @@
 .graph{
     box-sizing: border-box;
     border-radius: 0;
-    border-width:  0.33vw;
+    border-width:  0.32vw;
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffdb7f;
-    width: 10.66vw;
+    width: 10.61vw;
     height: 3.2vh;
+}
+
+.FutureMaxSpeedGraph{
+    background-color: #c4c4f3b4;
+    width: 1vw;
+    height: 2vh;
 }
 
 .MaxSpeedGraph{
     background-color: #d4f9bc;
-    width: 0.34vw;
+    width: 1vw;
     height: 2vh;
+    margin-top: -2vh;
+}
+
+.FutureAccelerationGraph{
+    background-color: #c4c4f3b4;
+    width: 1vw;
+    height: 2vh;
+}
+
+.AccelerationGraph{
+    background-color: #d4f9bc;
+    width: 1vw;
+    height: 2vh;
+    margin-top: -2vh;
+}
+
+.FutureManeuverabilityGraph{
+    background-color: #c4c4f3b4;
+    width: 1vw;
+    height: 2vh;
+}
+
+.ManeuverabilityGraph{
+    background-color: #d4f9bc;
+    width: 1vw;
+    height: 2vh;
+    margin-top: -2vh;
 }
 
 .money{
@@ -221,6 +254,24 @@
     cursor: pointer;
 }
 
+.tuning-upgradecost{
+    width: 60vw;
+    height: 4vh;
+}
+
+.tuning-field-Purchasebutton{   
+    width: 14vw;
+    height: 6vh;
+    box-sizing: border-box;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #d4f9bc;
+    padding: 10px;
+    cursor: pointer;
+    
+}
 .style-field{
     box-sizing: border-box;
     width: 60vw;
