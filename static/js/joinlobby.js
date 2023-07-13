@@ -25,10 +25,6 @@ formJoinLobby.addEventListener("submit", function() {
   handleTokenInputSubmit(event);
 })
 
-ConnectLobbyButton.addEventListener("click", function() {
-  handleTokenInputSubmit(event);
-})
-
 function showButtonAndDarkScreen() {
   handleJoinButtonClick();
   darkenScreen();
@@ -66,7 +62,7 @@ function getIdLobby(idLobby) {
   xhr.addEventListener('load', () => {
     
     window.localStorage.setItem("lobbyID", xhr.responseText.substring(12, 17))
-    window.location.href = "/lobby/" + idLobby.substring(1, 7)
+    window.location.href = "/lobby/" + idLobby.split('"')[1]
   });
 
 

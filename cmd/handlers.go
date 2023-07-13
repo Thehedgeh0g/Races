@@ -859,31 +859,31 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		//log.Println(UserId2, UserId3, UserId4)
-
-		if UserId2 == "0" {
+		updated := false
+		if (UserId2 == "0") && !updated {
+			updated = true
 			_, err = db.Exec("UPDATE sessions SET player2_id = ? WHERE session_id = ?", userId, lobbyId)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
 				return
 			}
-			return
-		} else if UserId3 == "0" {
+		} else if (UserId3 == "0") && !updated {
+			updated = true
 			_, err = db.Exec("UPDATE sessions SET player3_id = ? WHERE session_id = ?", userId, lobbyId)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
 				return
 			}
-			return
-		} else if UserId4 == "0" {
+		} else if (UserId4 == "0") && !updated {
+			updated = true
 			_, err = db.Exec("UPDATE sessions SET player4_id = ? WHERE session_id = ?", userId, lobbyId)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
 				return
 			}
-			return
 		} else {
 			Error := "This lobby is full"
 
@@ -904,7 +904,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			w.Write(jsonResponse)
 		}
-		broadcast <- "joined into lobby"
+		log.Println(updated)
 	}
 }
 
