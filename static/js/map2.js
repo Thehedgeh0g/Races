@@ -27,7 +27,9 @@ canvas.height = GAME.height;
 let canvasContext = canvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
-Car.src = '/static//sprites/abm_blue.png';
+
+myCar = 0
+Car.src = '/static/sprites/AY.png';
 
 const carW = 17;
 const carH = 25;
@@ -39,8 +41,8 @@ let xspeed = 0;
 let yspeed = 0; 
 let angle = 0;
 
-let xcanvas = 200;
-let ycanvas = 200;
+let xcanvas = 0;
+let ycanvas = 0;
 
 let wasd = { 
     w: 0, 
@@ -65,6 +67,39 @@ let startingTile = 1;
 
 let startX = 0;
 let startY = 0;
+
+let amountOfPlayers = 0;
+
+let cars = [
+    {
+    Name: null,
+    Img: null,
+    X: null,
+    Y: null,
+    Angle: null,
+    },
+    {
+    Name: null,
+    Img: null,
+    X: null,
+    Y: null,
+    Angle: null,
+    },
+    {
+    Name: null,
+    Img: null,
+    X: null,
+    Y: null,
+    Angle: null,
+    },
+    {
+    Name: null,
+    Img: null,
+    X: null,
+    Y: null,
+    Angle: null,
+    },
+]
 
 function drawFrame() {
     onCanvasKey();
@@ -118,11 +153,17 @@ function drawCar(image, x, y) {
     canvasContext.translate(-xcanvas, -ycanvas);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     // кажись сдесь можно впихнуть отрисовку других машин
-    canvasContext.translate(startX+50, startY+5+carW/2+40);
-    canvasContext.rotate(-Math.PI/2);
-    canvasContext.drawImage(image, x, y, carW, carH);
-    canvasContext.rotate(+Math.PI/2);
-    canvasContext.translate(-(startX+50), -(startY+5+carW/2+40));
+    for (let i = 0; i < amountOfPlayers; i++) {
+        if (i != myCar) {
+            canvasContext.translate(cars[i].X, cars[i].Y);
+            canvasContext.rotate(-cars[i].Angle);
+            Car.src = cars[i].Img;
+            canvasContext.drawImage(image, x, y, carW, carH);
+            Car.src = cars[myCar].Img;
+            canvasContext.rotate(cars[i].Angle);
+            canvasContext.translate(-cars[i].X, -cars[i].Y);
+        }
+    }
     // конец впихивания
     canvasContext.translate(xcanvas, ycanvas);
     canvasContext.rotate(-angle);
@@ -427,18 +468,33 @@ function getTiles() {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/getKey');
     xhr.addEventListener('load', () => {
-        mapping = xhr.responseText.slice(11, -2);
+        console.log(xhr.responseText);
+        info = JSON.parse(xhr.responseText);
+        console.log(info);
+        myCar=info.InSessionId;
+        mapping = info.MapKey;
         console.log(mapping);
         tiles = mapping.split(' ');
         console.log(tiles);
+        amountOfPlayers = info.Cars.length;
+        console.log(amountOfPlayers);
         isLoaded = true;
         findStartTile();
-        console.log(startingTile);
         startY = divme(startingTile, 15) * 96;
         startX = (startingTile % 15) * 96;
+        for (let i = 0; i < amountOfPlayers; i++) {
+            cars[i].Name = info.Nicknames[i];
+            cars[i].Img = '/static/sprites/' + info.Cars[i].split('/')[0] + '.png';
+            console.log(cars[i].Img);
+            cars[i].X = startX+50;
+            cars[i].Y = startY+5+carW/2+23*i;
+            cars[i].Angle = (Math.PI / 2);
+        }
+
+        console.log(startingTile);
         console.log(startX, startY);
-        xcanvas = startX;
-        ycanvas = startY;
+        xcanvas = startX+50;
+        ycanvas = startY+13.5;
         prepareCanvas();
         initEventsListeners();
         scrollToCenter();
