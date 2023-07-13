@@ -5,8 +5,8 @@ document.getElementById("CreateLobby").addEventListener("click", function() {
     xhr.send();
     
     xhr.addEventListener("load", () =>{
-        console.log(xhr.responseText.substring(12, 18))
+        console.log(xhr.responseText.split('"')[1])
         window.localStorage.setItem("lobbyID", xhr.responseText.substring(12, 18))
-        window.location.href = "/lobby/" + xhr.responseText.substring(12, 17)
-    })
+        window.location.href = "/lobby/" + xhr.responseText.split('"')[3]
+    });
 });
