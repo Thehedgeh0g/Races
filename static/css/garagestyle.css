@@ -289,17 +289,19 @@
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    padding: 2%;
 }
 
 .style-field-car{
-    width: 5vw;
+    width: 4vw;
+    height: 12vh;
     margin-top: 1vh;
     margin-left: 3vw;
 }
 
 .style-field-button{
     box-sizing: border-box;
-    width: 12vw;
+    width: 10vw;
     height: 8vh;
     border-radius: 0;
     border-width:  6px;

@@ -16,7 +16,7 @@ let rspeed = 0.03;
 let mspeed = mcarspeed;
 let accel = mspeed / 160;
 let resist = accel / 4;
-const pi1 = Math.PI
+const pi1 = Math.PI;
 const pi2 = 1/2;
 const ga = 0.1;
 const gs = mspeed/5;
@@ -106,12 +106,14 @@ let cars = [
 ]
 
 function drawFrame() {
+    setTimeout( () => {
     onCanvasKey();
     UpdatePosition();
-
     drawCar(Car, CarPosX, CarPosY); 
-    framesCountHandler(); 
-    requestAnimationFrame(drawFrame);
+    //framesCountHandler(); 
+    requestAnimationFrame(drawFrame);}
+    , 16)
+
 }
 
 function UpdatePosition() {
@@ -288,10 +290,12 @@ function onCanvasKey() {
     if ((wasd.d == 1) && (speed > 0)) { 
         if (speed >= pi1) {
             angle -= rspeed; 
-            canvasContext.rotate(rspeed);          
+            canvasContext.rotate(rspeed);
+            console.log(-rspeed);   
         } else {
-            angle -= rspeed * Math.sin(pi2 * speed); 
-            canvasContext.rotate(rspeed * Math.sin(pi2 * speed));
+            angle -= rspeed * Math.sin(speed/2); 
+            canvasContext.rotate(rspeed * Math.sin(speed/2));
+            console.log(-rspeed * Math.sin(speed/2)); 
         } 
         if (speed > 0) {
             speed -= resist;
@@ -306,16 +310,26 @@ function onCanvasKey() {
     if ((wasd.a == 1) && (speed > 0)) { 
         if (speed >= pi1) {
             angle += rspeed; 
-            canvasContext.rotate(-rspeed);        
+            canvasContext.rotate(-rspeed); 
+            console.log(rspeed);        
         } else {
-            angle += rspeed * Math.sin(pi2 * speed); 
-            canvasContext.rotate(-rspeed * Math.sin(pi2 * speed));
+            angle += rspeed * Math.sin(speed/2); 
+            canvasContext.rotate(-rspeed * Math.sin(speed/2));
+            console.log(rspeed * Math.sin(speed/2)); 
         }
         if (speed > 0) {
-            speed -= resist;
+            if ((speed - resist) > 0){
+                speed -= resist; 
+            } else {
+                speed = 0;
+            }
         }
         if (speed < 0) {
-            speed += resist;
+            if ((speed + resist) < 0){
+                speed += resist; 
+            } else {
+                speed = 0;
+            }
         }
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
@@ -323,16 +337,26 @@ function onCanvasKey() {
     if ((wasd.d == 1) && (speed < 0)) { 
         if (speed <= -pi1) {
             angle += rspeed; 
-            canvasContext.rotate(-rspeed);          
+            canvasContext.rotate(-rspeed);
+            console.log(rspeed);          
         } else {
-            angle += rspeed * Math.sin(-pi2 * speed); 
-            canvasContext.rotate(-rspeed * Math.sin(-pi2 * speed)); 
+            angle += rspeed * Math.sin(-speed/2); 
+            canvasContext.rotate(-rspeed * Math.sin(-speed/2));
+            console.log(rspeed * Math.sin(speed/2)); 
         }
         if (speed > 0) {
-            speed -= resist;
+            if ((speed - resist) > 0){
+                speed -= resist; 
+            } else {
+                speed = 0;
+            }
         }
         if (speed < 0) {
-            speed += resist;
+            if ((speed + resist) < 0){
+                speed += resist; 
+            } else {
+                speed = 0;
+            }
         }
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
@@ -341,10 +365,12 @@ function onCanvasKey() {
     if ((wasd.a == 1) && (speed < 0)) { 
         if (speed <= -pi1) {
             angle -= rspeed; 
-            canvasContext.rotate(rspeed);          
+            canvasContext.rotate(rspeed);
+            console.log(-rspeed);          
         } else {
-            angle -= rspeed * Math.sin(-pi2 * speed); 
-            canvasContext.rotate(rspeed * Math.sin(-pi2 * speed)); 
+            angle -= rspeed * Math.sin(-speed/2); 
+            canvasContext.rotate(rspeed * Math.sin(-speed/2));
+            console.log(-rspeed * Math.sin(speed/2)); 
         }
         if (speed > 0) {
             speed -= resist;
@@ -370,7 +396,7 @@ function onCanvasKeyUp(event) {
     if (event.code === 'KeyD') { 
         wasd.d = 0; 
     } 
-    onCanvasKey(); 
+    //onCanvasKey(); 
 } 
  
 function onCanvasKeyDown(event) {
@@ -386,7 +412,7 @@ function onCanvasKeyDown(event) {
     if (event.code === 'KeyD') { 
         wasd.d = 1; 
     } 
-    onCanvasKey(); 
+    //onCanvasKey(); 
 }
 
 function scrollToCenter() {
@@ -499,7 +525,6 @@ function getTiles() {
         console.log(startingTile);
         console.log(startX, startY);
         xcanvas = startX+50;
-        //ycanvas = startY+13.5;
         ycanvas = startY+5+carW/2+23*info.InSessionId;
         prepareCanvas();
         initEventsListeners();
