@@ -211,58 +211,58 @@ func generateClientID() string {
 }
 
 func verificatePos(posMessage string) string {
-	for {
 
-		// posMessage = "speed angle y0 x0 y1 x1 id"
-		//
+	// posMessage = "speed angle y0 x0 y1 x1 id"
+	//
 
-		// Получаем сообщение из канала broadcast
-		speed := strings.Split(posMessage, " ")[1]
-		angle := strings.Split(posMessage, " ")[2]
-		V, err := strconv.Atoi(speed)
-		if err != nil {
-			log.Println(err)
-		}
-
-		deg, err := strconv.Atoi(angle)
-		if err != nil {
-			log.Println(err)
-		}
-
-		y0 := strings.Split(posMessage, " ")[3]
-		yOld, err := strconv.Atoi(y0)
-		if err != nil {
-			log.Println(err)
-		}
-
-		x0 := strings.Split(posMessage, " ")[4]
-		xOld, err := strconv.Atoi(x0)
-		if err != nil {
-			log.Println(err)
-		}
-
-		y1 := strings.Split(posMessage, " ")[5]
-		yNew, err := strconv.Atoi(y1)
-		if err != nil {
-			log.Println(err)
-		}
-
-		x1 := strings.Split(posMessage, " ")[6]
-		xNew, err := strconv.Atoi(x1)
-		if err != nil {
-			log.Println(err)
-		}
-
-		inSessionId := strings.Split(posMessage, " ")[7]
-
-		xSpeed := math.Sin(float64(deg)) * float64(V)
-		ySpeed := math.Cos(float64(deg)) * float64(V)
-		if (float64(xOld)+xSpeed == float64(xNew)) && (float64(yOld)+ySpeed == float64(yNew)) {
-			posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId
-		}
-		// Отправляем сообщение всем подключенным клиентам
-		return posMessage
+	// Получаем сообщение из канала broadcast
+	speed := strings.Split(posMessage, " ")[2]
+	angle := strings.Split(posMessage, " ")[3]
+	V, err := strconv.ParseFloat(speed, 64)
+	if err != nil {
+		log.Println(err)
 	}
+
+	deg, err := strconv.ParseFloat(angle, 64)
+	if err != nil {
+		log.Println(err)
+	}
+
+	y0 := strings.Split(posMessage, " ")[4]
+	yOld, err := strconv.ParseFloat(y0, 64)
+	if err != nil {
+		log.Println(err)
+	}
+
+	x0 := strings.Split(posMessage, " ")[5]
+	xOld, err := strconv.ParseFloat(x0, 64)
+	if err != nil {
+		log.Println(err)
+	}
+
+	y1 := strings.Split(posMessage, " ")[6]
+	yNew, err := strconv.ParseFloat(y1, 64)
+	if err != nil {
+		log.Println(err)
+	}
+
+	x1 := strings.Split(posMessage, " ")[7]
+	xNew, err := strconv.ParseFloat(x1, 64)
+	if err != nil {
+		log.Println(err)
+	}
+
+	inSessionId := strings.Split(posMessage, " ")[8]
+
+	xSpeed := math.Sin(deg) * V
+	ySpeed := math.Cos(deg) * V
+	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
+		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId
+		log.Println(posMessage)
+	}
+	// Отправляем сообщение всем подключенным клиентам
+	return posMessage
+
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
