@@ -87,7 +87,7 @@ function checkIsValidFriend(userName) {
   xhr.open('POST', "/api/addFriend");
 
   xhr.addEventListener('load', () => {
-    
+    response = JSON.parse(xhr.responseText)
   });
 
 
