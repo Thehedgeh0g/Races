@@ -84,6 +84,14 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			},
 		}
 
+		cookie, err := r.Cookie("authCookieName")
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		r.Header.Add("Cookie", cookie.String())
+		log.Println(cookie)
+
 		conn, err := upgrader.Upgrade(w, r, nil)
 		//log.Println(conn)
 		if err != nil {
@@ -1169,6 +1177,7 @@ func getUserID(db *sqlx.DB, r *http.Request) (string, error) {
 	cookie, err := r.Cookie("authCookieName")
 	if err != nil {
 		if err == http.ErrNoCookie {
+			log.Println("tut")
 			return "", err
 		}
 		return "", err

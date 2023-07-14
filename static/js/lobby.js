@@ -93,7 +93,7 @@ const avatar4 = document.getElementById("avatar4");
 const nickName4 = document.getElementById("nickName4");
 const lvl4 = document.getElementById("lvl4");
 
-var socket = new WebSocket("ws:/localhost:3000/ws");
+var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 
 socket.onmessage = function(event) {
   var message = JSON.parse(event.data);
