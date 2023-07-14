@@ -116,6 +116,8 @@ let x1 = 0;
 
 const mapdot = document.getElementById("mapdot");
 
+let sflag = false;
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
@@ -123,8 +125,10 @@ function drawFrame() {
     drawCar(Car, CarPosX, CarPosY);
     drawMapDot();
     dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
-    var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
-    socket.send(JSON.stringify(message));
+    if (sflag == true) {
+        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
+        socket.send(JSON.stringify(message));
+    }
     requestAnimationFrame(drawFrame);}
     , 16)
 
@@ -592,7 +596,7 @@ socket.onmessage = function(event) {
 };
 
 socket.addEventListener("open", (event) => {
-
+    sflag = true;
     var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
     socket.send(JSON.stringify(message));
 
