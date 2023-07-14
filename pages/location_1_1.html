@@ -17,6 +17,12 @@
     <div id="dial-stand">
         <img src="/static/sprites/dial.png"  id="dial">
     </div>
+    <div id="minimap" class="minimap">
+        <div class="red" id="mapdot" class="mapdot"></div>
+        {{ range .GameArea }}
+            <img class="minitile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
+        {{ end }}
+    </div>
     <div id="move">
         <div class="red" id="r1"></div>
         <div class="red" id="r2"></div>
