@@ -142,6 +142,19 @@
     margin-top: -2vh;
 }
 
+.FutureBrakingGraph{
+    background-color: #c4c4f3b4;
+    width: 1vw;
+    height: 2vh;
+}
+
+.BrakingGraph{
+    background-color: #d4f9bc;
+    width: 1vw;
+    height: 2vh;
+    margin-top: -2vh;
+}
+
 .money{
     box-sizing: border-box;
     border-radius: 0;
