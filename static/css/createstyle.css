@@ -82,6 +82,7 @@
     padding: 10px;
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
 }
 
 .maps {
@@ -165,4 +166,9 @@
 .tile__pic {
     width: 4px;
     height: 4px;
+}
+
+#rounds-span {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
