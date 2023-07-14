@@ -132,7 +132,7 @@ socket.onmessage = function(event) {
 
 socket.addEventListener("open", (event) => {
 
-  var message = window.location.pathname.split('/')[2]
+  var message = window.location.pathname.split('/')[2] + ' reboot'
 
   var data = {
     Message: message
