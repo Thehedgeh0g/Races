@@ -125,6 +125,14 @@ console.log(mapdot)
 
 let sflag = false;
 
+const allTurnTiles = [6 ,7 ,8 ,9 ,13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 26];
+
+let turnTiles = [];
+
+let curRound = 1;
+
+const roundHTML = document.getElementById("round");
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
@@ -266,6 +274,24 @@ function updateReduce() {
     if (isLoaded) {
         curTile = Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
         //console.log(curTile);
+        
+        if (allTurnTiles.includes(Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]))) {
+            turnTiles[(224-(divme(x, 96) + divme(y, 96) * 15))] = curRound;
+            console.log(turnTiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
+        }
+
+        if ((224-(divme(x, 96) + divme(y, 96) * 15)) == startingTile) {
+            let flag = true;
+            for (let i = 0; i < curRound; i++) {
+                if (turnTiles.includes(i)) {
+                    flag = false
+                }
+            }
+            if (flag) {
+                curRound += 1;
+                roundHTML.innerHTML = curRound;
+            }
+        }
         
         if (grassArr.includes(curTile)) {
             //console.log('TRAVA')
@@ -536,6 +562,12 @@ function getTiles() {
         console.log(mapping);
         tiles = mapping.split(' ');
         console.log(tiles);
+        for (let i = 0; i < 225; i++) {
+            if (allTurnTiles.includes(Number(tiles[i]))) {
+                turnTiles[i] = 0
+            }
+        }
+        console.log(turnTiles)
         amountOfPlayers = info.Cars.length;
         console.log(amountOfPlayers);
         isLoaded = true;
