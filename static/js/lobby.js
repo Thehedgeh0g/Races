@@ -3,7 +3,10 @@ const list = document.getElementById('list');
 
 let flag = false;
 
-
+let settingsMail ={
+    MapID : "null",
+    Rounds : "null"
+}
 
 function mapList() {
     if (!flag) {
@@ -57,7 +60,10 @@ xhr1.addEventListener("load", () =>{
             var xhr = new XMLHttpRequest();
            // var lobbyId = response.lobbyId
             xhr.open("POST", "/api/chooseMap");
-            xhr.send(JSON.stringify(id, document.getElementById("rounds").value));
+            settingsMail.MapID = id;
+            settingsMail.Rounds = document.getElementById("rounds").value
+
+            xhr.send(JSON.stringify(settingsMail));
             
             xhr.addEventListener("load", () =>{
                 //console.log(xhr.responseText.substring(12, 18))

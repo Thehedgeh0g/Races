@@ -861,11 +861,13 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			UPDATE
 			  brainless_races.sessions
 			SET
-			  map_id = ?
+			  map_id = ?,
 			  rounds = ?
 			WHERE
 			  session_id = ?    
 		`
+		log.Println(lobbyId)
+
 		_, err = db.Exec(query, settings.MapID, settings.CountOfRounds, lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
