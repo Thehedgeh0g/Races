@@ -687,7 +687,7 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 				//log.Println(player.Level)
 			} else {
-				player.ImgPath = "../static/sprites/ava.png"
+				player.ImgPath = "../static/sprites/plug.png"
 				player.Nickname = "Empty"
 				player.Level = "0"
 			}
