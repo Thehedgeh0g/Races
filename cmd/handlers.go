@@ -20,6 +20,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type LobbySettings struct {
+	MapID         string `json:"MapID"`
+	CountOfRounds string `json:"CountOfRounds"`
+}
+
 type UserRequest struct {
 	Email    string `json:"Email"`
 	Password string `json:"Password"`
@@ -843,26 +848,25 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
-		var mapID string
+		var settings LobbySettings
 
-		err = json.Unmarshal(reqData, &mapID)
+		err = json.Unmarshal(reqData, &settings)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		log.Println(mapID)
-
 		query := `
 			UPDATE
 			  brainless_races.sessions
 			SET
 			  map_id = ?
+			  rounds = ?
 			WHERE
 			  session_id = ?    
 		`
-		_, err = db.Exec(query, mapID, lobbyId)
+		_, err = db.Exec(query, settings.MapID, settings.CountOfRounds, lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
