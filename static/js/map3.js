@@ -559,7 +559,7 @@ function getTiles() {
         mrspeed = info.Cars[myCar].split('/')[3] * 0.006
         rspeed = mrspeed;
         console.log(mcarspeed, mrspeed);
-        Rounds.innerHTML = curRound + "/" + maxRounds;
+        roundHTML.innerHTML = curRound + "/" + maxRounds;
 
         mapping = info.MapKey;
         console.log(mapping);
