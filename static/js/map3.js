@@ -131,6 +131,8 @@ let turnTiles = [];
 
 let curRound = 1;
 
+let maxRounds = 999;
+
 const roundHTML = document.getElementById("round");
 
 function drawFrame() {
@@ -289,7 +291,7 @@ function updateReduce() {
             }
             if (flag) {
                 curRound += 1;
-                roundHTML.innerHTML = curRound;
+                roundHTML.innerHTML = curRound + "/" + maxRounds;
             }
         }
         
@@ -551,12 +553,13 @@ function getTiles() {
         console.log(xhr.responseText);
         info = JSON.parse(xhr.responseText);
         console.log(info);
+        maxRounds = info.Rounds;
         myCar=info.InSessionId;
         mcarspeed = info.Cars[myCar].split('/')[1];
         mrspeed = info.Cars[myCar].split('/')[3] * 0.006
         rspeed = mrspeed;
         console.log(mcarspeed, mrspeed);
-
+        Rounds.innerHTML = curRound + "/" + maxRounds;
 
         mapping = info.MapKey;
         console.log(mapping);
