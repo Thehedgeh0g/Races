@@ -130,7 +130,7 @@ func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
 			removeConnectionFromGroups(conn)
 			return
 		}
-		message = "reboot"
+		
 		log.Printf("Received message from client %s: %s", clientID, message)
 
 		// Определение группы клиента

@@ -60,10 +60,10 @@ xhr1.addEventListener("load", () =>{
             xhr.send(JSON.stringify(id));
             
             xhr.addEventListener("load", () =>{
-                console.log(xhr.responseText.substring(12, 18))
+                //console.log(xhr.responseText.substring(12, 18))
         
                 var message = window.location.pathname.split('/')[2] + ' start'
-        
+                console.log(message)
                 var data = {
                   Message: message
                 };
