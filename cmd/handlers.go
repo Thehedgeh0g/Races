@@ -26,7 +26,7 @@ type UserRequest struct {
 }
 
 type FriendRequest struct {
-	Nickname string `db:"nickname"`
+	Nick string `json:"Nick"`
 }
 
 type Userdata struct {
@@ -1494,14 +1494,14 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
+		log.Println(reqData)
 		err = json.Unmarshal(reqData, &req)
 		if err != nil {
 			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+			log.Println(err.Error(), "tut")
 			return
 		}
-
+		log.Println(req)
 		isFound := false
 
 		friendID, err := getUserByNick(db, req)
@@ -1525,21 +1525,32 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
-				return
+				isFound = false
 			}
 
-			IDstr += " " + friendID.UserId
+			inFriends := false
 
-			stmt := `UPDATE users SET friends = ? WHERE user_id = ?`
+			for _, id := range strings.Split(IDstr, " ") {
+				if id == friendID {
+					inFriends = true
+				}
+			}
+			if !inFriends {
+				IDstr += " " + friendID
 
-			_, err = db.Exec(stmt, IDstr, userID)
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err)
-				return
+				stmt := `UPDATE users SET friends = ? WHERE user_id = ?`
+
+				_, err = db.Exec(stmt, IDstr, userID)
+				if err != nil {
+					http.Error(w, "Error", 500)
+					log.Println(err)
+					isFound = false
+				}
+
+			} else {
+				isFound = false
 			}
 
-			return
 		}
 		response := struct {
 			IsFound bool `json:"IsFound"`
@@ -1560,7 +1571,7 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getUserByNick(db *sqlx.DB, req FriendRequest) (*Userdata, error) {
+func getUserByNick(db *sqlx.DB, req FriendRequest) (string, error) {
 	const query = `
 	SELECT
 	  user_id
@@ -1569,13 +1580,14 @@ func getUserByNick(db *sqlx.DB, req FriendRequest) (*Userdata, error) {
   	WHERE
 	  nickname = ?
 	`
-	row := db.QueryRow(query, req.Nickname)
-	user := new(Userdata)
-	err := row.Scan(&user.UserId, &user.Email, &user.Password)
-	log.Println(user)
+	row := db.QueryRow(query, req.Nick)
+	log.Println(row)
+	var ID string
+	err := row.Scan(&ID)
+	//log.Println(ID)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	log.Println(user.UserId)
-	return user, nil
+	log.Println(ID)
+	return ID, nil
 }

@@ -8,6 +8,11 @@ const addFriends = document.getElementById("AddFriend");
 const closeButton = document.getElementById("CloseButton");
 const addFriendInput = document.getElementById("AddFriendInput");
 
+let user = {
+  "Nick": null
+}
+
+
 friendsListToggler.addEventListener("click", function() {
   if (friendsData.style.display === "none" || friendsData.style.display === "") {
     
@@ -76,25 +81,31 @@ searchFriendButton.addEventListener("click", addFriendInputSubmit);
 
 function addFriendInputSubmit(event) {
 
-  let nickInput = addFriendInput.value;
   event.preventDefault();
-  const nick = JSON.stringify(nickInput);
-  checkIsValidFriend(nick);
+  
+  checkIsValidFriend(addFriendInput.value);
 }
 
 function checkIsValidFriend(userName) {
+  user.Nick = userName
   const xhr = new XMLHttpRequest();
+  
   xhr.open('POST', "/api/addFriend");
-
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
+    if (response.IsFound == true){
+      window.location.reload()
+    }
+    console.log(response)
   });
 
 
   xhr.addEventListener('error', () => {
     console.log('error');
   });
-
-  xhr.send(userName);
+  console.log(user)
+  console.log(JSON.stringify(user))
+  xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+  xhr.send(JSON.stringify(user));
 }
 
