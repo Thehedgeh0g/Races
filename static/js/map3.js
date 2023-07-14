@@ -122,10 +122,11 @@ function drawFrame() {
     UpdatePosition();
     drawCar(Car, CarPosX, CarPosY); 
     dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
-    if (sflag) {
+    //if (sflag) {
         var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
         socket.send(JSON.stringify(message));
-    }
+        console.log(message)
+    //}
     requestAnimationFrame(drawFrame);}
     , 16)
 
@@ -586,10 +587,12 @@ getTiles();
 var socket = new WebSocket("ws:/localhost:3000/ws");
 
 socket.onmessage = function(event) {
-  var message = JSON.parse(event.data);
-  console.log(message)
-
-
+    var message = JSON.parse(event.data);
+    console.log(message)
+    let go = message.split(' ')
+    cars[go[3]].X = go[0];
+    cars[go[3]].Y = go[1];
+    cars[go[3]].Angle = go[2];
 
 };
 
