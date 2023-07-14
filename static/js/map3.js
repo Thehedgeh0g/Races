@@ -51,6 +51,9 @@ let wasd = {
     s: 0, 
     d: 0, 
 }
+
+const dial = document.getElementById('dial');
+
 const r1 = document.getElementById('r1');
 const r2 = document.getElementById('r2');
 const r3 = document.getElementById('r3');
@@ -111,7 +114,7 @@ function drawFrame() {
     onCanvasKey();
     UpdatePosition();
     drawCar(Car, CarPosX, CarPosY); 
-    //framesCountHandler(); 
+    dial.style.transform = "rotate(" + speed *18 + "deg)";
     requestAnimationFrame(drawFrame);}
     , 16)
 
@@ -147,13 +150,6 @@ function initEventsListeners() {
     window.addEventListener('keydown', onCanvasKeyDown); 
     window.addEventListener('keyup', onCanvasKeyUp); 
 }
-
-function framesCountHandler() { 
-    if (GAME.framesCnt === 120) { 
-        GAME.framesCnt = 0; 
-    } 
-    ++GAME.framesCnt; 
-} 
 
 function drawCar(image, x, y) { 
     canvasContext.rotate(angle);

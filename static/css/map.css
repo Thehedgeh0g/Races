@@ -64,3 +64,21 @@
     top: 0px;
     left: 0px;
 }
+
+#dial-stand {
+    position: fixed;
+    height: 50px;
+    width: 50px;
+    bottom: 0px;
+    background-size: contain;
+    background-image: url("/static/sprites/dial-stand.png");
+}
+
+#dial {
+    position: absolute;
+    height: 2px;
+    width: 30px;
+    bottom: 18%;
+    left: 20%;
+    transform: rotate(0deg);
+}
