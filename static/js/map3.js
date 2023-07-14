@@ -140,10 +140,12 @@ function drawFrame() {
 }
 
 function drawMapDots() {
-    for (let i = 0; i < amountOfPlayers; i++) {
-        mapdot[i].style.display = "block";
-        mapdot.style.top = cars[i].Y / 19.2 + "px";
-        mapdot.style.left = cars[i].X / 19.2 + "px";
+    if (sflag) {
+        for (let i = 0; i < amountOfPlayers; i++) {
+            mapdot[i].style.display = "block";
+            mapdot.style.top = cars[i].Y / 19.2 + "px";
+            mapdot.style.left = cars[i].X / 19.2 + "px";
+        }
     }
 }
 
