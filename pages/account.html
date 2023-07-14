@@ -30,22 +30,22 @@
     
     <div class="data-box">
         <div class="player-list">
-            <div class="account-data" >
-                <span class="player-list__naming">NickName</span>
-                <span class="player-list__data" id="NickName">{{}}</span>
-            </div>
-            <div class="account-data">
-                <span class="player-list__naming">Avatar</span>
-                <img id="AvatarPhoto" src="{{}}" alt="" width="130px" height="115px">
-            </div>
-            <div class="account-data">
-                <span class="player-list__naming">Level</span>
-                <span class="player-list__data" id="Level">{{}}</span>
-            </div>
-            <div class="account-data">
-                <span class="player-list__naming">Killed bosses</span>
-                <span class="player-list__data" id="KilledBosses">{{}}</span>
-            </div>
+                <div class="account-data">
+                    <span class="player-list__naming">NickName</span>
+                    <span class="player-list__data" id="NickName">{{ .Nickname }}</span>
+                </div>
+                <div class="account-data">
+                    <span class="player-list__naming">Avatar</span>
+                    <img id="AvatarPhoto" src="{{ .ImgPath }}" alt="" width="130px" height="115px">
+                </div>
+                <div class="account-data">
+                    <span class="player-list__naming">Level</span>
+                    <span class="player-list__data" id="Level">{{ .Lvl }}</span>
+                </div>
+                <div class="account-data">
+                    <span class="player-list__naming">Killed bosses</span>
+                    <span class="player-list__data" id="KilledBosses">{{ .Bosses }}</span>
+                </div>
         </div>
 
         <div class="friends-list" id="ListOfFriends">
@@ -54,12 +54,14 @@
                     <img class="friends-list__toggler" id="FriendsListToggler" src="../static/account-images/toggle2.png" alt="" width="38px" height="38px">
                     <span class="friends-list__naming">Friends</span>
                 </div>
-                <span class="friends-list__data" id="FriendsCounter">{{}}</span>
+                <span class="friends-list__data" id="FriendsCounter">,.tr</span>
             </div>
             <div class="friends-data">
-                <ul>
-                    <li class="elstyle">{{}}</li>
-                </ul>
+                {{ range .Friends }}
+                    <ul>
+                        <li class="elstyle">{{ .Nickname }}</li>
+                    </ul>
+                {{ end}}   
             </div>
             <div class="add-friends" id="AddFriend">
                 <img src="../static/account-images/plus6.png" alt="" width="40px" height="40px">

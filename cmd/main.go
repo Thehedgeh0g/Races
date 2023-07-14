@@ -34,6 +34,7 @@ func main() {
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
 
+	mux.HandleFunc("/api/addFriend", addFriend(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getHost", hostCheck(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/getPlayers", sendPlayers(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/getLobbyID", sendLobbyID(dbx)).Methods(http.MethodGet)
