@@ -114,7 +114,12 @@ let x0 = 0;
 let y1 = 0;
 let x1 = 0;
 
-const mapdot = document.getElementById("mapdot");
+const mapdot = [];
+
+mapdot[0] = document.getElementById("mapdot0");
+mapdot[1]= document.getElementById("mapdot1");
+mapdot[2] = document.getElementById("mapdot2");
+mapdot[3] = document.getElementById("mapdot3");
 
 let sflag = false;
 
@@ -123,7 +128,7 @@ function drawFrame() {
     onCanvasKey();
     UpdatePosition();
     drawCar(Car, CarPosX, CarPosY);
-    drawMapDot();
+    drawMapDots();
     dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
     if (sflag == true) {
         var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
@@ -134,9 +139,12 @@ function drawFrame() {
 
 }
 
-function drawMapDot() {
-    mapdot.style.top = ycanvas / 19.2 + "px";
-    mapdot.style.left = xcanvas / 19.2 + "px";
+function drawMapDots() {
+    for (let i = 0; i < amountOfPlayers; i++) {
+        mapdot[i].style.display = "block";
+        mapdot.style.top = cars[i].Y / 19.2 + "px";
+        mapdot.style.left = cars[i].X / 19.2 + "px";
+    }
 }
 
 function UpdatePosition() {
