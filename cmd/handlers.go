@@ -68,6 +68,25 @@ type Player struct {
 	Level    string `db:"exp"`
 }
 
+type AccountPlayer struct {
+	ImgPath  string `db:"avatar"`
+	Nickname string `db:"nickname"`
+	Lvl      string `db:"exp"`
+	Bosses   string ` db:"boss_count"`
+}
+
+type AccountData struct {
+	ImgPath  string `db:"avatar"`
+	Nickname string `db:"nickname"`
+	Lvl      string `db:"exp"`
+	Bosses   string ` db:"boss_count"`
+	Friends  []*FriendsData
+}
+
+type FriendsData struct {
+	Nickname string `db:"nickname"`
+}
+
 var connMutex sync.Mutex
 
 var connections = make(map[*websocket.Conn]string)
@@ -210,6 +229,14 @@ func removeConnectionFromGroups(conn *websocket.Conn) {
 				break
 			}
 		}
+		deleteGroup(group)
+	}
+
+}
+
+func deleteGroup(groupID string) {
+	if groups[groupID] == nil {
+		delete(groups, groupID)
 	}
 }
 
@@ -308,6 +335,138 @@ func menu(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		return
 	}
+}
+
+func accountData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ts, err := template.ParseFiles("pages/account.html")
+		if err != nil {
+			http.Error(w, "Internal Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		playerID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		player, err := getPlayerData(db, playerID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		friendList, err := getFriends(db, playerID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		data := AccountData{
+			ImgPath:  player[0],
+			Nickname: player[1],
+			Lvl:      player[2],
+			Bosses:   player[3],
+			Friends:  friendList,
+		}
+
+		err = ts.Execute(w, data)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+	}
+}
+
+func getPlayerData(db *sqlx.DB, playerID string) ([4]string, error) {
+	const query = `
+		SELECT
+		  avatar,
+		  nickname,
+		  exp,
+		  boss_count 
+		FROM
+		  users
+		WHERE
+		  user_id = ?    
+	`
+
+	row := db.QueryRow(query, playerID)
+	log.Println(playerID)
+	var player [4]string
+	err := row.Scan(&player[0], &player[1], &player[2], &player[3])
+	log.Println(player)
+	if err != nil {
+		log.Println(err.Error())
+		return player, err
+	}
+
+	lvl, err := strconv.Atoi(player[3])
+	if err != nil {
+		log.Println(err)
+		return player, err
+	}
+	player[3] = strconv.Itoa(lvl / 100)
+
+	return player, nil
+
+}
+
+func getFriends(db *sqlx.DB, playerID string) ([]*FriendsData, error) {
+	var query = `
+		SELECT
+		  friends
+		FROM
+		  users
+		WHERE
+		  user_id = ?    
+	`
+
+	row := db.QueryRow(query, playerID)
+	var IDstr string
+	err := row.Scan(&IDstr)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+
+	IDs := strings.Split(IDstr, " ")
+
+	var nicks []*FriendsData
+	for _, id := range IDs {
+		if id != "0" {
+			var nick FriendsData
+			query = `
+			SELECT
+			  nickname
+			FROM
+			  users
+			WHERE
+			  user_id = ?    
+		`
+
+			row := db.QueryRow(query, id)
+			err = row.Scan(&nick.Nickname)
+
+			if err != nil {
+				log.Println(err.Error())
+				return nil, err
+			}
+
+			nicks = append(nicks, &nick)
+			log.Println(nicks)
+		}
+
+	}
+
+	return nicks, nil
+
 }
 
 func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
