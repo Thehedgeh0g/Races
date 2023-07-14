@@ -57,7 +57,7 @@ xhr1.addEventListener("load", () =>{
             var xhr = new XMLHttpRequest();
            // var lobbyId = response.lobbyId
             xhr.open("POST", "/api/chooseMap");
-            xhr.send(JSON.stringify(id));
+            xhr.send(JSON.stringify(id, document.getElementById("rounds").value));
             
             xhr.addEventListener("load", () =>{
                 //console.log(xhr.responseText.substring(12, 18))
