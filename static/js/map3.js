@@ -109,12 +109,23 @@ let cars = [
     },
 ]
 
+let y0 = 0;
+let x0 = 0;
+let y1 = 0;
+let x1 = 0;
+
+sflag=false;
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
     UpdatePosition();
     drawCar(Car, CarPosX, CarPosY); 
-    dial.style.transform = "rotate(" + speed *18 + "deg)";
+    dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
+    if (sflag) {
+        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
+        socket.send(JSON.stringify(message));
+    }
     requestAnimationFrame(drawFrame);}
     , 16)
 
@@ -141,9 +152,14 @@ function UpdatePosition() {
 
     displayDots();
 
+    y0 = xcanvas;
+    x0 = ycanvas;
+    
     xcanvas += xspeed;
     ycanvas += yspeed;
 
+    y1 = xcanvas;
+    x1 = ycanvas;
 } 
 
 function initEventsListeners() { 
@@ -551,3 +567,37 @@ function findStartTile() {
 }
 
 getTiles();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var socket = new WebSocket("ws:/localhost:3000/ws");
+
+socket.onmessage = function(event) {
+  var message = JSON.parse(event.data);
+  console.log(message)
+
+
+
+};
+
+socket.addEventListener("open", (event) => {
+
+    sflag = true;
+    var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
+    socket.send(JSON.stringify(message));
+
+});
+
