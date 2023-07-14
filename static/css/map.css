@@ -82,3 +82,25 @@
     left: 20%;
     transform: rotate(0deg);
 }
+
+.minitile__pic {
+    width: 5px;
+    height: 5px;
+}
+
+.minimap {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    display: grid;
+    grid-template-columns: repeat(15, 5px);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    z-index: 1;
+}
+
+.mapdot {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
