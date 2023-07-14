@@ -30,6 +30,7 @@ func main() {
 	mux.HandleFunc("/menu", menu)
 	mux.HandleFunc("/lobby/{lobbyID}", lobbyCreation(dbx))
 	mux.HandleFunc("/race/{lobbyID}", gameArea(dbx))
+	mux.HandleFunc("/account", accountData(dbx))
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
 

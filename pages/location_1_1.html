@@ -18,10 +18,10 @@
         <img src="/static/sprites/dial.png"  id="dial">
     </div>
     <div id="minimap" class="minimap">
-        <div class="red" id="mapdot0" class="mapdot"></div>
-        <div class="red" id="mapdot1" class="mapdot"></div>
-        <div class="red" id="mapdot2" class="mapdot"></div>
-        <div class="red" id="mapdot3" class="mapdot"></div>
+        <div class="red mapdot" id="mapdot0"></div>
+        <div class="red mapdot" id="mapdot1"></div>
+        <div class="red mapdot" id="mapdot2"></div>
+        <div class="red mapdot" id="mapdot3"></div>
         {{ range .GameArea }}
             <img class="minitile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
         {{ end }}

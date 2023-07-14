@@ -121,6 +121,8 @@ mapdot[1]= document.getElementById("mapdot1");
 mapdot[2] = document.getElementById("mapdot2");
 mapdot[3] = document.getElementById("mapdot3");
 
+console.log(mapdot)
+
 let sflag = false;
 
 function drawFrame() {
@@ -143,8 +145,11 @@ function drawMapDots() {
     if (sflag) {
         for (let i = 0; i < amountOfPlayers; i++) {
             mapdot[i].style.display = "block";
-            mapdot.style.top = cars[i].Y / 19.2 + "px";
-            mapdot.style.left = cars[i].X / 19.2 + "px";
+            if (i == myCar) {
+                mapdot[i].style.backgroundColor = "white";
+            }
+            mapdot[i].style.top = cars[i].Y / 19.2 + "px";
+            mapdot[i].style.left = cars[i].X / 19.2 + "px";
         }
     }
 }
