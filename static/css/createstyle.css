@@ -172,3 +172,17 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+#rounds {
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffe6bf;
+    font-family: 'Press Start 2P';
+    color: #ffc30e;
+    font-size: 30px;
+    height: 40px;
+    padding-left: 10px;
+    outline: none;
+}
