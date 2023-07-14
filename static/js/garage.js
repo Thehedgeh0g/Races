@@ -62,9 +62,11 @@ let GarageCars = [
     stock: 0,
   },
 ];
+
 var GarageCarsCount = 0;
 var carArrowCnt = 0;
 GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+var TuningCar = GarageCars[carArrowCnt];
 
 const tuningPurchase = document.getElementById("tuningPurchase");
 
@@ -109,7 +111,7 @@ breaksArrowRight.addEventListener("click", breaksInc);
 suspensionArrowLeft.addEventListener("click", suspensionDec);
 suspensionArrowRight.addEventListener("click", suspensionInc);
 
-tuningPurchase.addEventListener("click", ShowPurchase);
+tuningPurchase.addEventListener("click", AcceptPurchase);
 
 carArrowLeft.addEventListener("click", GarageCarDec);
 carArrowRight.addEventListener("click", GarageCarInc);
@@ -182,7 +184,8 @@ function replaceCar() {
       GarageCars[GarageCarsCount].suspension = 2;
       ACarField.textContent = 'in garage';
       GarageCars[GarageCarsCount].stock = 1;
-      ShowPurchase();
+      TuningCar = GarageCars[GarageCarsCount];
+      AcceptPurchase();
     }
     if ((this == UCarField) && (GarageCars[1].stock != 2) && (GarageCars[2].stock != 2) && (GarageCars[3].stock != 2)){
       document.getElementById("currentCar").src = document.getElementById('UCar').src;
@@ -195,7 +198,8 @@ function replaceCar() {
       GarageCars[GarageCarsCount].suspension = 3;
       UCarField.textContent = 'in garage';
       GarageCars[GarageCarsCount].stock = 2;
-      ShowPurchase();
+      TuningCar = GarageCars[GarageCarsCount];
+      AcceptPurchase();
     }
     if ((this == BCarField) && (GarageCars[1].stock != 3) && (GarageCars[2].stock != 3) && (GarageCars[3].stock != 3)){
       document.getElementById("currentCar").src = document.getElementById('BCar').src;
@@ -208,7 +212,8 @@ function replaceCar() {
       GarageCars[GarageCarsCount].suspension = 4;
       BCarField.textContent = 'in garage';
       GarageCars[GarageCarsCount].stock = 3;
-      ShowPurchase();
+      TuningCar = GarageCars[GarageCarsCount];
+      AcceptPurchase();
     }
 
   }
@@ -235,66 +240,68 @@ function replaceCar() {
 }
 
 function engineDec() {
-  if (GarageCars[carArrowCnt].engine > 1){
-    document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].engine - 1);
-    document.querySelector(".FutureAccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine - 1) + "vw";
-    GarageCars[carArrowCnt].engine -= 1;
+  if (TuningCar.engine > 1){
+    document.getElementById("engineCnt").innerHTML = String(TuningCar.engine - 1);
+    document.querySelector(".FutureAccelerationGraph").style.width =  String(TuningCar.engine - 1) + "vw";
+    TuningCar.engine -= 1;
   }
 }
 
 function engineInc() {
-  if (GarageCars[carArrowCnt].engine < 10){
-    document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].engine + 1);
-    document.querySelector(".FutureAccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine + 1) + "vw";
-    GarageCars[carArrowCnt].engine += 1;
+  if (TuningCar.engine < 10){
+    document.getElementById("engineCnt").innerHTML = String(TuningCar.engine + 1);
+    document.querySelector(".FutureAccelerationGraph").style.width =  String(TuningCar.engine + 1) + "vw";
+    TuningCar.engine += 1;
   }
 }
 
 function transmissionDec() {
-  if (GarageCars[carArrowCnt].transmission > 1){
-    document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].transmission - 1);
-    document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission - 1) + "vw";
-    GarageCars[carArrowCnt].transmission -= 1;
+  if (TuningCar.transmission > 1){
+    document.getElementById("transmissionCnt").innerHTML = String(TuningCartransmission - 1);
+    document.querySelector(".FutureMaxSpeedGraph").style.width =  String(TuningCar.transmission - 1) + "vw";
+    TuningCar.transmission -= 1;
   }
 }
 
 function transmissionInc() {
-  if (GarageCars[carArrowCnt].transmission < 10){
-    document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].transmission + 1);
-    document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission + 1) + "vw";
-    GarageCars[carArrowCnt].transmission += 1;
+  if (TuningCar.transmission < 10){
+    document.getElementById("transmissionCnt").innerHTML = String(TuningCar.transmission + 1);
+    document.querySelector(".FutureMaxSpeedGraph").style.width =  String(TuningCar.transmission + 1) + "vw";
+    TuningCar.transmission += 1;
   }
 }
 
 function breaksDec() {
-  if (GarageCars[carArrowCnt].breaks > 1){
-    document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].breaks - 1);
-    document.querySelector(".FutureBrakingGraph").style.width =  String(GarageCars[carArrowCnt].breaks - 1) + "vw";
-    GarageCars[carArrowCnt].breaks -= 1;
+  if (TuningCar.breaks > 1){
+    document.getElementById("breaksCnt").innerHTML = String(TuningCar.breaks - 1);
+    document.querySelector(".FutureBrakingGraph").style.width =  String(TuningCar.breaks - 1) + "vw";
+    TuningCar.breaks -= 1;
   }
 }
 
 function breaksInc() {
-  if (GarageCars[carArrowCnt].breaks < 10){
-    document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].breaks + 1);
-    document.querySelector(".FutureBrakingGraph").style.width =  String(GarageCars[carArrowCnt].breaks + 1) + "vw";
-    GarageCars[carArrowCnt].breaks += 1;
+  if (TuningCar.breaks < 10){
+    document.getElementById("breaksCnt").innerHTML = String(TuningCar.breaks + 1);
+    document.querySelector(".FutureBrakingGraph").style.width =  String(TuningCar.breaks + 1) + "vw";
+    TuningCar.breaks += 1;
   }
 }
 
 function suspensionDec() {
-  if (GarageCars[carArrowCnt].suspension > 1){
-    document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].suspension - 1);
-    document.querySelector(".FutureManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].suspension - 1) + "vw";
-    GarageCars[carArrowCnt].suspension -= 1;
+  if (TuningCar.suspension > 1){
+    document.getElementById("suspensionCnt").innerHTML = String(TuningCar.suspension - 1);
+    document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension - 1) + "vw";
+    TuningCar.suspension -= 1;
+    ShowPurchase();
   }
 }
 
 function suspensionInc() {
   if (GarageCars[carArrowCnt].suspension < 10){
-    document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].suspension + 1);
-    document.querySelector(".FutureManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].suspension + 1) + "vw";
-    GarageCars[carArrowCnt].suspension += 1;
+    document.getElementById("suspensionCnt").innerHTML = String(TuningCar.suspension + 1);
+    document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension + 1) + "vw";
+    TuningCar.suspension += 1;
+    ShowPurchase();
   }
 }
 
@@ -303,7 +310,7 @@ function GarageCarDec() {
     carArrowCnt -= 1;
     document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
     currentStyle();
-    ShowPurchase();
+    ShowPurchaseFututre();
   }
 }
 
@@ -312,15 +319,43 @@ function GarageCarInc() {
     carArrowCnt += 1;
     document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
     currentStyle();
-    ShowPurchase();
+    ShowPurchaseFututre();
   }
+}
+function ShowPurchaseFututre() {
+  
+  document.getElementById("engineCnt").innerHTML = String(TuningCar.engine);
+  document.getElementById("transmissionCnt").innerHTML = String(TuningCar.transmission);
+  document.getElementById("breaksCnt").innerHTML = String(TuningCar.breaks);
+  document.getElementById("suspensionCnt").innerHTML = String(TuningCar.suspension);
+
+  document.querySelector(".FutureMaxSpeedGraph").style.width =  String(TuningCar.transmission) + "vw";
+  document.querySelector(".FutureAccelerationGraph").style.width =  String(TuningCar.engine) + "vw";
+  document.querySelector(".FutureBrakingGraph").style.width =  String(TuningCar.breaks) + "vw";
+  document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension) + "vw";
 }
 function ShowPurchase() {
   document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].engine);
   document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].transmission);
   document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].breaks);
   document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].suspension);
-  
+
+  document.querySelector(".MaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
+  document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
+  document.querySelector(".AccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine) + "vw";
+  document.querySelector(".FutureAccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine) + "vw";
+  document.querySelector(".BrakingGraph").style.width =  String(GarageCars[carArrowCnt].breaks) + "vw";
+  document.querySelector(".FutureBrakingGraph").style.width =  String(GarageCars[carArrowCnt].breaks) + "vw";
+  document.querySelector(".ManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].suspension) + "vw";
+  document.querySelector(".FutureManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].suspension) + "vw";
+}
+
+function AcceptPurchase() {
+  document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].engine);
+  document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].transmission);
+  document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].breaks);
+  document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].suspension);
+
   document.querySelector(".MaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
   document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
   document.querySelector(".AccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine) + "vw";
