@@ -1,7 +1,12 @@
 const friendsListToggler = document.getElementById("FriendsListToggler");
 const friendsData = document.querySelector(".friends-data");
 const friendsListTogglerClassList = document.querySelector(".friends-list__toggler");
+const friendsCounter = document.getElementById("FriendsCounter");
+const addFriendForm = document.getElementById("AddFriendForm");
 const searchFriendButton = document.getElementById("SearchFriendButton");
+const addFriends = document.getElementById("AddFriend");
+const closeButton = document.getElementById("CloseButton");
+const addFriendInput = document.getElementById("AddFriendInput");
 
 friendsListToggler.addEventListener("click", function() {
   if (friendsData.style.display === "none" || friendsData.style.display === "") {
@@ -16,10 +21,14 @@ friendsListToggler.addEventListener("click", function() {
 });
 
 
+// подсчет друзей
+let liElements = friendsData.querySelectorAll('li');
+let countLi = liElements.length;
+friendsCounter.innerHTML = countLi;
+
+
 // добавление друга
 
-const addFriends = document.getElementById("AddFriend");
-const closeButton = document.getElementById("CloseButton");
 
 addFriends.addEventListener("click", showAddFriendBox);
 
@@ -55,3 +64,37 @@ function returnBorderColor() {
 
 searchFriendButton.addEventListener("mouseover", changeBorderColor);
 searchFriendButton.addEventListener("mouseout", returnBorderColor);
+
+
+
+// отправка NickName на сервер
+
+
+
+addFriendForm.addEventListener("submit", addFriendInputSubmit);
+searchFriendButton.addEventListener("click", addFriendInputSubmit);
+
+function addFriendInputSubmit(event) {
+
+  let nickInput = addFriendInput.value;
+  event.preventDefault();
+  const nick = JSON.stringify(nickInput);
+  checkIsValidFriend(nick);
+}
+
+function checkIsValidFriend(userName) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', "/api/addFriend");
+
+  xhr.addEventListener('load', () => {
+    response = JSON.parse(xhr.responseText)
+  });
+
+
+  xhr.addEventListener('error', () => {
+    console.log('error');
+  });
+
+  xhr.send(userName);
+}
+

@@ -25,6 +25,10 @@ type UserRequest struct {
 	Password string `json:"Password"`
 }
 
+type FriendRequest struct {
+	Nickname string `db:"nickname"`
+}
+
 type Userdata struct {
 	UserId   string
 	Email    string
@@ -1473,4 +1477,105 @@ func deleteUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+}
+func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		var req FriendRequest
+
+		userID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		err = json.Unmarshal(reqData, &req)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		isFound := false
+
+		friendID, err := getUserByNick(db, req)
+		if err != nil {
+			isFound = false
+		} else {
+			isFound = true
+
+			var query = `
+				SELECT
+				  friends
+				FROM
+				  users
+				WHERE
+				  user_id = ?    
+			`
+
+			row := db.QueryRow(query, userID)
+			var IDstr string
+			err := row.Scan(&IDstr)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
+
+			IDstr += " " + friendID.UserId
+
+			stmt := `UPDATE users SET friends = ? WHERE user_id = ?`
+
+			_, err = db.Exec(stmt, IDstr, userID)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err)
+				return
+			}
+
+			return
+		}
+		response := struct {
+			IsFound bool `json:"IsFound"`
+		}{
+			IsFound: isFound,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+	}
+}
+
+func getUserByNick(db *sqlx.DB, req FriendRequest) (*Userdata, error) {
+	const query = `
+	SELECT
+	  user_id
+  	FROM
+	  users
+  	WHERE
+	  nickname = ?
+	`
+	row := db.QueryRow(query, req.Nickname)
+	user := new(Userdata)
+	err := row.Scan(&user.UserId, &user.Email, &user.Password)
+	log.Println(user)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(user.UserId)
+	return user, nil
 }
