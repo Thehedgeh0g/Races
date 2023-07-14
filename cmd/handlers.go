@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"sync"
 
 	//"math"
 	"net/http"
@@ -67,6 +68,8 @@ type Player struct {
 	Level    string `db:"exp"`
 }
 
+var connMutex sync.Mutex
+
 var connections = make(map[*websocket.Conn]string)
 var groups = make(map[string][]*websocket.Conn)
 
@@ -80,6 +83,14 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				return true
 			},
 		}
+
+		cookie, err := r.Cookie("authCookieName")
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		r.Header.Add("Cookie", cookie.String())
+		log.Println(cookie)
 
 		conn, err := upgrader.Upgrade(w, r, nil)
 		//log.Println(conn)
@@ -130,7 +141,7 @@ func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
 			removeConnectionFromGroups(conn)
 			return
 		}
-		log.Printf("Received message from client %s: %s", clientID, message)
+		log.Printf("Received message from client %s: %s", strings.Split(clientID, " ")[1], message)
 
 		// Определение группы клиента
 		group := determineGroup(clientID, strconv.Itoa(lobbyID))
@@ -139,7 +150,9 @@ func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
 			message = verificatePos(message)
 		}
 		// Отправка сообщения только определенной группе клиентов
+		connMutex.Lock()
 		sendMessageToGroup(message, group)
+		connMutex.Unlock()
 	}
 }
 func sendMessageToGroup(message, group string) {
@@ -258,7 +271,7 @@ func verificatePos(posMessage string) string {
 	ySpeed := math.Cos(deg) * V
 	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
 		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId
-		log.Println(posMessage)
+		//log.Println(posMessage)
 	}
 	// Отправляем сообщение всем подключенным клиентам
 	return posMessage
@@ -1164,6 +1177,7 @@ func getUserID(db *sqlx.DB, r *http.Request) (string, error) {
 	cookie, err := r.Cookie("authCookieName")
 	if err != nil {
 		if err == http.ErrNoCookie {
+			log.Println("tut")
 			return "", err
 		}
 		return "", err
