@@ -54,6 +54,9 @@
     width: 2880px;
     height: 2880px;
     zoom: 500%;
+    font-family: 'Press Start 2P';
+    color: #ffc30e;
+    font-size: 15px;
 }
 
 .red {
@@ -104,4 +107,10 @@
     top: 0px;
     left: 0px;
     display: none;
+}
+
+#round {
+    position: fixed;
+    top: 10px;
+    left: 10px;
 }
