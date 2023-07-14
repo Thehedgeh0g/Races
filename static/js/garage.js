@@ -35,27 +35,31 @@ let GarageCars = [
     engine: 1,
     breaks: 1,
     suspension: 1,
+    stock: 1,
   },
   {
     scr: '',
-    transmission: 2,
-    engine: 2,
-    breaks: 2,
-    suspension: 2,
+    transmission: 1,
+    engine: 1,
+    breaks: 1,
+    suspension: 1,
+    stock: 0,
   },
   {
     scr: '',
-    transmission: 3,
-    engine: 3,
-    breaks: 3,
-    suspension: 3,
+    transmission: 1,
+    engine: 1,
+    breaks: 1,
+    suspension: 1,
+    stock: 0,
   },
   {
     scr: '',
-    transmission: 4,
-    engine: 4,
-    breaks: 4,
-    suspension: 4,
+    transmission: 1,
+    engine: 1,
+    breaks: 1,
+    suspension: 1,
+    stock: 0,
   },
 ];
 var GarageCarsCount = 0;
@@ -166,36 +170,48 @@ function currentStyle() {
   }
 }
 function replaceCar() {
-  if (this == JCarField){
-    document.getElementById("currentCar").src = document.getElementById('JCar').src;
-    GarageCarsCount += 1;
-    carArrowCnt = GarageCarsCount;
-    GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
-    ShowPurchase();
-  }
-  if (this == ACarField){
-    document.getElementById("currentCar").src = document.getElementById('ACar').src;
-    GarageCarsCount += 1;
-    carArrowCnt = GarageCarsCount;
-    GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
-    ShowPurchase();
-  }
-  if (this == UCarField){
-    document.getElementById("currentCar").src = document.getElementById('UCar').src;
-    GarageCarsCount += 1;
-    carArrowCnt = GarageCarsCount;
-    GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
-    ShowPurchase();
-  }
-  if (this == BCarField){
-    document.getElementById("currentCar").src = document.getElementById('BCar').src;
-    GarageCarsCount += 1;
-    carArrowCnt = GarageCarsCount;
-    GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
-    ShowPurchase();
-  }
+  if (GarageCarsCount < 3){
+    if ((this == ACarField) && (GarageCars[1].stock != 1) && (GarageCars[2].stock != 1) && (GarageCars[3].stock != 1)){
+      document.getElementById("currentCar").src = document.getElementById('ACar').src;
+      GarageCarsCount += 1;
+      carArrowCnt = GarageCarsCount;
+      GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
+      GarageCars[GarageCarsCount].transmission = 2;
+      GarageCars[GarageCarsCount].engine = 2;
+      GarageCars[GarageCarsCount].breaks = 2;
+      GarageCars[GarageCarsCount].suspension = 2;
+      ACarField.textContent = 'in garage';
+      GarageCars[GarageCarsCount].stock = 1;
+      ShowPurchase();
+    }
+    if ((this == UCarField) && (GarageCars[1].stock != 2) && (GarageCars[2].stock != 2) && (GarageCars[3].stock != 2)){
+      document.getElementById("currentCar").src = document.getElementById('UCar').src;
+      GarageCarsCount += 1;
+      carArrowCnt = GarageCarsCount;
+      GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
+      GarageCars[GarageCarsCount].transmission = 3;
+      GarageCars[GarageCarsCount].engine = 3;
+      GarageCars[GarageCarsCount].breaks = 3;
+      GarageCars[GarageCarsCount].suspension = 3;
+      UCarField.textContent = 'in garage';
+      GarageCars[GarageCarsCount].stock = 2;
+      ShowPurchase();
+    }
+    if ((this == BCarField) && (GarageCars[1].stock != 3) && (GarageCars[2].stock != 3) && (GarageCars[3].stock != 3)){
+      document.getElementById("currentCar").src = document.getElementById('BCar').src;
+      GarageCarsCount += 1;
+      carArrowCnt = GarageCarsCount;
+      GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
+      GarageCars[GarageCarsCount].transmission = 4;
+      GarageCars[GarageCarsCount].engine = 4;
+      GarageCars[GarageCarsCount].breaks = 4;
+      GarageCars[GarageCarsCount].suspension = 4;
+      BCarField.textContent = 'in garage';
+      GarageCars[GarageCarsCount].stock = 3;
+      ShowPurchase();
+    }
 
-
+  }
   if (this == GreyCarField){
     document.getElementById("currentCar").src = document.getElementById('greyCar').src;
     GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
@@ -300,6 +316,11 @@ function GarageCarInc() {
   }
 }
 function ShowPurchase() {
+  document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].engine);
+  document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].transmission);
+  document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].breaks);
+  document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].suspension);
+  
   document.querySelector(".MaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
   document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
   document.querySelector(".AccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine) + "vw";
