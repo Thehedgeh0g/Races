@@ -760,7 +760,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapID, err := getMapID(db, lobbyID)
+		mapID, _, err := getMapID(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
@@ -958,7 +958,7 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapID, err := getMapID(db, lobbyID)
+		mapID, rounds, err := getMapID(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)
@@ -1030,11 +1030,13 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		response := struct {
+			Rounds      string   `json:"Rounds"`
 			MapKey      string   `json:"MapKey"`
 			Cars        []string `json:"Cars"`
 			Nicknames   []string `json:"Nicknames"`
 			InSessionId string   `json:"InSessionId"`
 		}{
+			Rounds:      rounds,
 			MapKey:      mapKey,
 			Cars:        cars,
 			Nicknames:   nicknames,
@@ -1074,9 +1076,10 @@ func getLobbyID(db *sqlx.DB, userID int) (int, error) {
 	return ID, nil
 }
 
-func getMapID(db *sqlx.DB, lobbyID int) (int, error) {
+func getMapID(db *sqlx.DB, lobbyID int) (int, string, error) {
 	const query = `SELECT
-	  map_id
+	  map_id,
+	  rounds
 	FROM
 	  sessions
 	WHERE
@@ -1084,18 +1087,18 @@ func getMapID(db *sqlx.DB, lobbyID int) (int, error) {
 	`
 
 	row := db.QueryRow(query, lobbyID)
-	var IDstr string
-	err := row.Scan(&IDstr)
+	var IDstr, CountOfRounds string
+	err := row.Scan(&IDstr, &CountOfRounds)
 	if err != nil {
-		return 0, err
+		return 0, "", err
 	}
 
 	ID, err := strconv.Atoi(IDstr)
 	if err != nil {
-		return 0, err
+		return 0, "", err
 	}
 
-	return ID, nil
+	return ID, CountOfRounds, nil
 }
 
 func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
