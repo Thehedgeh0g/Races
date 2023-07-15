@@ -1,45 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../static/sprites/AY.png" type="image/x-icon">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../static/sprites/AY.png" type="image/x-icon" />
     <title>BRAINLESS RACES</title>
     <link rel="stylesheet" type="text/css" href="../static/css/map.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-        
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
     <script defer src="../static/js/map3.js"></script>
-</head>
-<body class="main">
+  </head>
+  <body class="main">
     <span id="round">1</span>
     <div id="dial-stand">
-        <img src="/static/sprites/dial.png"  id="dial">
+      <img src="/static/sprites/dial.png" id="dial" />
     </div>
     <div id="minimap" class="minimap">
-        <div class="red mapdot" id="mapdot0"></div>
-        <div class="red mapdot" id="mapdot1"></div>
-        <div class="red mapdot" id="mapdot2"></div>
-        <div class="red mapdot" id="mapdot3"></div>
-        {{ range .GameArea }}
-            <img class="minitile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
-        {{ end }}
+      <div class="red mapdot" id="mapdot0"></div>
+      <div class="red mapdot" id="mapdot1"></div>
+      <div class="red mapdot" id="mapdot2"></div>
+      <div class="red mapdot" id="mapdot3"></div>
+      {{ range .GameArea }}
+      <img
+        class="minitile__pic"
+        src="../static/map tiles sprites/{{ .CellInfo }}.png"
+      />
+      {{ end }}
     </div>
     <div id="move">
-        <div class="red" id="r1"></div>
-        <div class="red" id="r2"></div>
-        <div class="red" id="r3"></div>
-        <div class="red" id="r4"></div>
-        <canvas id="canvas"></canvas>
-        <div class="map">
-            {{ range .GameArea }}
-                <div class="tile">
-                    <img class="tile__pic" src="../static/map tiles sprites/{{ .CellInfo }}.png">
-                </div>
-            {{ end }}
+      <div class="red" id="r1"></div>
+      <div class="red" id="r2"></div>
+      <div class="red" id="r3"></div>
+      <div class="red" id="r4"></div>
+      <canvas id="canvas"></canvas>
+      <div class="map">
+        {{ range .GameArea }}
+        <div class="tile">
+          <img
+            class="tile__pic"
+            src="../static/map tiles sprites/{{ .CellInfo }}.png"
+          />
         </div>
+        {{ end }}
+      </div>
     </div>
-</body>
+  </body>
 </html>

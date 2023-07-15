@@ -61,6 +61,7 @@ const r4 = document.getElementById('r4');
 
 const grassArr = [1, 2, 3, 4];
 const roadArr = [11, 10, 9, 8, 7, 6, 31];
+const BGtransArr = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
 const bRoadArr = [13, 14, 15, 16, 17, 18];
 const borderArr = [12];
 
@@ -316,6 +317,15 @@ function updateReduce() {
             //console.log('ASPHALT')
             rspeed = mrspeed;
             mspeed = mcarspeed/2;
+           
+            accel = mspeed / 160;
+            resist = accel / 4;
+            bFlag = false;
+        }
+        if (BGtransArr.includes(curTile)) {
+            //console.log('ASPHALT')
+            rspeed = mrspeed;
+            mspeed = mcarspeed/3*2;
            
             accel = mspeed / 160;
             resist = accel / 4;
