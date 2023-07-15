@@ -3,11 +3,6 @@ const list = document.getElementById('list');
 
 let flag = false;
 
-let settingsMail ={
-    MapID : "null",
-    Rounds : "null"
-}
-
 function mapList() {
     if (!flag) {
         list.style.height = '35vh';
@@ -60,10 +55,8 @@ xhr1.addEventListener("load", () =>{
             var xhr = new XMLHttpRequest();
            // var lobbyId = response.lobbyId
             xhr.open("POST", "/api/chooseMap");
-            settingsMail.MapID = id;
-            settingsMail.Rounds = document.getElementById("rounds").value
-
-            xhr.send(JSON.stringify(settingsMail));
+            settingspost = id + " " + document.getElementById("rounds").value;
+            xhr.send(JSON.stringify(settingspost));
             
             xhr.addEventListener("load", () =>{
                 //console.log(xhr.responseText.substring(12, 18))
@@ -130,7 +123,7 @@ socket.onmessage = function(event) {
       });
   }
   if (message == window.location.pathname.split('/')[2] + ' start') {
-      window.location.href = "/race/" + window.location.pathname.split('/')[2];
+    window.location.href = "/race/" + window.location.pathname.split('/')[2];
   }
 
 

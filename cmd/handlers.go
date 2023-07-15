@@ -118,7 +118,7 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		r.Header.Add("Cookie", cookie.String())
-		log.Println(cookie)
+		//log.Println(cookie)
 
 		conn, err := upgrader.Upgrade(w, r, nil)
 		//log.Println(conn)
@@ -169,7 +169,7 @@ func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
 			removeConnectionFromGroups(conn)
 			return
 		}
-		log.Printf("Received message from client %s: %s", strings.Split(clientID, " ")[1], message)
+		//log.Printf("Received message from client %s: %s", strings.Split(clientID, " ")[1], message)
 
 		// Определение группы клиента
 		group := determineGroup(clientID, strconv.Itoa(lobbyID))
@@ -184,7 +184,7 @@ func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
 	}
 }
 func sendMessageToGroup(message, group string) {
-	log.Println(groups)
+	//log.Println(groups)
 	for _, conn := range groups[group] {
 
 		err := conn.WriteJSON(message)
@@ -215,7 +215,7 @@ func Contains(a []*websocket.Conn, x *websocket.Conn) bool {
 func determineGroup(clientID, groupID string) string {
 	// Реализуйте определение группы клиента на основе его идентификатора
 	// В данном примере используется простое условие
-	log.Println(strings.Split(clientID, " ")[0])
+	//log.Println(strings.Split(clientID, " ")[0])
 	for group := range groups {
 		if strings.Split(clientID, " ")[0] == group {
 
@@ -847,16 +847,18 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 		}
+		log.Println(reqData)
+		var settingsStr string
+		var settings []string
 
-		var settings LobbySettings
-
-		err = json.Unmarshal(reqData, &settings)
+		err = json.Unmarshal(reqData, &settingsStr)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
+		settings = strings.Split(settingsStr, " ")
 		query := `
 			UPDATE
 			  brainless_races.sessions
@@ -867,8 +869,8 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			  session_id = ?    
 		`
 		log.Println(lobbyId)
-
-		_, err = db.Exec(query, settings.MapID, settings.CountOfRounds, lobbyId)
+		log.Println(settings)
+		_, err = db.Exec(query, settings[0], settings[1], lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
