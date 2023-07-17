@@ -114,3 +114,9 @@
     top: 10px;
     left: 10px;
 }
+
+#notification {
+    position: fixed;
+    left: 10px;
+    left: 10px;
+}

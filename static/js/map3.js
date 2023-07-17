@@ -145,6 +145,8 @@ let table = {
     forth: 4,
 }
 
+const notification = document.getElementById("notification");
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
@@ -672,21 +674,25 @@ socket.onmessage = function(event) {
     if (go.length == 5) {
         if (go[4].length == 1) {
             table.first = go[4][0]
+            notification.innerHTML = cars[table.first].Name + "finished first";
         }
         if (go[4].length == 2) {
             table.first = go[4][0]
             table.second = go[4][1]
+            notification.innerHTML = cars[table.second].Name + "finished second";
         }
         if (go[4].length == 3) {
             table.first = go[4][0]
             table.second = go[4][1]
             table.third = go[4][2]
+            notification.innerHTML = cars[table.third].Name + "finished third";
         }
         if (go[4].length == 4) {
             table.first = go[4][0]
             table.second = go[4][1]
             table.third = go[4][2]
             table.forth = go[4][3]
+            notification.innerHTML = cars[table.forth].Name + "finished forth";
         }
     }
 
