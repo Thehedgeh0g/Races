@@ -298,12 +298,12 @@ func verificatePos(posMessage string) string {
 	if isFinished == "1" {
 		finshers := strings.Split(races[sessionID], " ")
 		for i, id := range finshers {
-			if id == inSessionId {
-				break
+			if id != inSessionId {
+				if id == "4" {
+					finshers[i] = inSessionId
+				}
 			}
-			if id == "4" {
-				finshers[i] = inSessionId
-			}
+
 		}
 		races[sessionID] = strings.Join(finshers, " ")
 	}
