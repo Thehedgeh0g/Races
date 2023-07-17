@@ -60,7 +60,7 @@
 
 .window {
     box-sizing: border-box;
-    width: 40vw;
+    width: 60vw;
     height: 70vh;
     border-radius: 0;
     border-width:  6px;
@@ -72,7 +72,7 @@
 
 .settings {
     box-sizing: border-box;
-    width: 40vw;
+    width: 20vw;
     height: 50vh;
     border-radius: 0;
     border-width:  6px;
@@ -129,7 +129,7 @@
 .button {
     box-sizing: border-box;
     margin-top: 5vh;
-    width: 40vw;
+    width: 20vw;
     height: 15vh;
     border-radius: 0;
     border-width:  6px;

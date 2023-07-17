@@ -80,6 +80,10 @@ xhr1.addEventListener("load", () =>{
         document.getElementById("button").style.backgroundColor = '#6e6a5d';
         document.getElementById("settings").style.backgroundColor = '#6e6a5d';
         document.getElementById("maps").style.backgroundColor = '#6e6a5d';
+        document.getElementById("rounds").disabled = true;
+        document.getElementById("rounds").style.backgroundColor = '#6e6a5d';
+        document.getElementById("rounds").type = "text";
+        document.getElementById("rounds").value = "Only host can change";
         document.getElementById("button-text").innerHTML = "Only host can start a game";
         choose.innerHTML = "Only host can choose a map";
     }
