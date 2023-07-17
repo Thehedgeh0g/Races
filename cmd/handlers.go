@@ -249,6 +249,7 @@ func generateClientID() string {
 }
 
 func verificatePos(posMessage string) string {
+	isFinished := strings.Split(posMessage, " ")[9]
 	speed := strings.Split(posMessage, " ")[2]
 	angle := strings.Split(posMessage, " ")[3]
 	V, err := strconv.ParseFloat(speed, 64)
@@ -290,7 +291,7 @@ func verificatePos(posMessage string) string {
 	xSpeed := math.Sin(deg) * V
 	ySpeed := math.Cos(deg) * V
 	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
-		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId
+		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId + " " + isFinished
 	}
 	return posMessage
 
