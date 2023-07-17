@@ -118,10 +118,8 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		r.Header.Add("Cookie", cookie.String())
-		//log.Println(cookie)
 
 		conn, err := upgrader.Upgrade(w, r, nil)
-		//log.Println(conn)
 		if err != nil {
 			log.Println(err)
 			return
@@ -169,22 +167,18 @@ func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
 			removeConnectionFromGroups(conn)
 			return
 		}
-		//log.Printf("Received message from client %s: %s", strings.Split(clientID, " ")[1], message)
 
-		// Определение группы клиента
 		group := determineGroup(clientID, strconv.Itoa(lobbyID))
 		addToGroup(conn, group)
 		if strings.Split(message, " ")[1] == "race" {
 			message = verificatePos(message)
 		}
-		// Отправка сообщения только определенной группе клиентов
 		connMutex.Lock()
 		sendMessageToGroup(message, group)
 		connMutex.Unlock()
 	}
 }
 func sendMessageToGroup(message, group string) {
-	//log.Println(groups)
 	for _, conn := range groups[group] {
 
 		err := conn.WriteJSON(message)
@@ -213,9 +207,6 @@ func Contains(a []*websocket.Conn, x *websocket.Conn) bool {
 }
 
 func determineGroup(clientID, groupID string) string {
-	// Реализуйте определение группы клиента на основе его идентификатора
-	// В данном примере используется простое условие
-	//log.Println(strings.Split(clientID, " ")[0])
 	for group := range groups {
 		if strings.Split(clientID, " ")[0] == group {
 
@@ -254,17 +245,10 @@ func createGroup(groupName string) {
 }
 
 func generateClientID() string {
-	// Реализуйте генерацию уникального идентификатора для клиента
-	// В данном примере используется временная метка
 	return time.Now().Format("20060102150405")
 }
 
 func verificatePos(posMessage string) string {
-
-	// posMessage = "speed angle y0 x0 y1 x1 id"
-	//
-
-	// Получаем сообщение из канала broadcast
 	speed := strings.Split(posMessage, " ")[2]
 	angle := strings.Split(posMessage, " ")[3]
 	V, err := strconv.ParseFloat(speed, 64)
@@ -307,9 +291,7 @@ func verificatePos(posMessage string) string {
 	ySpeed := math.Cos(deg) * V
 	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
 		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId
-		//log.Println(posMessage)
 	}
-	// Отправляем сообщение всем подключенным клиентам
 	return posMessage
 
 }
@@ -549,7 +531,6 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
-		//log.Println(userId, "host")
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -586,7 +567,6 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-		//log.Println(UserId1, UserId2, UserId3, UserId4)
 		var isHost bool
 		if hostID == userIdstr {
 			isHost = true
@@ -617,7 +597,6 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
-		//log.Println(userId, "host")
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -650,7 +629,6 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		`
 		var players []Player
 		var IDs []string
-		//log.Println(query, lobbyID)
 
 		var UserId1, UserId2, UserId3, UserId4 string
 		row := db.QueryRow(query, lobbyID)
@@ -660,9 +638,10 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-		//log.Println(UserId1, UserId2, UserId3, UserId4)
+
 		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
 		var player Player
+
 		for _, element := range IDs {
 			query = `
 				SELECT
@@ -690,7 +669,6 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				}
 				player.Level = strconv.Itoa(lvl / 100)
 
-				//log.Println(player.Level)
 			} else {
 				player.ImgPath = "../static/sprites/plug.png"
 				player.Nickname = "Empty"
@@ -726,7 +704,7 @@ func getPreview(db *sqlx.DB, mapID int) ([]PreviewData, error) {
 	if err != nil {
 		log.Println(err)
 	}
-	//log.Println(mapData)
+
 	var cells []PreviewData
 	var cell PreviewData
 
@@ -822,6 +800,7 @@ func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		userIDstr, err := getUserID(db, r)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
@@ -847,7 +826,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 		}
-		log.Println(reqData)
+
 		var settings LobbySettings
 
 		err = json.Unmarshal(reqData, &settings)
@@ -866,8 +845,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			WHERE
 			  session_id = ?    
 		`
-		log.Println(lobbyId)
-		log.Println(settings)
+
 		_, err = db.Exec(query, settings.MapID, settings.Rounds, lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -897,12 +875,12 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func sendLobbyID(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
-		//log.Println(userId, "host")
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
+
 		userID, err := strconv.Atoi(userIdstr)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
@@ -940,7 +918,7 @@ func sendLobbyID(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
-		//log.Println(userId, "host")
+
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -988,9 +966,8 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			  session_id = ?   
 		`
 
-		//log.Println(query, lobbyID)
-
 		var UserId1, UserId2, UserId3, UserId4 string
+
 		row := db.QueryRow(query, lobbyID)
 		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4)
 		if err != nil {
@@ -998,7 +975,7 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-		//log.Println(UserId1, UserId2, UserId3, UserId4)
+
 		var inSessionId, car, nickname string
 		var cars, nicknames []string
 		IDs := []string{UserId1, UserId2, UserId3, UserId4}
@@ -1087,9 +1064,9 @@ func getMapID(db *sqlx.DB, lobbyID int) (int, string, error) {
 	WHERE
 	session_id = ?    
 	`
+	var IDstr, CountOfRounds string
 
 	row := db.QueryRow(query, lobbyID)
-	var IDstr, CountOfRounds string
 	err := row.Scan(&IDstr, &CountOfRounds)
 	if err != nil {
 		return 0, "", err
@@ -1112,9 +1089,9 @@ func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
 	  sprite_id = ?    
 	`
 
-	row := db.QueryRow(query, spriteId)
-
 	newSprite := new(SpriteData)
+
+	row := db.QueryRow(query, spriteId)
 	err := row.Scan(&newSprite.SpritePath)
 	if err != nil {
 		return nil, err
@@ -1125,10 +1102,11 @@ func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
 
 func getMapData(db *sqlx.DB, mapId int) (*MapData, error) {
 	query := "SELECT map_data FROM maps WHERE map_id = ?"
-	row := db.QueryRow(query, mapId)
-	key := new(MapData)
-	err := row.Scan(&key.MapKey)
 
+	key := new(MapData)
+
+	row := db.QueryRow(query, mapId)
+	err := row.Scan(&key.MapKey)
 	if err != nil {
 		return nil, err
 	}
@@ -1146,7 +1124,7 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		lobbyId := generateLobbyId()
-		log.Println(lobbyId)
+
 		_, err = insert(db, lobbyId, hostId, "0", "0", "0")
 		if err != nil {
 			http.Error(w, "Server Error", 500)
@@ -1247,16 +1225,17 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var UserId2, UserId3, UserId4 string
+
 		row := db.QueryRow(query, ID)
-		//log.Println(row)
 		err = row.Scan(&UserId2, &UserId3, &UserId4)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
-		//log.Println(UserId2, UserId3, UserId4)
+
 		updated := false
+
 		if (UserId2 == "0") && !updated {
 			updated = true
 			_, err = db.Exec("UPDATE sessions SET player2_id = ? WHERE session_id = ?", userId, lobbyId)
@@ -1327,7 +1306,6 @@ func UPDATE(db *sqlx.DB, userID string, lobbyID int) (int, error) {
 
 	result, err := db.Exec(stmt, lobbyID, userID)
 	if err != nil {
-		log.Println("tut")
 		return 0, err
 	}
 
@@ -1349,7 +1327,6 @@ func getUserID(db *sqlx.DB, r *http.Request) (string, error) {
 	cookie, err := r.Cookie("authCookieName")
 	if err != nil {
 		if err == http.ErrNoCookie {
-			log.Println("tut")
 			return "", err
 		}
 		return "", err
@@ -1382,9 +1359,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println(req.Email, req.Password)
 		user, err := getUser(db, req)
-		log.Println(user.Email, ' ', user.Password)
 
 		if err != nil {
 			http.Error(w, "Incorect email or password", 500)
@@ -1463,16 +1438,14 @@ func search(db *sqlx.DB, UserID string) error {
 	  user_id = ?
 	`
 
-	row := db.QueryRow(query, UserID)
 	user := new(Userdata)
+
+	row := db.QueryRow(query, UserID)
 	err := row.Scan(&user.UserId, &user.Email, &user.Password)
-	//fmt.Println(user, UserID)
 	if err != nil {
-		fmt.Println("fdf")
 		return err
 	}
 
-	//fmt.Println(UserID)
 	return nil
 }
 
@@ -1503,14 +1476,14 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-		log.Println(reqData)
+
 		err = json.Unmarshal(reqData, &req)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error(), "tut")
 			return
 		}
-		log.Println(req)
+
 		isFound := false
 
 		friendID, err := getUserByNick(db, req)
@@ -1544,6 +1517,11 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					inFriends = true
 				}
 			}
+
+			if userID == friendID {
+				inFriends = true
+			}
+
 			if !inFriends {
 				IDstr += " " + friendID
 
@@ -1589,14 +1567,13 @@ func getUserByNick(db *sqlx.DB, req FriendRequest) (string, error) {
   	WHERE
 	  nickname = ?
 	`
-	row := db.QueryRow(query, req.Nick)
-	log.Println(row)
 	var ID string
+
+	row := db.QueryRow(query, req.Nick)
 	err := row.Scan(&ID)
-	//log.Println(ID)
 	if err != nil {
 		return "", err
 	}
-	log.Println(ID)
+
 	return ID, nil
 }
