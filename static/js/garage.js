@@ -88,15 +88,6 @@ var PriceCarB = 0;
 var PriceColor = 0;
 var CostUpgrade = 0;
 
-let xhr = new XMLHttpRequest();
-xhr.open('GET', '');
-xhr.send();
-xhr.onload = function() {
-  let stats = xhr.response;
-  console.log(stats);
-};
-
-
 var TuningCar = {
   transmission: 1,
   engine: 1,

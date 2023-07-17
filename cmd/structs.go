@@ -8,6 +8,7 @@ type Garage struct {
 	BCarCost    int
 	UCarCost    int
 	UpgradeCost int
+	Money       string
 }
 
 type Car struct {
