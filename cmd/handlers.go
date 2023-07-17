@@ -6,311 +6,14 @@ import (
 	"html/template"
 	"io"
 	"log"
-	"math"
-	"sync"
-
-	//"math"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 	"github.com/jmoiron/sqlx"
 )
-
-type car struct {
-}
-
-type LobbySettings struct {
-	MapID  string `json:"MapID"`
-	Rounds string `json:"Rounds"`
-}
-
-type UserRequest struct {
-	Email    string `json:"Email"`
-	Password string `json:"Password"`
-}
-
-type FriendRequest struct {
-	Nick string `json:"Nick"`
-}
-
-type Userdata struct {
-	UserId   string
-	Email    string
-	Password string
-}
-
-type CreationPage struct {
-	Token string
-	Maps  []MapsData
-}
-
-type MapsData struct {
-	MapID      string `db:"sprite_id"`
-	MapPreview []PreviewData
-}
-
-type PreviewData struct {
-	CellPath string `db:"sprite_path"`
-}
-
-type GameMap struct {
-	GameArea [225]CellsData
-}
-
-type CellsData struct {
-	CellInfo string
-}
-
-type SpriteData struct {
-	SpriteId   string `db:"sprite_id"`
-	SpritePath string `db:"sprite_path"`
-}
-
-type MapData struct {
-	MapKey string `db:"map_data"`
-}
-
-type Player struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Level    string `db:"exp"`
-}
-
-type AccountPlayer struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Lvl      string `db:"exp"`
-	Bosses   string ` db:"boss_count"`
-}
-
-type AccountData struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Lvl      string `db:"exp"`
-	Bosses   string ` db:"boss_count"`
-	Friends  []*FriendsData
-}
-
-type FriendsData struct {
-	Nickname string `db:"nickname"`
-}
-
-var connMutex sync.Mutex
-
-var connections = make(map[*websocket.Conn]string)
-var groups = make(map[string][]*websocket.Conn)
-var races = make(map[string]string)
-
-func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		upgrader := websocket.Upgrader{
-			ReadBufferSize:  1024,
-			WriteBufferSize: 1024,
-			CheckOrigin: func(r *http.Request) bool {
-				return true
-			},
-		}
-
-		cookie, err := r.Cookie("authCookieName")
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		r.Header.Add("Cookie", cookie.String())
-
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		userIDstr, err := getUserID(db, r)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		userID, err := strconv.Atoi(userIDstr)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		lobbyID, err := getLobbyID(db, userID)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		clientID := strconv.Itoa(lobbyID) + " " + generateClientID()
-
-		connections[conn] = clientID
-
-		handleMessages(conn, clientID, lobbyID)
-
-		err = conn.Close()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-	}
-}
-
-func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
-	var message string
-	for {
-		err := conn.ReadJSON(&message)
-		if err != nil {
-			log.Println(err)
-			delete(connections, conn)
-			removeConnectionFromGroups(conn)
-			return
-		}
-
-		group := determineGroup(clientID, strconv.Itoa(lobbyID))
-		addToGroup(conn, group)
-		if strings.Split(message, " ")[1] == "race" {
-			message = verificatePos(message)
-		}
-		connMutex.Lock()
-		sendMessageToGroup(message, group)
-		connMutex.Unlock()
-	}
-}
-func sendMessageToGroup(message, group string) {
-	for _, conn := range groups[group] {
-
-		err := conn.WriteJSON(message)
-		if err != nil {
-			log.Println(err)
-			delete(connections, conn)
-			removeConnectionFromGroups(conn)
-		}
-	}
-}
-
-func addToGroup(conn *websocket.Conn, groupID string) {
-	if !Contains(groups[groupID], conn) {
-		groups[groupID] = append(groups[groupID], conn)
-	}
-
-}
-
-func Contains(a []*websocket.Conn, x *websocket.Conn) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
-	}
-	return false
-}
-
-func determineGroup(clientID, groupID string) string {
-	for group := range groups {
-		if strings.Split(clientID, " ")[0] == group {
-
-			return group
-		} else {
-			continue
-		}
-	}
-
-	return ""
-}
-
-func removeConnectionFromGroups(conn *websocket.Conn) {
-	delete(connections, conn)
-
-	for group, conns := range groups {
-		for i, c := range conns {
-			if c == conn {
-				groups[group] = append(conns[:i], conns[i+1:]...)
-				break
-			}
-		}
-		deleteGroup(group)
-	}
-
-}
-
-func deleteGroup(groupID string) {
-	if groups[groupID] == nil {
-		delete(groups, groupID)
-	}
-}
-
-func createGroup(groupName string) {
-	groups[groupName] = []*websocket.Conn{}
-	races[groupName] = ""
-}
-
-func generateClientID() string {
-	return time.Now().Format("20060102150405")
-}
-
-func verificatePos(posMessage string) string {
-
-	isFinished := strings.Split(posMessage, " ")[len(strings.Split(posMessage, " "))-1]
-
-	speed := strings.Split(posMessage, " ")[2]
-
-	angle := strings.Split(posMessage, " ")[3]
-
-	V, err := strconv.ParseFloat(speed, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	deg, err := strconv.ParseFloat(angle, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	y0 := strings.Split(posMessage, " ")[4]
-	yOld, err := strconv.ParseFloat(y0, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	x0 := strings.Split(posMessage, " ")[5]
-	xOld, err := strconv.ParseFloat(x0, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	y1 := strings.Split(posMessage, " ")[6]
-	yNew, err := strconv.ParseFloat(y1, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	x1 := strings.Split(posMessage, " ")[7]
-	xNew, err := strconv.ParseFloat(x1, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	sessionID := strings.Split(posMessage, " ")[0]
-	inSessionId := strings.Split(posMessage, " ")[8]
-	log.Println(isFinished)
-	if (isFinished == "1") && !(strings.Contains(races[sessionID], inSessionId)) {
-		//log.Println("tut")
-		races[sessionID] += inSessionId
-	}
-
-	xSpeed := math.Sin(deg) * V
-	ySpeed := math.Cos(deg) * V
-	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
-		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId + " " + races[sessionID]
-	}
-	return posMessage
-
-}
 
 func login(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("pages/login.html")
@@ -344,136 +47,20 @@ func menu(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func accountData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ts, err := template.ParseFiles("pages/account.html")
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		playerID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		player, err := getPlayerData(db, playerID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		friendList, err := getFriends(db, playerID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		data := AccountData{
-			ImgPath:  player[0],
-			Nickname: player[1],
-			Lvl:      player[2],
-			Bosses:   player[3],
-			Friends:  friendList,
-		}
-
-		err = ts.Execute(w, data)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-	}
-}
-
-func getPlayerData(db *sqlx.DB, playerID string) ([4]string, error) {
-	const query = `
-		SELECT
-		  avatar,
-		  nickname,
-		  exp,
-		  boss_count 
-		FROM
-		  users
-		WHERE
-		  user_id = ?    
-	`
-
-	row := db.QueryRow(query, playerID)
-	log.Println(playerID)
-	var player [4]string
-	err := row.Scan(&player[0], &player[1], &player[2], &player[3])
-	log.Println(player)
+func garageHandler(w http.ResponseWriter, r *http.Request) {
+	ts, err := template.ParseFiles("pages/garage.html")
 	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
 		log.Println(err.Error())
-		return player, err
+		return
 	}
 
-	lvl, err := strconv.Atoi(player[3])
+	err = ts.Execute(w, nil)
 	if err != nil {
-		log.Println(err)
-		return player, err
-	}
-	player[3] = strconv.Itoa(lvl / 100)
-
-	return player, nil
-
-}
-
-func getFriends(db *sqlx.DB, playerID string) ([]*FriendsData, error) {
-	var query = `
-		SELECT
-		  friends
-		FROM
-		  users
-		WHERE
-		  user_id = ?    
-	`
-
-	row := db.QueryRow(query, playerID)
-	var IDstr string
-	err := row.Scan(&IDstr)
-	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
 		log.Println(err.Error())
-		return nil, err
+		return
 	}
-
-	IDs := strings.Split(IDstr, " ")
-
-	var nicks []*FriendsData
-	for _, id := range IDs {
-		if id != "0" {
-			var nick FriendsData
-			query = `
-			SELECT
-			  nickname
-			FROM
-			  users
-			WHERE
-			  user_id = ?    
-		`
-
-			row := db.QueryRow(query, id)
-			err = row.Scan(&nick.Nickname)
-
-			if err != nil {
-				log.Println(err.Error())
-				return nil, err
-			}
-
-			nicks = append(nicks, &nick)
-			log.Println(nicks)
-		}
-
-	}
-
-	return nicks, nil
-
 }
 
 func lobbyCreation(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -608,139 +195,6 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonResponse)
 
 	}
-}
-
-func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		userIdstr, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-		userID, err := strconv.Atoi(userIdstr)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		lobbyID, err := getLobbyID(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		query := `
-			SELECT
-			  host_id,
-			  player2_id,
-			  player3_id,
-			  player4_id
-			FROM
-			  brainless_races.sessions
-			WHERE
-			  session_id = ?   
-		`
-		var players []Player
-		var IDs []string
-
-		var UserId1, UserId2, UserId3, UserId4 string
-		row := db.QueryRow(query, lobbyID)
-		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
-		var player Player
-
-		for _, element := range IDs {
-			query = `
-				SELECT
-				  avatar,
-				  nickname,
-				  exp 
-				FROM
-				  users
-				WHERE
-				  user_id = ?    
-			`
-
-			if element != "0" {
-				row := db.QueryRow(query, element)
-				err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
-				if err != nil {
-					http.Error(w, "Server Error", 500)
-					log.Println(err.Error())
-					return
-				}
-				lvl, err := strconv.Atoi(player.Level)
-				if err != nil {
-					log.Println(err)
-					return
-				}
-				player.Level = strconv.Itoa(lvl / 100)
-
-			} else {
-				player.ImgPath = "../static/sprites/plug.png"
-				player.Nickname = "Empty"
-				player.Level = "0"
-			}
-
-			players = append(players, player)
-		}
-
-		response := struct {
-			Players []Player `json:"User"`
-		}{
-			Players: players,
-		}
-
-		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResponse)
-
-	}
-}
-
-func getPreview(db *sqlx.DB, mapID int) ([]PreviewData, error) {
-
-	mapData, err := getMapData(db, mapID)
-	if err != nil {
-		log.Println(err)
-	}
-
-	var cells []PreviewData
-	var cell PreviewData
-
-	cellArr := strings.Split(mapData.MapKey, " ")
-
-	for _, element := range cellArr {
-		id, err := strconv.Atoi(element)
-		if err != nil {
-			log.Println(err)
-		}
-		sprite, err := getSprite(db, id)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		cell.CellPath = sprite.SpritePath
-		cells = append(cells, cell)
-	}
-	return cells, nil
 }
 
 func gameArea(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -1476,89 +930,37 @@ func deleteUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+
+func garageData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		reqData, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-		}
-
-		var req FriendRequest
-
 		userID, err := getUserID(db, r)
 		if err != nil {
-			http.Error(w, "Error", 500)
+			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		err = json.Unmarshal(reqData, &req)
+		cars, err := getCars(db, userID)
 		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error(), "tut")
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
 			return
 		}
 
-		isFound := false
-
-		friendID, err := getUserByNick(db, req)
-		if err != nil {
-			isFound = false
-		} else {
-			isFound = true
-
-			var query = `
-				SELECT
-				  friends
-				FROM
-				  users
-				WHERE
-				  user_id = ?    
-			`
-
-			row := db.QueryRow(query, userID)
-			var IDstr string
-			err := row.Scan(&IDstr)
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err.Error())
-				isFound = false
-			}
-
-			inFriends := false
-
-			for _, id := range strings.Split(IDstr, " ") {
-				if id == friendID {
-					inFriends = true
-				}
-			}
-
-			if userID == friendID {
-				inFriends = true
-			}
-
-			if !inFriends {
-				IDstr += " " + friendID
-
-				stmt := `UPDATE users SET friends = ? WHERE user_id = ?`
-
-				_, err = db.Exec(stmt, IDstr, userID)
-				if err != nil {
-					http.Error(w, "Error", 500)
-					log.Println(err)
-					isFound = false
-				}
-
-			} else {
-				isFound = false
-			}
-
+		garageData := Garage{
+			Cars:        cars,
+			CountOfCars: len(cars),
+			ColorCost:   100,
+			ACarCost:    10000,
+			BCarCost:    12000,
+			UCarCost:    14000,
+			UpgradeCost: 200,
 		}
+
 		response := struct {
-			IsFound bool `json:"IsFound"`
+			Garage Garage `json:"Host"`
 		}{
-			IsFound: isFound,
+			Garage: garageData,
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -1571,25 +973,43 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
+
 	}
 }
 
-func getUserByNick(db *sqlx.DB, req FriendRequest) (string, error) {
+func getCars(db *sqlx.DB, userID string) ([]Car, error) {
 	const query = `
-	SELECT
-	  user_id
-  	FROM
-	  users
-  	WHERE
-	  nickname = ?
+		SELECT
+		  cars
+		FROM
+		  users
+		WHERE
+		  user_id = ?    
 	`
-	var ID string
 
-	row := db.QueryRow(query, req.Nick)
-	err := row.Scan(&ID)
+	var carsStr string
+
+	row := db.QueryRow(query, userID)
+
+	err := row.Scan(&carsStr)
 	if err != nil {
-		return "", err
+		log.Println(err)
+		return nil, err
 	}
 
-	return ID, nil
+	var cars []Car
+	var car Car
+
+	for _, carStr := range strings.Split(carsStr, " ") {
+		car.Scr = strings.Split(carStr, "/")[0]
+		car.Transmission = strings.Split(carStr, "/")[1]
+		car.Engine = strings.Split(carStr, "/")[2]
+		car.Breaks = strings.Split(carStr, "/")[3]
+		car.Suspension = strings.Split(carStr, "/")[4]
+		car.Stock = strings.Split(carStr, "/")[5]
+		car.IsChoosen = strings.Split(carStr, "/")[6]
+		cars = append(cars, car)
+	}
+
+	return cars, nil
 }
