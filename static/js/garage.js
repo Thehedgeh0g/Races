@@ -28,58 +28,10 @@ const suspensionArrowRight = document.getElementById("suspensionArrowRight");
 const carArrowLeft = document.getElementById("carArrowLeft");
 const carArrowRight = document.getElementById("carArrowRight");
 
-let GarageCars = [
-  {
-    scr: '../static/sprites/JG.png',
-    transmission: 1,
-    engine: 1,
-    breaks: 1,
-    suspension: 1,
-    stock: 1,
-    isChosen: 1,
-  },
-  {
-    scr: '../static/sprites/AG.png',
-    transmission: 2,
-    engine: 2,
-    breaks: 2,
-    suspension: 2,
-    stock: 0,
-    isChosen: 0,
-  },
-  {
-    scr: '../static/sprites/UG.png',
-    transmission: 3,
-    engine: 3,
-    breaks: 3,
-    suspension: 3,
-    stock: 0,
-    isChosen: 0,
-  },
-  {
-    scr: '../static/sprites/BG.png',
-    transmission: 4,
-    engine: 4,
-    breaks: 4,
-    suspension: 4,
-    stock: 0,
-    isChosen: 0,
-  },
-];
-
-let xhrGarageCars = new XMLHttpRequest();
-xhrGarageCars.open('GET', '/api/getGarageData');
-xhrGarageCars.send();
-xhrGarageCars.onload = function() {
-  let GarageCars = JSON.parse(xhrGarageCars.response);
-  console.log(GarageCars);
-};
-
+let Data = '';
+let GarageCars = NaN;
 var carArrowCnt = 0;
-while(GarageCars[carArrowCnt].isChosen == 0){
-  carArrowCnt += 1;
-}
-
+let xhr = new XMLHttpRequest();
 var GarageCarsCount = 0;
 var Money = 0;
 var PriceCarA = 0;
@@ -87,6 +39,25 @@ var PriceCarU = 0;
 var PriceCarB = 0;
 var PriceColor = 0;
 var CostUpgrade = 0;
+xhr.open('GET', '/api/getGarageData');
+xhr.send();
+xhr.onload = function() {
+  Data = JSON.parse(xhr.response);
+  console.log(Data.Garage);
+  GarageCars = Data.Garage.Cars;
+  while(GarageCars[carArrowCnt].isChosen == 0){
+    carArrowCnt += 1;
+  }
+  while(GarageCars[carArrowCnt].stock == 1){
+    GarageCarsCount += 1;
+  }
+  PriceCarA = Data.ACarCost;
+  PriceCarU = Data.UCarCost;
+  PriceCarB = Data.BCarCost;
+  PriceColor = Data.ColorCost;
+  CostUpgrade = Data.UpgradeCost;
+};
+
 
 var TuningCar = {
   transmission: 1,

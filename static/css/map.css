@@ -114,6 +114,102 @@
     position: fixed;
     top: 10px;
     left: 10px;
+}
+
+
+
+
+.modal-container {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    position: absolute;
+    visibility: visible;
+}
+
+.finish-tablo{
+    position: fixed;
+    margin-left: 90px;
+    margin-top: 30px;
+    top: 5px;
+    z-index: 100;
+    width: 200px;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    border: 8px solid #ffc30e;
+    background-color:#ffe6bf;
+    visibility: hidden;  
+    font-size: 5px;
+}
+
+table td {
+    padding: 3px;
+}
+
+table tr:nth-child(1) td {
+    background-color: #A61D00; 
+}
+  
+table tr:nth-child(2) td {
+    background-color: #FF2C00; 
+}
+  
+table tr:nth-child(3) td {
+    background-color: #FF6140;
+}
+  
+table tr:nth-child(4) td {
+    background-color: #FF9773;
+}
+  
+.finish-results__heading{
+    font-size: 7px;
+    color: #ffa826;
+    margin: 0 0 2px 2px;
+}
+
+.finish-earning{
+    display: flex;
+    flex-direction: column;
+}
+
+.finish-earning__heading{
+    font-size: 7px;
+    color: #ffa826;
+    margin-bottom: 4px;
+}
+
+.finish-earning__data{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.earned-money{
+   padding: 3px;
+   background-color: #776bb9;
+}
+
+.earned-experience{
+    padding: 3px;
+    background-color: #776bb9;
+}
+
+.back-to-menu-button
+{
+    height: 24px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    font-family: 'Press Start 2P';
+    color: #ffa826;
+    font-size: 10px;
+    border-radius: 2px;
+    border-color: #cf820e;
+    background-color: #f0d9ba;
+
     display: flex;
     flex-direction: column;
 }
