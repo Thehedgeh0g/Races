@@ -146,7 +146,7 @@ function drawFrame() {
     drawMapDots();
     dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
     if (sflag == true) {
-        var message = window.location.pathname.split('/')[2] + ";race;" + String(speed) + ";" + String(angle) + ";" + String(y0) + ";" + String(x0) + ";" + String(y1) + ";" + String(x1) + ";" + String(myCar) + ";" + String(finished);
+        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + String(finished);
         socket.send(JSON.stringify(message));
         console.log(message);
     }
