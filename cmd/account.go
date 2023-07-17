@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -11,53 +10,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 )
-
-func accountData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ts, err := template.ParseFiles("pages/account.html")
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		playerID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		player, err := getPlayerData(db, playerID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		friendList, err := getFriends(db, playerID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		data := AccountData{
-			ImgPath:  player[0],
-			Nickname: player[1],
-			Lvl:      player[2],
-			Bosses:   player[3],
-			Friends:  friendList,
-		}
-
-		err = ts.Execute(w, data)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-	}
-}
 
 func getPlayerData(db *sqlx.DB, playerID string) ([4]string, error) {
 	const query = `
