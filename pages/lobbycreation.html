@@ -46,7 +46,7 @@
                     <div class="maps" id="maps">
                         <div>
                             <img src="/static/sprites/triangle.png" class="triangle" id="triangle">
-                            <span id="choose">choose map</span>
+                            <span id="choose">map</span>
                             
                             <div class="list" id="list">
                                 {{ range .Maps}}
@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <span id="rounds-span">Rounds</span>
-                    <input type="number" id="rounds">
+                    <input type="number" id="rounds" min="1" max="100" value="1" oninput="validity.valid||(value='1');">
                 </div>
                 <div id="button" class="button">
                     <span id="button-text">START</span>
