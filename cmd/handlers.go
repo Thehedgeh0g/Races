@@ -21,8 +21,8 @@ import (
 )
 
 type LobbySettings struct {
-	MapID         string `json:"MapID"`
-	CountOfRounds string `json:"CountOfRounds"`
+	MapID  string `json:"MapID"`
+	Rounds string `json:"Rounds"`
 }
 
 type UserRequest struct {
@@ -848,17 +848,15 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 		log.Println(reqData)
-		var settingsStr string
-		var settings []string
+		var settings LobbySettings
 
-		err = json.Unmarshal(reqData, &settingsStr)
+		err = json.Unmarshal(reqData, &settings)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		settings = strings.Split(settingsStr, " ")
 		query := `
 			UPDATE
 			  brainless_races.sessions
@@ -870,7 +868,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		`
 		log.Println(lobbyId)
 		log.Println(settings)
-		_, err = db.Exec(query, settings[0], settings[1], lobbyId)
+		_, err = db.Exec(query, settings.MapID, settings.Rounds, lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())

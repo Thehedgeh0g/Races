@@ -3,6 +3,11 @@ const list = document.getElementById('list');
 
 let flag = false;
 
+let MapSettings = {
+    MapID: "",
+    Rounds: ""
+}
+
 function mapList() {
     if (!flag) {
         list.style.height = '35vh';
@@ -55,8 +60,9 @@ xhr1.addEventListener("load", () =>{
             var xhr = new XMLHttpRequest();
            // var lobbyId = response.lobbyId
             xhr.open("POST", "/api/chooseMap");
-            settingspost = id + " " + document.getElementById("rounds").value;
-            xhr.send(JSON.stringify(settingspost));
+            MapSettings.MapID = id;
+            MapSettings.Rounds = document.getElementById("rounds").value;
+            xhr.send(JSON.stringify(MapSettings));
             
             xhr.addEventListener("load", () =>{
                 //console.log(xhr.responseText.substring(12, 18))
