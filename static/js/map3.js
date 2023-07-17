@@ -669,10 +669,27 @@ socket.onmessage = function(event) {
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
-    table.first = go[3];
-    table.second = go[4];
-    table.third = go[5];
-    table.forth = go[6];
+    if (go.length == 5) {
+        if (go[4].length == 1) {
+            table.first = go[4][0]
+        }
+        if (go[4].length == 2) {
+            table.first = go[4][0]
+            table.second = go[4][1]
+        }
+        if (go[4].length == 3) {
+            table.first = go[4][0]
+            table.second = go[4][1]
+            table.third = go[4][2]
+        }
+        if (go[4].length == 4) {
+            table.first = go[4][0]
+            table.second = go[4][1]
+            table.third = go[4][2]
+            table.forth = go[4][3]
+        }
+    }
+
 };
 
 socket.addEventListener("open", (event) => {
