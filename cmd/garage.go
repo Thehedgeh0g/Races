@@ -27,6 +27,8 @@ func garageData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		usersMoney, err := getMoney(db, userID)
+
 		garageData := Garage{
 			Cars:        cars,
 			CountOfCars: len(cars),
@@ -35,6 +37,7 @@ func garageData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			BCarCost:    12000,
 			UCarCost:    14000,
 			UpgradeCost: 200,
+			Money:       usersMoney,
 		}
 
 		response := struct {
@@ -57,6 +60,29 @@ func garageData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getMoney(db *sqlx.DB, userID string) (string, error) {
+
+	query := `
+		SELECT
+		  money
+		FROM
+		  users
+		WHERE
+		  user_id = ?    
+	`
+
+	var usersMoneyStr string
+
+	row := db.QueryRow(query, userID)
+
+	err := row.Scan(&usersMoneyStr)
+	if err != nil {
+		return "", err
+	}
+
+	return usersMoneyStr, nil
+}
+
 func getCars(db *sqlx.DB, userID string) ([]Car, error) {
 	const query = `
 		SELECT
@@ -76,11 +102,12 @@ func getCars(db *sqlx.DB, userID string) ([]Car, error) {
 		log.Println(err)
 		return nil, err
 	}
-
+	log.Println(carsStr)
 	var cars []Car
 	var car Car
 
 	for _, carStr := range strings.Split(carsStr, " ") {
+		log.Println(carStr)
 		car.Scr = strings.Split(carStr, "/")[0]
 		car.Transmission = strings.Split(carStr, "/")[1]
 		car.Engine = strings.Split(carStr, "/")[2]
