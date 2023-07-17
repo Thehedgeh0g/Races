@@ -100,6 +100,7 @@ var connMutex sync.Mutex
 
 var connections = make(map[*websocket.Conn]string)
 var groups = make(map[string][]*websocket.Conn)
+var races = make(map[string]string)
 
 func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -242,6 +243,7 @@ func deleteGroup(groupID string) {
 
 func createGroup(groupName string) {
 	groups[groupName] = []*websocket.Conn{}
+	races[groupName] = ""
 }
 
 func generateClientID() string {
@@ -249,9 +251,13 @@ func generateClientID() string {
 }
 
 func verificatePos(posMessage string) string {
-	isFinished := strings.Split(posMessage, " ")[9]
+
+	isFinished := strings.Split(posMessage, " ")[len(strings.Split(posMessage, " "))-1]
+
 	speed := strings.Split(posMessage, " ")[2]
+
 	angle := strings.Split(posMessage, " ")[3]
+
 	V, err := strconv.ParseFloat(speed, 64)
 	if err != nil {
 		log.Println(err)
@@ -286,12 +292,17 @@ func verificatePos(posMessage string) string {
 		log.Println(err)
 	}
 
+	sessionID := strings.Split(posMessage, " ")[0]
 	inSessionId := strings.Split(posMessage, " ")[8]
+
+	if isFinished == "1" {
+		races[sessionID] += inSessionId
+	}
 
 	xSpeed := math.Sin(deg) * V
 	ySpeed := math.Cos(deg) * V
 	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
-		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId + " " + isFinished
+		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId + " " + races[sessionID]
 	}
 	return posMessage
 
