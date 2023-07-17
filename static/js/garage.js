@@ -68,7 +68,7 @@ let GarageCars = [
 ];
 
 let xhrGarageCars = new XMLHttpRequest();
-xhrGarageCars.open('GET', '');
+xhrGarageCars.open('GET', '/api/getGarageData');
 xhrGarageCars.send();
 xhrGarageCars.onload = function() {
   let GarageCars = xhrGarageCars.response;
@@ -243,7 +243,7 @@ function replaceCar() {
       xhrACar.open("POST", "");
       xhrACar.send(car);
       xhrACar.onload = () => {
-        if (xhrACar.response == 'yes') {
+        if (xhrACar.response) {
           carArrowCnt = 1;
           document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
           GarageCarsCount += 1;
@@ -264,7 +264,7 @@ function replaceCar() {
       xhrUCar.open("POST", "");
       xhrUCar.send(car);
       xhrUCar.onload = () => {
-        if (xhrUCar.response == 'yes') {
+        if (xhrUCar.response) {
           carArrowCnt = 2;
           document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
           GarageCarsCount += 1;
@@ -284,7 +284,7 @@ function replaceCar() {
       xhrBCar.open("POST", "");
       xhrBCar.send(car);
       xhrBCar.onload = () => {
-        if (xhrBCar.response == 'yes') {
+        if (xhrBCar.response) {
           carArrowCnt = 3;
           document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
           GarageCarsCount += 1;
@@ -306,7 +306,7 @@ function replaceCar() {
     xhrGreyColor.open("POST", "");
     xhrGreyColor.send(src);
     xhrGreyColor.onload = () => {
-      if (xhrGreyColor.response == 'yes') {
+      if (xhrGreyColor.response) {
         document.getElementById("currentCar").src = document.getElementById('greyCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -318,7 +318,7 @@ function replaceCar() {
     xhrGreenColor.open("POST", "");
     xhrGreenColor.send(src);
     xhrGreenColor.onload = () => {
-      if (xhrGreenColor.response == 'yes') {
+      if (xhrGreenColor.response) {
         document.getElementById("currentCar").src = document.getElementById('greenCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -330,7 +330,7 @@ function replaceCar() {
     xhrRedColor.open("POST", "");
     xhrRedColor.send(src);
     xhrRedColor.onload = () => {
-      if (xhrRedColor.response == 'yes') {
+      if (xhrRedColor.response) {
         document.getElementById("currentCar").src = document.getElementById('redCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -342,7 +342,7 @@ function replaceCar() {
     xhrYellowColor.open("POST", "");
     xhrYellowColor.send(src);
     xhrYellowColor.onload = () => {
-      if (xhrYellowColor.response == 'yes') {
+      if (xhrYellowColor.response) {
         document.getElementById("currentCar").src = document.getElementById('yellowCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -354,7 +354,7 @@ function replaceCar() {
     xhrBlueColor.open("POST", "");
     xhrBlueColor.send(src);
     xhrBlueColor.onload = () => {
-      if (xhrBlueColor.response == 'yes') {
+      if (xhrBlueColor.response) {
         document.getElementById("currentCar").src = document.getElementById('blueCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -491,10 +491,17 @@ function ShowPurchase() {
 }
 
 function AcceptPurchase() {
-  
-  GarageCars[carArrowCnt].transmission = TuningCar.transmission;
-  GarageCars[carArrowCnt].engine = TuningCar.engine;
-  GarageCars[carArrowCnt].breaks = TuningCar.breaks;
-  GarageCars[carArrowCnt].suspension = TuningCar.suspension;
+  var str = '/' + String(TuningCar.transmission) + '/' + String(TuningCar.engine) + '/' + String(TuningCar.suspension) + '/' + String(TuningCar.breaks) + '/';
+  let xhrTuning = new XMLHttpRequest();
+  xhrTuning.open("POST", "");
+  xhrTuning.send(src);
+  xhrTuning.onload = () => {
+    if (xhrTuning.response) {
+      GarageCars[carArrowCnt].transmission = TuningCar.transmission;
+      GarageCars[carArrowCnt].engine = TuningCar.engine;
+      GarageCars[carArrowCnt].breaks = TuningCar.breaks;
+      GarageCars[carArrowCnt].suspension = TuningCar.suspension;
+    }
+  }
   ShowPurchase();
 }
