@@ -71,7 +71,7 @@ let xhrGarageCars = new XMLHttpRequest();
 xhrGarageCars.open('GET', '/api/getGarageData');
 xhrGarageCars.send();
 xhrGarageCars.onload = function() {
-  let GarageCars = xhrGarageCars.response;
+  let GarageCars = JSON.parse(xhrGarageCars.response);
   console.log(GarageCars);
 };
 

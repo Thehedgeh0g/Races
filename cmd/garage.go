@@ -76,11 +76,12 @@ func getCars(db *sqlx.DB, userID string) ([]Car, error) {
 		log.Println(err)
 		return nil, err
 	}
-
+	log.Println(carsStr)
 	var cars []Car
 	var car Car
 
 	for _, carStr := range strings.Split(carsStr, " ") {
+		log.Println(carStr)
 		car.Scr = strings.Split(carStr, "/")[0]
 		car.Transmission = strings.Split(carStr, "/")[1]
 		car.Engine = strings.Split(carStr, "/")[2]
