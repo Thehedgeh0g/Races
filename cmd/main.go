@@ -31,9 +31,11 @@ func main() {
 	mux.HandleFunc("/lobby/{lobbyID}", lobbyCreation(dbx))
 	mux.HandleFunc("/race/{lobbyID}", gameArea(dbx))
 	mux.HandleFunc("/account", accountData(dbx))
+	mux.HandleFunc("/garage", garageHandler)
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
 
+	mux.HandleFunc("/api/getGarageData", garageData(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/addFriend", addFriend(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getHost", hostCheck(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/getPlayers", sendPlayers(dbx)).Methods(http.MethodGet)
