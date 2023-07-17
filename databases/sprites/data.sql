@@ -35,4 +35,5 @@ insert INTO sprites (sprite_path) values
 ('BCH1'),
 ('BCH0'),
 ('ICH1'),
-('ICH0');
+('ICH0'),
+('NS1S');
