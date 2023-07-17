@@ -243,7 +243,7 @@ func deleteGroup(groupID string) {
 
 func createGroup(groupName string) {
 	groups[groupName] = []*websocket.Conn{}
-	races[groupName] = "4 4 4 4"
+	races[groupName] = ""
 }
 
 func generateClientID() string {
@@ -296,18 +296,7 @@ func verificatePos(posMessage string) string {
 	inSessionId := strings.Split(posMessage, " ")[8]
 
 	if isFinished == "1" {
-		finshers := strings.Split(races[sessionID], " ")
-		for i, id := range finshers {
-			if id != inSessionId {
-				if id == "4" {
-					finshers[i] = inSessionId
-				}
-			} else {
-				break
-			}
-
-		}
-		races[sessionID] = strings.Join(finshers, " ")
+		races[sessionID] += inSessionId
 	}
 
 	xSpeed := math.Sin(deg) * V
