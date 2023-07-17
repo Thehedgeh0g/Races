@@ -306,7 +306,7 @@ function updateReduce() {
             }
             if (flag) {
                 curRound += 1;
-                if (curRound > maxRounds) {
+                if (curRound > maxRounds && sflag) {
                     finished = 1;
                     roundHTML.innerHTML = "FINISHED";
                     waiting.innerHTML = "waiting for the other players"
