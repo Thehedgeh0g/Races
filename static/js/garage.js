@@ -30,42 +30,73 @@ const carArrowRight = document.getElementById("carArrowRight");
 
 let GarageCars = [
   {
-    scr: '',
+    scr: '../static/sprites/JG.png',
     transmission: 1,
     engine: 1,
     breaks: 1,
     suspension: 1,
     stock: 1,
+    isChosen: 1,
   },
   {
-    scr: '',
-    transmission: 1,
-    engine: 1,
-    breaks: 1,
-    suspension: 1,
+    scr: '../static/sprites/AG.png',
+    transmission: 2,
+    engine: 2,
+    breaks: 2,
+    suspension: 2,
     stock: 0,
+    isChosen: 0,
   },
   {
-    scr: '',
-    transmission: 1,
-    engine: 1,
-    breaks: 1,
-    suspension: 1,
+    scr: '../static/sprites/UG.png',
+    transmission: 3,
+    engine: 3,
+    breaks: 3,
+    suspension: 3,
     stock: 0,
+    isChosen: 0,
   },
   {
-    scr: '',
-    transmission: 1,
-    engine: 1,
-    breaks: 1,
-    suspension: 1,
+    scr: '../static/sprites/BG.png',
+    transmission: 4,
+    engine: 4,
+    breaks: 4,
+    suspension: 4,
     stock: 0,
+    isChosen: 0,
   },
 ];
 
-var GarageCarsCount = 0;
+let xhrGarageCars = new XMLHttpRequest();
+xhrGarageCars.open('GET', '');
+xhrGarageCars.send();
+xhrGarageCars.onload = function() {
+  let GarageCars = xhrGarageCars.response;
+  console.log(GarageCars);
+};
+
 var carArrowCnt = 0;
-GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+while(GarageCars[carArrowCnt].isChosen == 0){
+  carArrowCnt += 1;
+}
+
+var GarageCarsCount = 0;
+var Money = 0;
+var PriceCarA = 0;
+var PriceCarU = 0;
+var PriceCarB = 0;
+var PriceColor = 0;
+var CostUpgrade = 0;
+
+let xhr = new XMLHttpRequest();
+xhr.open('GET', '');
+xhr.send();
+xhr.onload = function() {
+  let stats = xhr.response;
+  console.log(stats);
+};
+
+
 var TuningCar = {
   transmission: 1,
   engine: 1,
@@ -80,17 +111,30 @@ TuningCar.suspension = GarageCars[carArrowCnt].suspension;
 
 const tuningPurchase = document.getElementById("tuningPurchase");
 
-var engineCnt = 1;
+var engineCnt = GarageCars[carArrowCnt].engine;
 document.getElementById("engineCnt").innerHTML = engineCnt;
-var transmissionCnt = 1;
+var transmissionCnt = GarageCars[carArrowCnt].transmission;
 document.getElementById("transmissionCnt").innerHTML = transmissionCnt;
-var breaksCnt = 1;
+var breaksCnt = GarageCars[carArrowCnt].breaks;
 document.getElementById("breaksCnt").innerHTML = breaksCnt;
-var  suspensionCnt = 1;
+var  suspensionCnt = GarageCars[carArrowCnt].suspension;
 document.getElementById("suspensionCnt").innerHTML = suspensionCnt;
 
-var futureEngineCnt = 1;
+document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
 
+document.getElementById("PriceCarA").innerHTML = PriceCarA;
+document.getElementById("PriceCarU").innerHTML = PriceCarU;
+document.getElementById("PriceCarB").innerHTML = PriceCarB;
+
+document.getElementById("PriceColor1").innerHTML = PriceColor;
+document.getElementById("PriceColor2").innerHTML = PriceColor;
+document.getElementById("PriceColor3").innerHTML = PriceColor;
+document.getElementById("PriceColor4").innerHTML = PriceColor;
+document.getElementById("PriceColor5").innerHTML = PriceColor;
+
+document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: ' + String(CostUpgrade);
+
+document.getElementById("Money").innerHTML = 'Money: ' + String(Money);
 
 ShopField.addEventListener("click", showShop);
 TuningField.addEventListener("click", showTuning);
@@ -127,16 +171,12 @@ carArrowLeft.addEventListener("click", GarageCarDec);
 carArrowRight.addEventListener("click", GarageCarInc);
 
 
-// var xhr = new XMLHttpRequest();
-// xhr.open("GET", "");
-// xhr.send();
-// xhr.addEventListener("load", () =>{  })
-
 function showShop() {
   document.querySelector(".style-field").style.visibility = "hidden";
   document.querySelector(".tuning-field").style.visibility = "hidden";
   document.querySelector(".shop-field").style.visibility = "visible";
   ShowPurchase();
+  showOwned();
 }
 
 function showTuning() {
@@ -153,6 +193,17 @@ function showStyle() {
   ShowPurchase();
 }
 
+function showOwned() {
+  if (GarageCars[1].stock == 1){
+    ACarField.textContent = 'Owned';
+  }
+  if (GarageCars[2].stock == 1){
+    UCarField.textContent = 'Owned';
+  }
+  if (GarageCars[3].stock == 1){
+    BCarField.textContent = 'Owned';
+  }
+}
 function currentStyle() {
   var str = document.getElementById("currentCar").src;
   if (str[str.length-6] == 'J'){
@@ -186,78 +237,128 @@ function currentStyle() {
 }
 function replaceCar() {
   if (GarageCarsCount < 3){
-    if ((this == ACarField) && (GarageCars[1].stock != 1) && (GarageCars[2].stock != 1) && (GarageCars[3].stock != 1)){
-      document.getElementById("currentCar").src = document.getElementById('ACar').src;
-      GarageCarsCount += 1;
-      carArrowCnt = GarageCarsCount;
-      GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
-      GarageCars[GarageCarsCount].transmission = 2;
-      GarageCars[GarageCarsCount].engine = 2;
-      GarageCars[GarageCarsCount].breaks = 2;
-      GarageCars[GarageCarsCount].suspension = 2;
-      ACarField.textContent = 'in garage';
-      GarageCars[GarageCarsCount].stock = 1;
-      TuningCar.transmission = GarageCars[carArrowCnt].transmission;
-      TuningCar.engine = GarageCars[carArrowCnt].engine;
-      TuningCar.breaks = GarageCars[carArrowCnt].breaks;
-      TuningCar.suspension = GarageCars[carArrowCnt].suspension;
-      ShowPurchase();
+    if ((this == ACarField) && (GarageCars[1].stock != 1)){
+      let car = 'ACar';
+      let xhrACar = new XMLHttpRequest();
+      xhrACar.open("POST", "");
+      xhrACar.send(car);
+      xhrACar.onload = () => {
+        if (xhrACar.response == 'yes') {
+          carArrowCnt = 1;
+          document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
+          GarageCarsCount += 1;
+          ACarField.textContent = 'Owned';
+          GarageCars[carArrowCnt].stock = 1;
+          TuningCar.transmission = GarageCars[carArrowCnt].transmission;
+          TuningCar.engine = GarageCars[carArrowCnt].engine;
+          TuningCar.breaks = GarageCars[carArrowCnt].breaks;
+          TuningCar.suspension = GarageCars[carArrowCnt].suspension;
+          ShowPurchase();
+        }
+      }
     }
-    if ((this == UCarField) && (GarageCars[1].stock != 2) && (GarageCars[2].stock != 2) && (GarageCars[3].stock != 2)){
-      document.getElementById("currentCar").src = document.getElementById('UCar').src;
-      GarageCarsCount += 1;
-      carArrowCnt = GarageCarsCount;
-      GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
-      GarageCars[GarageCarsCount].transmission = 3;
-      GarageCars[GarageCarsCount].engine = 3;
-      GarageCars[GarageCarsCount].breaks = 3;
-      GarageCars[GarageCarsCount].suspension = 3;
-      UCarField.textContent = 'in garage';
-      GarageCars[GarageCarsCount].stock = 2;
-      TuningCar.transmission = GarageCars[carArrowCnt].transmission;
-      TuningCar.engine = GarageCars[carArrowCnt].engine;
-      TuningCar.breaks = GarageCars[carArrowCnt].breaks;
-      TuningCar.suspension = GarageCars[carArrowCnt].suspension;
-      ShowPurchase();
+
+    if ((this == UCarField) && (GarageCars[2].stock != 1)){
+      let car = 'UCar';
+      let xhrUCar = new XMLHttpRequest();
+      xhrUCar.open("POST", "");
+      xhrUCar.send(car);
+      xhrUCar.onload = () => {
+        if (xhrUCar.response == 'yes') {
+          carArrowCnt = 2;
+          document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
+          GarageCarsCount += 1;
+          UCarField.textContent = 'Owned';
+          GarageCars[carArrowCnt].stock = 1;
+          TuningCar.transmission = GarageCars[carArrowCnt].transmission;
+          TuningCar.engine = GarageCars[carArrowCnt].engine;
+          TuningCar.breaks = GarageCars[carArrowCnt].breaks;
+          TuningCar.suspension = GarageCars[carArrowCnt].suspension;
+          ShowPurchase();
+        }
+      }
     }
-    if ((this == BCarField) && (GarageCars[1].stock != 3) && (GarageCars[2].stock != 3) && (GarageCars[3].stock != 3)){
-      document.getElementById("currentCar").src = document.getElementById('BCar').src;
-      GarageCarsCount += 1;
-      carArrowCnt = GarageCarsCount;
-      GarageCars[GarageCarsCount].scr = document.getElementById("currentCar").src;
-      GarageCars[GarageCarsCount].transmission = 4;
-      GarageCars[GarageCarsCount].engine = 4;
-      GarageCars[GarageCarsCount].breaks = 4;
-      GarageCars[GarageCarsCount].suspension = 4;
-      BCarField.textContent = 'in garage';
-      GarageCars[GarageCarsCount].stock = 3;
-      TuningCar.transmission = GarageCars[carArrowCnt].transmission;
-      TuningCar.engine = GarageCars[carArrowCnt].engine;
-      TuningCar.breaks = GarageCars[carArrowCnt].breaks;
-      TuningCar.suspension = GarageCars[carArrowCnt].suspension;
-      ShowPurchase();
+    if ((this == BCarField) && (GarageCars[3].stock != 1)){
+      let car = 'BCar';
+      let xhrBCar = new XMLHttpRequest();
+      xhrBCar.open("POST", "");
+      xhrBCar.send(car);
+      xhrBCar.onload = () => {
+        if (xhrBCar.response == 'yes') {
+          carArrowCnt = 3;
+          document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
+          GarageCarsCount += 1;
+          BCarField.textContent = 'Owned';
+          GarageCars[carArrowCnt].stock = 1;
+          TuningCar.transmission = GarageCars[carArrowCnt].transmission;
+          TuningCar.engine = GarageCars[carArrowCnt].engine;
+          TuningCar.breaks = GarageCars[carArrowCnt].breaks;
+          TuningCar.suspension = GarageCars[carArrowCnt].suspension;
+          ShowPurchase();
+        }
+      }
     }
 
   }
   if (this == GreyCarField){
-    document.getElementById("currentCar").src = document.getElementById('greyCar').src;
-    GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+    var src = document.getElementById('greyCar').src;
+    let xhrGreyColor = new XMLHttpRequest();
+    xhrGreyColor.open("POST", "");
+    xhrGreyColor.send(src);
+    xhrGreyColor.onload = () => {
+      if (xhrGreyColor.response == 'yes') {
+        document.getElementById("currentCar").src = document.getElementById('greyCar').src;
+        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+      }
+    }
   }
   if (this == GreenCarField){
-    document.getElementById("currentCar").src = document.getElementById('greenCar').src;
-    GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+    var src = document.getElementById('greenCar').src;
+    let xhrGreenColor = new XMLHttpRequest();
+    xhrGreenColor.open("POST", "");
+    xhrGreenColor.send(src);
+    xhrGreenColor.onload = () => {
+      if (xhrGreenColor.response == 'yes') {
+        document.getElementById("currentCar").src = document.getElementById('greenCar').src;
+        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+      }
+    }
   }
   if (this == RedCarField){
-    document.getElementById("currentCar").src = document.getElementById('redCar').src;
-    GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+    var src = document.getElementById('redCar').src;
+    let xhrRedColor = new XMLHttpRequest();
+    xhrRedColor.open("POST", "");
+    xhrRedColor.send(src);
+    xhrRedColor.onload = () => {
+      if (xhrRedColor.response == 'yes') {
+        document.getElementById("currentCar").src = document.getElementById('redCar').src;
+        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+      }
+    }
   }
   if (this == YellowCarField){
-    document.getElementById("currentCar").src = document.getElementById('yellowCar').src;
-    GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+    var src = document.getElementById('yellowCar').src;
+    let xhrYellowColor = new XMLHttpRequest();
+    xhrYellowColor.open("POST", "");
+    xhrYellowColor.send(src);
+    xhrYellowColor.onload = () => {
+      if (xhrYellowColor.response == 'yes') {
+        document.getElementById("currentCar").src = document.getElementById('yellowCar').src;
+        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+      }
+    }
   }
   if (this == BlueCarField){
-    document.getElementById("currentCar").src = document.getElementById('blueCar').src;
-    GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+    var src = document.getElementById('blueCar').src;
+    let xhrBlueColor = new XMLHttpRequest();
+    xhrBlueColor.open("POST", "");
+    xhrBlueColor.send(src);
+    xhrBlueColor.onload = () => {
+      if (xhrBlueColor.response == 'yes') {
+        document.getElementById("currentCar").src = document.getElementById('blueCar').src;
+        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+      }
+    }
   }
 }
 
@@ -336,6 +437,9 @@ function suspensionInc() {
 function GarageCarDec() {
   if (carArrowCnt > 0) {
     carArrowCnt -= 1;
+    while (GarageCars[carArrowCnt].stock == 0){
+      carArrowCnt -= 1;
+    }
     document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
     currentStyle();
     ShowPurchase();
@@ -345,6 +449,9 @@ function GarageCarDec() {
 function GarageCarInc() {
   if (carArrowCnt < GarageCarsCount) {
     carArrowCnt += 1;
+    while (GarageCars[carArrowCnt].stock == 0){
+      carArrowCnt += 1;
+    }
     document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
     currentStyle();
     ShowPurchase();
@@ -384,6 +491,7 @@ function ShowPurchase() {
 }
 
 function AcceptPurchase() {
+  
   GarageCars[carArrowCnt].transmission = TuningCar.transmission;
   GarageCars[carArrowCnt].engine = TuningCar.engine;
   GarageCars[carArrowCnt].breaks = TuningCar.breaks;
