@@ -302,6 +302,8 @@ func verificatePos(posMessage string) string {
 				if id == "4" {
 					finshers[i] = inSessionId
 				}
+			} else {
+				break
 			}
 
 		}
