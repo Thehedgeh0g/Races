@@ -138,6 +138,13 @@ const roundHTML = document.getElementById("round");
 
 let finished = 0;
 
+let table = {
+    first: 4,
+    second: 4,
+    third: 4,
+    forth: 4,
+}
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
@@ -661,7 +668,10 @@ socket.onmessage = function(event) {
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
-
+    table.first = go[3];
+    table.second = go[4];
+    table.third = go[5];
+    table.forth = go[6];
 };
 
 socket.addEventListener("open", (event) => {
