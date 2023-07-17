@@ -701,7 +701,7 @@ socket.onmessage = function(event) {
 
 socket.addEventListener("open", (event) => {
     sflag = true;
-    var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
+    var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished
     socket.send(JSON.stringify(message));
 
 });

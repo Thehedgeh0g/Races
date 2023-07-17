@@ -210,8 +210,9 @@ func verificatePos(posMessage string) string {
 	}
 
 	sessionID := strings.Split(posMessage, " ")[0]
+
 	inSessionId := strings.Split(posMessage, " ")[8]
-	log.Println(isFinished)
+
 	if (isFinished == "1") && !(strings.Contains(races[sessionID], inSessionId)) {
 		//log.Println("tut")
 		races[sessionID] += inSessionId
