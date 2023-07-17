@@ -65,8 +65,8 @@ const BGtransArr = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
 const bRoadArr = [13, 14, 15, 16, 17, 18];
 const borderArr = [12];
 
-const startArr = ['31'];
-const startStraightArr = ['31'];
+const startArr = ['37'];
+const startStraightArr = ['37'];
 
 let startingTile = 1;
 
@@ -126,7 +126,7 @@ console.log(mapdot)
 
 let sflag = false;
 
-const allTurnTiles = [6 ,7 ,8 ,9 ,13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 26];
+const checkPointTiles = [31, 32, 33, 34, 35, 36];
 
 let turnTiles = [];
 
@@ -136,6 +136,8 @@ let maxRounds = 999;
 
 const roundHTML = document.getElementById("round");
 
+let finished = 0;
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
@@ -144,7 +146,7 @@ function drawFrame() {
     drawMapDots();
     dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
     if (sflag == true) {
-        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar)
+        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + String(finished)
         socket.send(JSON.stringify(message));
     }
     requestAnimationFrame(drawFrame);}
@@ -278,7 +280,7 @@ function updateReduce() {
         curTile = Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
         //console.log(curTile);
         
-        if (allTurnTiles.includes(Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]))) {
+        if (checkPointTiles.includes(Number(tiles[(224-(divme(x, 96) + divme(y, 96) * 15))]))) {
             turnTiles[(224-(divme(x, 96) + divme(y, 96) * 15))] = curRound;
             console.log(turnTiles[(224-(divme(x, 96) + divme(y, 96) * 15))]);
         }
@@ -292,11 +294,17 @@ function updateReduce() {
             }
             if (flag) {
                 curRound += 1;
-                roundHTML.innerHTML = curRound + "/" + maxRounds;
+                if (curRound > maxRounds) {
+                    finished = 1;
+                    roundHTML.innerHTML = "FINISHED";
+                    mspeed = 0;
+                } else {
+                    roundHTML.innerHTML = curRound + "/" + maxRounds;
+                }
             }
         }
         
-        if (grassArr.includes(curTile)) {
+        if (grassArr.includes(curTile) && finished == 0) {
             //console.log('TRAVA')
             rspeed = mrspeed;
             mspeed = gs;
@@ -304,7 +312,7 @@ function updateReduce() {
             resist = accel / 4;
             bFlag = false;
         } 
-        if (roadArr.includes(curTile)) {
+        if (roadArr.includes(curTile) && finished == 0) {
             //console.log('ASPHALT')
             rspeed = mrspeed;
             mspeed = mcarspeed;
@@ -313,7 +321,7 @@ function updateReduce() {
             resist = accel / 4;
             bFlag = false;
         }
-        if (bRoadArr.includes(curTile)) {
+        if (bRoadArr.includes(curTile) && finished == 0) {
             //console.log('ASPHALT')
             rspeed = mrspeed;
             mspeed = mcarspeed/2;
@@ -322,7 +330,7 @@ function updateReduce() {
             resist = accel / 4;
             bFlag = false;
         }
-        if (BGtransArr.includes(curTile)) {
+        if (BGtransArr.includes(curTile) && finished == 0) {
             //console.log('ASPHALT')
             rspeed = mrspeed;
             mspeed = mcarspeed/3*2;
@@ -576,7 +584,7 @@ function getTiles() {
         tiles = mapping.split(' ');
         console.log(tiles);
         for (let i = 0; i < 225; i++) {
-            if (allTurnTiles.includes(Number(tiles[i]))) {
+            if (checkPointTiles.includes(Number(tiles[i]))) {
                 turnTiles[i] = 0
             }
         }
