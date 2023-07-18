@@ -46,7 +46,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
+		log.Println(req)
 		user, err := getUser(db, req)
 
 		if err != nil {
@@ -104,6 +104,7 @@ func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
 	  password = ?
 	`
 	row := db.QueryRow(query, req.Email, req.Password)
+	log.Println(row)
 	user := new(Userdata)
 	err := row.Scan(&user.UserId, &user.Email, &user.Password)
 	log.Println(user)

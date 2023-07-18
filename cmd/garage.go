@@ -107,12 +107,10 @@ func getCars(db *sqlx.DB, userID string) ([]Car, error) {
 		log.Println(err)
 		return nil, err
 	}
-	log.Println(carsStr)
 	var cars []Car
 	var car Car
 
 	for _, carStr := range strings.Split(carsStr, " ") {
-		log.Println(carStr)
 		car.Scr = strings.Split(carStr, "/")[0]
 		car.Transmission = strings.Split(carStr, "/")[1]
 		car.Engine = strings.Split(carStr, "/")[2]
@@ -160,16 +158,9 @@ func buyCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		ID := getCarID(cars, req)
 
-		lastStock, err := getLastCar(cars, req)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
 		success := false
 
-		success, err = updateCar(db, userID, req, ID, lastStock)
+		success, err = updateCar(db, userID, req, ID)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -205,22 +196,7 @@ func getCarID(cars []Car, req string) int {
 	return 404
 }
 
-func getLastCar(cars []Car, req string) (int, error) {
-	max := -100
-	for _, car := range cars {
-		stock, err := strconv.Atoi(car.Stock)
-		if err != nil {
-			log.Println(err.Error())
-			return 404, err
-		}
-		if stock > max {
-			max = stock
-		}
-	}
-	return max, nil
-}
-
-func updateCar(db *sqlx.DB, userID, req string, carID, stock int) (bool, error) {
+func updateCar(db *sqlx.DB, userID, req string, carID int) (bool, error) {
 	query := `
 		SELECT
 		  cars
@@ -288,7 +264,8 @@ func updateCar(db *sqlx.DB, userID, req string, carID, stock int) (bool, error) 
 			return false, err
 		}
 
-		strings.Split(carsArr[carID], "/")[5] = strconv.Itoa(stock + 1)
+		carsArr[carID] = carsArr[carID][:15] + "1" + carsArr[carID][16:]
+		log.Println(carsArr[carID])
 		cars := strings.Join(carsArr, " ")
 		stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
 
@@ -424,19 +401,21 @@ func updateColor(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 			return false, err
 		}
 		color := req[1]
-		carsArr[ID] = string(carsArr[ID][1]) + string(color) + carsArr[ID][2:]
-		cars := strings.Join(carsArr, " ")
-		stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
+		if ID != 404 {
+			carsArr[ID] = string(carsArr[ID][2]) + string(color) + carsArr[ID][3:]
+			log.Println(carsArr[ID])
+			cars := strings.Join(carsArr, " ")
+			stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
 
-		_, err = db.Exec(stmt, cars, userID)
-		if err != nil {
-			return false, err
+			_, err = db.Exec(stmt, cars, userID)
+			if err != nil {
+				return false, err
+			}
+
 		}
-
-		return true, nil
 	}
 
-	return false, nil
+	return true, nil
 }
 
 func tune(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
