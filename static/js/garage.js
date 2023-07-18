@@ -316,11 +316,13 @@ function replaceCar() {
   }
   if (this == GreenCarField){
     var src = document.getElementById('greenCar').src;
+    src = src.slice(src.length-6  , src.length-4); 
     let xhrGreenColor = new XMLHttpRequest();
-    xhrGreenColor.open("POST", "");
-    xhrGreenColor.send(src);
+    xhrGreenColor.open("POST", "/api/buyColor");
+    xhrGreenColor.send(JSON.stringify(src));
     xhrGreenColor.onload = () => {
-      if (xhrGreenColor.response) {
+      let answer = JSON.parse(xhrGreenColor.response);
+      if (answer) {
         document.getElementById("currentCar").src = document.getElementById('greenCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -328,11 +330,13 @@ function replaceCar() {
   }
   if (this == RedCarField){
     var src = document.getElementById('redCar').src;
+    src = src.slice(src.length-6  , src.length-4); 
     let xhrRedColor = new XMLHttpRequest();
-    xhrRedColor.open("POST", "");
-    xhrRedColor.send(src);
+    xhrRedColor.open("POST", "/api/buyColor");
+    xhrRedColor.send(JSON.stringify(src));
     xhrRedColor.onload = () => {
-      if (xhrRedColor.response) {
+      let answer = JSON.parse(xhrRedColor.response);
+      if (answer) {
         document.getElementById("currentCar").src = document.getElementById('redCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -341,10 +345,11 @@ function replaceCar() {
   if (this == YellowCarField){
     var src = document.getElementById('yellowCar').src;
     let xhrYellowColor = new XMLHttpRequest();
-    xhrYellowColor.open("POST", "");
-    xhrYellowColor.send(src);
+    xhrYellowColor.open("POST", "/api/buyColor");
+    xhrYellowColor.send(JSON.stringify(src));
     xhrYellowColor.onload = () => {
-      if (xhrYellowColor.response) {
+      let answer = JSON.parse(xhrYellowColor.response);
+      if (answer) {
         document.getElementById("currentCar").src = document.getElementById('yellowCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -353,10 +358,11 @@ function replaceCar() {
   if (this == BlueCarField){
     var src = document.getElementById('blueCar').src;
     let xhrBlueColor = new XMLHttpRequest();
-    xhrBlueColor.open("POST", "");
-    xhrBlueColor.send(src);
+    xhrBlueColor.open("POST", "/api/buyColor");
+    xhrBlueColor.send(JSON.stringify(src));
     xhrBlueColor.onload = () => {
-      if (xhrBlueColor.response) {
+      let answer = JSON.parse(xhrBlueColor.response);
+      if (answer) {
         document.getElementById("currentCar").src = document.getElementById('blueCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
