@@ -402,7 +402,7 @@ func updateColor(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 		}
 		color := req[1]
 		if ID != 404 {
-			carsArr[ID] = string(carsArr[ID][2]) + string(color) + carsArr[ID][3:]
+			carsArr[ID] = string(carsArr[ID][:1]) + string(color) + carsArr[ID][2:]
 			log.Println(carsArr[ID])
 			cars := strings.Join(carsArr, " ")
 			stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
