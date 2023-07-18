@@ -574,7 +574,7 @@ function scrollToCenter() {
     A=[O[0]-Math.cos(angle)*8.5, O[1]+Math.sin(angle)*8.5];
     C=[D[0]+Math.sin(angle)*24, D[1]+Math.cos(angle)*24];
     B=[A[0]+Math.sin(angle)*24, A[1]+Math.cos(angle)*24];
-    //console.log(A, B, C, D);
+    //console.log(O, A, B, C, D);
 
     carBorder = {
         O: O,
@@ -603,16 +603,34 @@ function scrollToCenter() {
 
     //console.log(carBorder.A, carBorder.B, carBorder.C, carBorder.D);
 
-    r1.style.top = String(A[1]) + 'px';
-    r1.style.left = String(A[0]) + 'px';
+    //r1.style.top = String(A[1]) + 'px';
+    //r1.style.left = String(A[0]) + 'px';
+   
+    r1.style.top = String(206) + 'px';
+    r1.style.left = String(434) + 'px';
     r2.style.top = String(B[1]) + 'px';
     r2.style.left = String(B[0]) + 'px';
     r3.style.top = String(C[1]) + 'px';
     r3.style.left = String(C[0]) + 'px';
     r4.style.top = String(D[1]) + 'px';
     r4.style.left = String(D[0]) + 'px';
+
+    if (checkCrosses(carBorder, 434, 206)) {
+        console.log('touching');
+    }
 }
 
+function checkCrosses(border, x, y) {
+    if ((((border.AB.k * x + border.AB.b) <= y) && ((border.BC.k * x + border.BC.b) <= y) && ((border.CD.k * x + border.CD.b) >= y) && ((border.DA.k * x + border.DA.b) >= y)) ||
+        (((border.AB.k * x + border.AB.b) >= y) && ((border.BC.k * x + border.BC.b) <= y) && ((border.CD.k * x + border.CD.b) <= y) && ((border.DA.k * x + border.DA.b) >= y)) ||
+        (((border.AB.k * x + border.AB.b) >= y) && ((border.BC.k * x + border.BC.b) >= y) && ((border.CD.k * x + border.CD.b) <= y) && ((border.DA.k * x + border.DA.b) <= y)) ||
+        (((border.AB.k * x + border.AB.b) <= y) && ((border.BC.k * x + border.BC.b) >= y) && ((border.CD.k * x + border.CD.b) >= y) && ((border.DA.k * x + border.DA.b) <= y)))
+    {
+        return true
+    } else {
+        return false
+    }
+}
 function getK(x1, x2, y1, y2) {
     return ((y1-y2)/(x1-x2));
 }
