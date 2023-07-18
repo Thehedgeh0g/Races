@@ -547,15 +547,18 @@ func updateStats(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 		if err != nil {
 			return false, err
 		}
-		carsArr[ID] = string(carsArr[ID][:2]) + req + carsArr[ID][15:]
-		cars := strings.Join(carsArr, " ")
-		stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
+		if ID != 404 {
+			carsArr[ID] = string(carsArr[ID][:2]) + req + carsArr[ID][15:]
+			log.Println(carsArr[ID])
+			cars := strings.Join(carsArr, " ")
+			stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
 
-		_, err = db.Exec(stmt, cars, userID)
-		if err != nil {
-			return false, err
+			_, err = db.Exec(stmt, cars, userID)
+			if err != nil {
+				return false, err
+			}
+
 		}
-
 		return true, nil
 	}
 

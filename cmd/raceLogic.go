@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"math"
@@ -67,7 +66,7 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		connections[conn] = clientID
 
-		handleMessages(conn, clientID, lobbyID)
+		handleMessages(db, conn, clientID, lobbyID)
 
 		err = conn.Close()
 		if err != nil {
@@ -78,14 +77,14 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
+func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID int) {
 	var message string
 	for {
 		err := conn.ReadJSON(&message)
 		if err != nil {
 			log.Println(err)
 			delete(connections, conn)
-			removeConnectionFromGroups(conn)
+			removeConnectionFromGroups(db, conn)
 			return
 		}
 
@@ -95,18 +94,18 @@ func handleMessages(conn *websocket.Conn, clientID string, lobbyID int) {
 			message = verificatePos(message)
 		}
 		connMutex.Lock()
-		sendMessageToGroup(message, group)
+		sendMessageToGroup(db, message, group)
 		connMutex.Unlock()
 	}
 }
-func sendMessageToGroup(message, group string) {
+func sendMessageToGroup(db *sqlx.DB, message, group string) {
 	for _, conn := range groups[group] {
 
 		err := conn.WriteJSON(message)
 		if err != nil {
 			log.Println(err)
 			delete(connections, conn)
-			removeConnectionFromGroups(conn)
+			removeConnectionFromGroups(db, conn)
 		}
 	}
 }
@@ -140,7 +139,7 @@ func determineGroup(clientID, groupID string) string {
 	return ""
 }
 
-func removeConnectionFromGroups(conn *websocket.Conn) {
+func removeConnectionFromGroups(db *sqlx.DB, conn *websocket.Conn) {
 	delete(connections, conn)
 
 	for group, conns := range groups {
@@ -150,14 +149,15 @@ func removeConnectionFromGroups(conn *websocket.Conn) {
 				break
 			}
 		}
-		deleteGroup(group)
+		deleteGroup(db, group)
 	}
 
 }
 
-func deleteGroup(groupID string) {
+func deleteGroup(db *sqlx.DB, groupID string) {
 	if groups[groupID] == nil {
 		delete(groups, groupID)
+		deleteSession(db, groupID)
 	}
 }
 
@@ -229,7 +229,7 @@ func verificatePos(posMessage string) string {
 	} else {
 		posMessage = y0 + " " + x0 + " " + angle + " " + inSessionId + races[sessionID]
 	}
-	//log.Println(races[sessiwonID])
+
 	return posMessage
 
 }
@@ -242,7 +242,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 		}
-		fmt.Printf("reqData: %v\n", reqData)
+
 		var req string
 
 		err = json.Unmarshal(reqData, &req)
@@ -253,16 +253,11 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		tableStrings := strings.Split(races[req][1:], " ")
-		//log.Println(tableStrings)
-		var sequence []int
-		for _, playerResults := range tableStrings {
-			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err.Error())
-				return
-			}
-			sequence = append(sequence, CID)
+		sequence, err := getSequence(tableStrings)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
 		}
 
 		userID, err := getUserID(db, r)
@@ -272,22 +267,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		query := `
-			SELECT
-			  host_id,
-			  player2_id,
-			  player3_id,
-			  player4_id
-			FROM
-			  sessions
-			WHERE
-			  session_id = ?   
-		`
-
-		var IDs [4]string
-
-		row := db.QueryRow(query, req)
-		err = row.Scan(&IDs[0], &IDs[1], &IDs[2], &IDs[3])
+		IDs, err := getIDs(db, req)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
@@ -311,6 +291,8 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+
+		deleteSession(db, req)
 
 		response := struct {
 			Response ResultsTable `json:"response"`
@@ -337,6 +319,54 @@ func updateUserTable(db *sqlx.DB, userID string, modificator int) error {
 
 	_, err := db.Exec(stmt, strconv.Itoa(15*modificator), strconv.Itoa(13*modificator), userID)
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getIDs(db *sqlx.DB, sessionID string) ([4]string, error) {
+	query := `
+			SELECT
+			  host_id,
+			  player2_id,
+			  player3_id,
+			  player4_id
+			FROM
+			  sessions
+			WHERE
+			  session_id = ?   
+		`
+
+	var IDs [4]string
+
+	row := db.QueryRow(query, sessionID)
+	err := row.Scan(&IDs[0], &IDs[1], &IDs[2], &IDs[3])
+	if err != nil {
+		log.Println(err.Error())
+		return IDs, err
+	}
+	return IDs, nil
+}
+
+func getSequence(tableStrings []string) ([]int, error) {
+	var sequence []int
+	for _, playerResults := range tableStrings {
+		CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
+		if err != nil {
+			log.Println(err.Error())
+			return sequence, err
+		}
+		sequence = append(sequence, CID)
+	}
+	return sequence, nil
+}
+
+func deleteSession(db *sqlx.DB, lobbyID string) error {
+	stmt := `DELETE FROM brainless_races.sessions WHERE session_id = ?`
+
+	_, err := db.Exec(stmt, lobbyID)
+	if err != nil {
+		log.Println(err.Error())
 		return err
 	}
 	return nil
