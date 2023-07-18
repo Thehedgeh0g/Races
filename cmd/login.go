@@ -144,7 +144,5 @@ func deleteUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			Path:    "/",
 			Expires: time.Now().AddDate(0, 0, -1),
 		})
-
-		return
 	}
 }

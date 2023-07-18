@@ -63,7 +63,7 @@ function drawBackground() {
 function drawCar(image, x, y) { 
     canvasContext.rotate(angle);
     canvasContext.translate(-xcanvas, -ycanvas);
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
+ //   canvasContext.clearRect(0, 0, canvas.width, canvas.height); 
     canvasContext.translate(xcanvas, ycanvas);
     canvasContext.rotate(-angle);
     canvasContext.drawImage(image, x, y, 17, 24);
@@ -104,7 +104,7 @@ function drawFrame() {
         xspeed = Math.sin(angle)*speed; 
         yspeed = Math.cos(angle)*speed; 
     } 
-    canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
+    //canvasContext.clearRect(0, 0, GAME.width, GAME.height); 
     drawBackground(); 
     UpdatePosition(); 
     initEventsListeners(); 

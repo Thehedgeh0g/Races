@@ -28,6 +28,11 @@ func garageData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		usersMoney, err := getMoney(db, userID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
 
 		garageData := Garage{
 			Cars:        cars,
