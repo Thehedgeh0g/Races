@@ -169,6 +169,8 @@ const time4 = document.getElementById("Time4");
 const exp = document.getElementById("exp");
 const money = document.getElementById("money");
 
+const button = document.getElementById("button");
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
@@ -179,7 +181,7 @@ function drawFrame() {
     if (sflag == true) {
         var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished + "/" + dif;
         socket.send(JSON.stringify(message));
-        console.log(message);
+        //console.log(message);
     }
 
     endTime = new Date();
@@ -238,7 +240,10 @@ function UpdatePosition() {
 
 function initEventsListeners() { 
     window.addEventListener('keydown', onCanvasKeyDown); 
-    window.addEventListener('keyup', onCanvasKeyUp); 
+    window.addEventListener('keyup', onCanvasKeyUp);
+    button.addEventListener('click', ()=> {
+        window.location.href = "/menu"
+    })
 }
 
 function drawCar(image, x, y) { 
@@ -703,7 +708,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
-    console.log(go);
+    //console.log(go);
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
