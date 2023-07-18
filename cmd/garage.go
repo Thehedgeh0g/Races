@@ -160,7 +160,7 @@ func buyCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		ID := getCarID(cars, req)
 
-		lastStock, err := getLastCar(cars, req)
+		lastStock, err := getLastCar(cars)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -205,7 +205,7 @@ func getCarID(cars []Car, req string) int {
 	return 404
 }
 
-func getLastCar(cars []Car, req string) (int, error) {
+func getLastCar(cars []Car) (int, error) {
 	max := -100
 	for _, car := range cars {
 		stock, err := strconv.Atoi(car.Stock)
@@ -424,7 +424,7 @@ func updateColor(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 			return false, err
 		}
 		color := req[1]
-		carsArr[ID] = string(carsArr[ID][1]) + string(color) + carsArr[ID][2:]
+		carsArr[ID] = string(carsArr[ID][2]) + string(color) + carsArr[ID][3:]
 		cars := strings.Join(carsArr, " ")
 		stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
 
