@@ -149,6 +149,8 @@ let endTime = new Date();
 
 let dif = 0;
 
+let sended = false;
+
 const notification = document.getElementById("notification");
 
 const waiting = document.getElementById("waiting");
@@ -172,7 +174,7 @@ function drawFrame() {
     drawMapDots();
     dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
     if (sflag == true) {
-        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished + " " + dif;
+        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished + "/" + dif;
         socket.send(JSON.stringify(message));
         //console.log(message);
     }
@@ -180,7 +182,7 @@ function drawFrame() {
     endTime = new Date();
     dif = (endTime - startTime);
     dif = (String(divme((endTime - startTime)/1000, 60)) + ":" + String((endTime - startTime)/1000 % 60));
-    console.log(dif);
+    //console.log(dif);
 
     requestAnimationFrame(drawFrame);}
     , 16)
@@ -698,7 +700,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
-//    console.log(go);
+    //console.log(event.data);
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
@@ -725,14 +727,14 @@ socket.onmessage = function(event) {
         notification.innerHTML = cars[table.forth].Name + "finished forth";
     }
     
-    if ((go.length - 4) = amountOfPlayers) {
+    if (((go.length - 4) == amountOfPlayers) && !sended && isLoaded) {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', '/api/getTable');
         xhr.addEventListener('load', () => {
             console.log(xhr.responseText);
 
         })
-        xhr.send(window.location.pathname.split('/')[2]);
+        xhr.send(JSON.stringify(window.location.pathname.split('/')[2]));
         if (go.length >= 5) {
             name1.innerHTML = cars[table.first].Name;
             time1.innerHTML = go[4].split('/')[1];
@@ -752,6 +754,7 @@ socket.onmessage = function(event) {
 
 
         tabl.style.visibility = "visible";
+        sended = true;
     }
 };
 
