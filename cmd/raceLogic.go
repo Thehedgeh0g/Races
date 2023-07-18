@@ -280,7 +280,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			  session_id = ?   
 		`
 
-		var IDs []string
+		var IDs [4]string
 
 		row := db.QueryRow(query, req)
 		err = row.Scan(&IDs[0], &IDs[1], &IDs[2], &IDs[3])
