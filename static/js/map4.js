@@ -166,6 +166,9 @@ const time3 = document.getElementById("Time3");
 const name4 = document.getElementById("Name4");
 const time4 = document.getElementById("Time4");
 
+const exp = document.getElementById("exp");
+const money = document.getElementById("money");
+
 function drawFrame() {
     setTimeout( () => {
     onCanvasKey();
@@ -700,7 +703,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
-    //console.log(event.data);
+    //console.log(go);
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
@@ -730,28 +733,28 @@ socket.onmessage = function(event) {
     if (((go.length - 4) == amountOfPlayers) && !sended && isLoaded) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/getTable');
-        xhr.send(JSON.stringify(window.location.pathname.split('/')[2]));
         xhr.addEventListener('load', () => {
             console.log(xhr.responseText);
 
         })
+        xhr.send(window.location.pathname.split('/')[2]);
         if (go.length >= 5) {
             name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[4].split('/')[1];
+            time1.innerHTML = go[4].split('/')[1].slice(0, 7);
         }
         if (go.length >= 6) {
             name2.innerHTML = cars[table.second].Name;
-            time2.innerHTML = go[5].split('/')[1];
+            time2.innerHTML = go[5].split('/')[1].slice(0, 7);
         }
         if (go.length >= 7) {
             name3.innerHTML = cars[table.third].Name;
-            time3.innerHTML = go[6].split('/')[1];
+            time3.innerHTML = go[6].split('/')[1].slice(0, 7);
         }
         if (go.length >= 8) {
             name4.innerHTML = cars[table.forth].Name;
-            time4.innerHTML = go[7].split('/')[1];
+            time4.innerHTML = go[7].split('/')[1].slice(0, 7);
         }
-
+        //money.innerHTML = 
 
         tabl.style.visibility = "visible";
         sended = true;
