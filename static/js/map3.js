@@ -145,6 +145,8 @@ let table = {
     forth: 4,
 }
 
+let endTime = new Date();
+
 const notification = document.getElementById("notification");
 
 const waiting = document.getElementById("waiting");
@@ -161,6 +163,12 @@ function drawFrame() {
         socket.send(JSON.stringify(message));
         //console.log(message);
     }
+
+    endTime = new Date();
+    let dif = (endTime - startTime);
+    dif = (String(divme((endTime - startTime)/1000, 60)) + ":" + String((endTime - startTime)/1000 % 60));
+    console.log(dif);
+
     requestAnimationFrame(drawFrame);}
     , 16)
 
@@ -362,6 +370,10 @@ function updateReduce() {
         }
     }
 }
+
+function diffDates(day_one, day_two) {
+    return (day_one - day_two) / (60 * 60 * 24 * 1000);
+};
 
 function onCanvasKey() { 
     if (wasd.w == 1) { 
@@ -655,6 +667,8 @@ function findStartTile() {
     
 }
 
+let startTime = new Date()
+console.log(startTime);
 getTiles();
 
 
@@ -670,7 +684,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
-    console.log(go);
+//    console.log(go);
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
