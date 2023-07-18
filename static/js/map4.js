@@ -179,7 +179,7 @@ function drawFrame() {
     if (sflag == true) {
         var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished + "/" + dif;
         socket.send(JSON.stringify(message));
-        //console.log(message);
+        console.log(message);
     }
 
     endTime = new Date();
@@ -703,7 +703,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
-    //console.log(go);
+    console.log(go);
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
@@ -735,9 +735,11 @@ socket.onmessage = function(event) {
         xhr.open('POST', '/api/getTable');
         xhr.addEventListener('load', () => {
             console.log(xhr.responseText);
-
+            let infor = JSON.parse(xhr.responseText)
+            money.innerHTML = ' ' + String(infor.response.Money);
+            exp.innerHTML = ' ' + String(infor.response.Exp);
         })
-        xhr.send(window.location.pathname.split('/')[2]);
+        xhr.send(JSON.stringify(window.location.pathname.split('/')[2]));
         if (go.length >= 5) {
             name1.innerHTML = cars[table.first].Name;
             time1.innerHTML = go[4].split('/')[1].slice(0, 7);
@@ -754,7 +756,7 @@ socket.onmessage = function(event) {
             name4.innerHTML = cars[table.forth].Name;
             time4.innerHTML = go[7].split('/')[1].slice(0, 7);
         }
-        //money.innerHTML = 
+        
 
         tabl.style.visibility = "visible";
         sended = true;
