@@ -29,7 +29,12 @@ const carArrowLeft = document.getElementById("carArrowLeft");
 const carArrowRight = document.getElementById("carArrowRight");
 
 let Data = '';
-let GarageCars = NaN;
+let GarageCars = [
+  {},
+  {},
+  {},
+  {},
+];
 var carArrowCnt = 0;
 let xhr = new XMLHttpRequest();
 var GarageCarsCount = 0;
@@ -57,11 +62,13 @@ xhr.send();
 xhr.onload = function() {
   Data = JSON.parse(xhr.response);
   console.log(Data.Garage);
+  console.log(Data.Garage.Cars);
   GarageCars = Data.Garage.Cars;
-  while(GarageCars[carArrowCnt].isChosen == 0){
+  console.log(GarageCars);  
+  while(GarageCars[carArrowCnt].IsChoosen == '0'){
     carArrowCnt += 1;
   }
-  while(GarageCars[carArrowCnt].stock == 1){
+  while(GarageCars[GarageCarsCount].Stock == '1'){
     GarageCarsCount += 1;
   }
   PriceCarA = Data.Garage.ACarCost;
@@ -70,38 +77,55 @@ xhr.onload = function() {
   PriceColor = Data.Garage.ColorCost;
   CostUpgrade = Data.Garage.UpgradeCost;
   Money = Data.Garage.Money;
-  TuningCar.transmission = GarageCars[carArrowCnt].transmission;
-  TuningCar.engine = GarageCars[carArrowCnt].engine;
-  TuningCar.breaks = GarageCars[carArrowCnt].breaks;
-  TuningCar.suspension = GarageCars[carArrowCnt].suspension;
-  engineCnt = GarageCars[carArrowCnt].engine;
-  transmissionCnt = GarageCars[carArrowCnt].transmission;
-  breaksCnt = GarageCars[carArrowCnt].breaks;
-  suspensionCnt = GarageCars[carArrowCnt].suspension;
+
+  GarageCars.Transmission =  Number(GarageCars[carArrowCnt].Transmission);
+  GarageCars.Engine = Number(GarageCars[carArrowCnt].Engine);
+  GarageCars.Breaks = Number(GarageCars[carArrowCnt].Breaks);
+  GarageCars.Suspension = Number(GarageCars[carArrowCnt].Suspension);
+
+  TuningCar.transmission =  GarageCars[carArrowCnt].Transmission;
+  TuningCar.engine = GarageCars[carArrowCnt].Engine;
+  TuningCar.breaks = GarageCars[carArrowCnt].Breaks;
+  TuningCar.suspension = GarageCars[carArrowCnt].Suspension;
+  
+
+  engineCnt = GarageCars[carArrowCnt].Engine;
+  transmissionCnt = GarageCars[carArrowCnt].Transmission;
+  breaksCnt = GarageCars[carArrowCnt].Breaks;
+  suspensionCnt = GarageCars[carArrowCnt].Suspension;
+
+  console.log(engineCnt);  
+
   document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
+  document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: '; 
+  document.getElementById("Money").innerHTML = 'Money: ' + Money;
+
+  document.getElementById("engineCnt").innerHTML = engineCnt;
+  document.getElementById("transmissionCnt").innerHTML = transmissionCnt;
+  document.getElementById("breaksCnt").innerHTML = breaksCnt;
+  document.getElementById("suspensionCnt").innerHTML = suspensionCnt;
+
+  document.getElementById("PriceCarA").innerHTML = PriceCarA;
+  document.getElementById("PriceCarU").innerHTML = PriceCarU;
+  document.getElementById("PriceCarB").innerHTML = PriceCarB;
+
+  console.log(PriceColor);
+  document.getElementById("PriceColor1").innerHTML = PriceColor;
+  document.getElementById("PriceColor2").innerHTML = PriceColor;
+  document.getElementById("PriceColor3").innerHTML = PriceColor;
+  document.getElementById("PriceColor4").innerHTML = PriceColor;
+  document.getElementById("PriceColor5").innerHTML = PriceColor;
+
+  console.log(GarageCars[carArrowCnt]);
+  ShowPurchase();
+
 };
 
 const tuningPurchase = document.getElementById("tuningPurchase");
 
 
-document.getElementById("engineCnt").innerHTML = engineCnt;
-document.getElementById("transmissionCnt").innerHTML = transmissionCnt;
-document.getElementById("breaksCnt").innerHTML = breaksCnt;
-document.getElementById("suspensionCnt").innerHTML = suspensionCnt;
 
-document.getElementById("PriceCarA").innerHTML = PriceCarA;
-document.getElementById("PriceCarU").innerHTML = PriceCarU;
-document.getElementById("PriceCarB").innerHTML = PriceCarB;
 
-document.getElementById("PriceColor1").innerHTML = PriceColor;
-document.getElementById("PriceColor2").innerHTML = PriceColor;
-document.getElementById("PriceColor3").innerHTML = PriceColor;
-document.getElementById("PriceColor4").innerHTML = PriceColor;
-document.getElementById("PriceColor5").innerHTML = PriceColor;
-
-document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: ' + String(CostUpgrade);
-
-document.getElementById("Money").innerHTML = 'Money: ' + String(Money);
 
 ShopField.addEventListener("click", showShop);
 TuningField.addEventListener("click", showTuning);
@@ -203,16 +227,17 @@ function currentStyle() {
   }
 }
 function replaceCar() {
-  if (GarageCarsCount < 3){
+  if (GarageCarsCount < 4){
     if ((this == ACarField) && (GarageCars[1].stock != 1)){
-      let car = 'ACar';
+      let car = 'ACar'; 
       let xhrACar = new XMLHttpRequest();
       xhrACar.open("POST", "/api/buyCar");
-      xhrACar.send(car);
+      xhrACar.send(JSON.stringify(car));
       xhrACar.onload = () => {
-        if (xhrACar.response) {
+        let answer = JSON.parse(xhrACar.response);
+        if (answer) {
           carArrowCnt = 1;
-          document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
+          document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
           ACarField.textContent = 'Owned';
           GarageCars[carArrowCnt].stock = 1;
@@ -220,8 +245,9 @@ function replaceCar() {
           TuningCar.engine = GarageCars[carArrowCnt].engine;
           TuningCar.breaks = GarageCars[carArrowCnt].breaks;
           TuningCar.suspension = GarageCars[carArrowCnt].suspension;
+          Money -= PriceCarA;
+          document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
-          console.log(xhrACar.response);
         }
       }
     }
@@ -229,12 +255,13 @@ function replaceCar() {
     if ((this == UCarField) && (GarageCars[2].stock != 1)){
       let car = 'UCar';
       let xhrUCar = new XMLHttpRequest();
-      xhrUCar.open("POST", "");
-      xhrUCar.send(car);
+      xhrUCar.open("POST", "/api/buyCar");
+      xhrUCar.send(JSON.stringify(car));
       xhrUCar.onload = () => {
-        if (xhrUCar.response) {
+        let answer = JSON.parse(xhrUCar.response);
+        if (answer) {
           carArrowCnt = 2;
-          document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
+          document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
           UCarField.textContent = 'Owned';
           GarageCars[carArrowCnt].stock = 1;
@@ -242,6 +269,8 @@ function replaceCar() {
           TuningCar.engine = GarageCars[carArrowCnt].engine;
           TuningCar.breaks = GarageCars[carArrowCnt].breaks;
           TuningCar.suspension = GarageCars[carArrowCnt].suspension;
+          Money -= PriceCarU;
+          document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
         }
       }
@@ -249,12 +278,13 @@ function replaceCar() {
     if ((this == BCarField) && (GarageCars[3].stock != 1)){
       let car = 'BCar';
       let xhrBCar = new XMLHttpRequest();
-      xhrBCar.open("POST", "");
-      xhrBCar.send(car);
+      xhrBCar.open("POST", "/api/buyCar");
+      xhrBCar.send(JSON.stringify(car));
       xhrBCar.onload = () => {
-        if (xhrBCar.response) {
+        let answer = JSON.parse(xhrBCar.response);
+        if (answer) {
           carArrowCnt = 3;
-          document.getElementById("currentCar").src = GarageCars[carArrowCnt].scr;
+          document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
           BCarField.textContent = 'Owned';
           GarageCars[carArrowCnt].stock = 1;
@@ -262,6 +292,8 @@ function replaceCar() {
           TuningCar.engine = GarageCars[carArrowCnt].engine;
           TuningCar.breaks = GarageCars[carArrowCnt].breaks;
           TuningCar.suspension = GarageCars[carArrowCnt].suspension;
+          Money -= PriceCarB;
+          document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
         }
       }
@@ -269,12 +301,14 @@ function replaceCar() {
 
   }
   if (this == GreyCarField){
-    var src = document.getElementById('greyCar').src;
+    var src = document.getElementById('greyCar').src; 
+    src = src.slice(src.length-6  , src.length-4); 
     let xhrGreyColor = new XMLHttpRequest();
-    xhrGreyColor.open("POST", "");
-    xhrGreyColor.send(src);
+    xhrGreyColor.open("POST", "/api/buyColor");
+    xhrGreyColor.send(JSON.stringify(src));
     xhrGreyColor.onload = () => {
-      if (xhrGreyColor.response) {
+      let answer = JSON.parse(xhrGreyColor.response);
+      if (answer) {
         document.getElementById("currentCar").src = document.getElementById('greyCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
       }
@@ -438,30 +472,31 @@ function ShowPurchaseFututre() {
   document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension) + "vw";
 }
 function ShowPurchase() {
-  document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].engine);
-  document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].transmission);
-  document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].breaks);
-  document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].suspension);
+  console.log(GarageCars[carArrowCnt]);
+  document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].Engine);
+  document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].Transmission);
+  document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].Breaks);
+  document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].Suspension);
 
-  document.querySelector(".MaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
-  document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].transmission) + "vw";
-  document.querySelector(".AccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine) + "vw";
-  document.querySelector(".FutureAccelerationGraph").style.width =  String(GarageCars[carArrowCnt].engine) + "vw";
-  document.querySelector(".BrakingGraph").style.width =  String(GarageCars[carArrowCnt].breaks) + "vw";
-  document.querySelector(".FutureBrakingGraph").style.width =  String(GarageCars[carArrowCnt].breaks) + "vw";
-  document.querySelector(".ManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].suspension) + "vw";
-  document.querySelector(".FutureManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].suspension) + "vw";
+  document.querySelector(".MaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].Transmission) + "vw";
+  document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].Transmission) + "vw";
+  document.querySelector(".AccelerationGraph").style.width =  String(GarageCars[carArrowCnt].Engine) + "vw";
+  document.querySelector(".FutureAccelerationGraph").style.width =  String(GarageCars[carArrowCnt].Engine) + "vw";
+  document.querySelector(".BrakingGraph").style.width =  String(GarageCars[carArrowCnt].Breaks) + "vw";
+  document.querySelector(".FutureBrakingGraph").style.width =  String(GarageCars[carArrowCnt].Breaks) + "vw";
+  document.querySelector(".ManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].Suspension) + "vw";
+  document.querySelector(".FutureManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].Suspension) + "vw";
 
-  TuningCar.transmission = GarageCars[carArrowCnt].transmission;
-  TuningCar.engine = GarageCars[carArrowCnt].engine;
-  TuningCar.breaks = GarageCars[carArrowCnt].breaks;
-  TuningCar.suspension = GarageCars[carArrowCnt].suspension;
+  TuningCar.transmission = GarageCars[carArrowCnt].Transmission;
+  TuningCar.engine = GarageCars[carArrowCnt].Engine;
+  TuningCar.breaks = GarageCars[carArrowCnt].Breaks;
+  TuningCar.suspension = GarageCars[carArrowCnt].Suspension;
 }
 
 function AcceptPurchase() {
   var str = '/' + String(TuningCar.transmission) + '/' + String(TuningCar.engine) + '/' + String(TuningCar.suspension) + '/' + String(TuningCar.breaks) + '/';
   let xhrTuning = new XMLHttpRequest();
-  xhrTuning.open("POST", "");
+  xhrTuning.open("POST", "/api/buyStats");
   xhrTuning.send(src);
   xhrTuning.onload = () => {
     if (xhrTuning.response) {
