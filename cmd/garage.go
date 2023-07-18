@@ -450,7 +450,7 @@ func tune(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		ID := getCarID(cars, req)
+		ID := getCarID(cars, string(req[0]))
 
 		success := false
 
@@ -547,7 +547,9 @@ func updateStats(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 		if err != nil {
 			return false, err
 		}
+		log.Println(ID)
 		if ID != 404 {
+
 			carsArr[ID] = string(carsArr[ID][:2]) + req + carsArr[ID][15:]
 			log.Println(carsArr[ID])
 			cars := strings.Join(carsArr, " ")
