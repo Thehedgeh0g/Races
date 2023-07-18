@@ -729,12 +729,12 @@ socket.onmessage = function(event) {
     
     if (((go.length - 4) == amountOfPlayers) && !sended && isLoaded) {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/getTable');
+        xhr.open('POST', '/api/getTable');
+        xhr.send(JSON.stringify(window.location.pathname.split('/')[2]));
         xhr.addEventListener('load', () => {
             console.log(xhr.responseText);
 
         })
-        xhr.send(JSON.stringify(window.location.pathname.split('/')[2]));
         if (go.length >= 5) {
             name1.innerHTML = cars[table.first].Name;
             time1.innerHTML = go[4].split('/')[1];

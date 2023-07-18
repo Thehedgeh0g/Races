@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"math"
@@ -239,7 +240,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 		}
-
+		fmt.Printf("reqData: %v\n", reqData)
 		var req string
 
 		err = json.Unmarshal(reqData, &req)
@@ -249,7 +250,8 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		tableStrings := strings.Split(races[req], " ")
+		tableStrings := strings.Split(races[req][1:], " ")
+		log.Println(tableStrings)
 		var sequence []int
 		for _, playerResults := range tableStrings {
 			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
