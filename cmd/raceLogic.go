@@ -172,7 +172,7 @@ func generateClientID() string {
 
 func verificatePos(posMessage string) string {
 
-	isFinished := strings.Split(posMessage, " ")[len(strings.Split(posMessage, " "))-1]
+	isFinished := strings.Split(posMessage, " ")[9]
 
 	speed := strings.Split(posMessage, " ")[2]
 
@@ -215,10 +215,11 @@ func verificatePos(posMessage string) string {
 	sessionID := strings.Split(posMessage, " ")[0]
 
 	inSessionId := strings.Split(posMessage, " ")[8]
-
-	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId)) {
-		//log.Println("tut")
-		races[sessionID] += " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
+	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
+		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
+		log.Println(inSessionId, races[sessionID])
+	} else if inSessionId == "0" {
+		log.Println(inSessionId, strings.Contains(races[sessionID], inSessionId+"/"))
 	}
 
 	xSpeed := math.Sin(deg) * V
@@ -228,6 +229,7 @@ func verificatePos(posMessage string) string {
 	} else {
 		posMessage = y0 + " " + x0 + " " + angle + " " + inSessionId + races[sessionID]
 	}
+	//log.Println(races[sessiwonID])
 	return posMessage
 
 }
@@ -251,7 +253,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		tableStrings := strings.Split(races[req][1:], " ")
-		log.Println(tableStrings)
+		//log.Println(tableStrings)
 		var sequence []int
 		for _, playerResults := range tableStrings {
 			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
