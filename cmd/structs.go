@@ -1,5 +1,10 @@
 package main
 
+type ResultsTable struct {
+	Money string
+	Exp   string
+}
+
 type Garage struct {
 	Cars        []Car
 	CountOfCars int
@@ -82,14 +87,14 @@ type AccountPlayer struct {
 	ImgPath  string `db:"avatar"`
 	Nickname string `db:"nickname"`
 	Lvl      string `db:"exp"`
-	Bosses   string ` db:"boss_count"`
+	Bosses   string `db:"boss_count"`
 }
 
 type AccountData struct {
 	ImgPath  string `db:"avatar"`
 	Nickname string `db:"nickname"`
 	Lvl      string `db:"exp"`
-	Bosses   string ` db:"boss_count"`
+	Bosses   string `db:"boss_count"`
 	Friends  []*FriendsData
 }
 

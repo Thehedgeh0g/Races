@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"math"
 	"net/http"
@@ -221,10 +224,118 @@ func verificatePos(posMessage string) string {
 	xSpeed := math.Sin(deg) * V
 	ySpeed := math.Cos(deg) * V
 	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
-		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId + " " + races[sessionID]
+		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId + races[sessionID]
 	} else {
-		posMessage = y0 + " " + x0 + " " + angle + " " + inSessionId + " " + races[sessionID]
+		posMessage = y0 + " " + x0 + " " + angle + " " + inSessionId + races[sessionID]
 	}
 	return posMessage
 
+}
+
+func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+		fmt.Printf("reqData: %v\n", reqData)
+		var req string
+
+		err = json.Unmarshal(reqData, &req)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		tableStrings := strings.Split(races[req][1:], " ")
+		log.Println(tableStrings)
+		var sequence []int
+		for _, playerResults := range tableStrings {
+			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
+			sequence = append(sequence, CID)
+		}
+
+		userID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		query := `
+			SELECT
+			  host_id,
+			  player2_id,
+			  player3_id,
+			  player4_id
+			FROM
+			  sessions
+			WHERE
+			  session_id = ?   
+		`
+
+		var IDs [4]string
+
+		row := db.QueryRow(query, req)
+		err = row.Scan(&IDs[0], &IDs[1], &IDs[2], &IDs[3])
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		var results ResultsTable
+
+		for place, inSessionId := range sequence {
+			if inSessionId < 4 {
+				if IDs[inSessionId] == userID {
+					err := updateUserTable(db, userID, 4-place)
+					if err != nil {
+						http.Error(w, "Server Error", 500)
+						log.Println(err.Error())
+						return
+					}
+
+					results.Money = strconv.Itoa(15 * (4 - place))
+					results.Exp = strconv.Itoa(13 * (4 - place))
+				}
+			}
+		}
+
+		response := struct {
+			Response ResultsTable `json:"response"`
+		}{
+			Response: results,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
+	}
+}
+
+func updateUserTable(db *sqlx.DB, userID string, modificator int) error {
+	stmt := `UPDATE users SET money = ?, exp = ? WHERE user_id = ?`
+
+	_, err := db.Exec(stmt, strconv.Itoa(15*modificator), strconv.Itoa(13*modificator), userID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

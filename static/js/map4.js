@@ -149,9 +149,25 @@ let endTime = new Date();
 
 let dif = 0;
 
+let sended = false;
+
 const notification = document.getElementById("notification");
 
 const waiting = document.getElementById("waiting");
+
+const tabl = document.getElementById("table");
+
+const name1 = document.getElementById("Name1");
+const time1 = document.getElementById("Time1");
+const name2 = document.getElementById("Name2");
+const time2 = document.getElementById("Time2");
+const name3 = document.getElementById("Name3");
+const time3 = document.getElementById("Time3");
+const name4 = document.getElementById("Name4");
+const time4 = document.getElementById("Time4");
+
+const exp = document.getElementById("exp");
+const money = document.getElementById("money");
 
 function drawFrame() {
     setTimeout( () => {
@@ -161,7 +177,7 @@ function drawFrame() {
     drawMapDots();
     dial.style.transform = "rotate(" + Math.abs(speed *18) + "deg)";
     if (sflag == true) {
-        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished + " " + dif;
+        var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished + "/" + dif;
         socket.send(JSON.stringify(message));
         //console.log(message);
     }
@@ -169,7 +185,7 @@ function drawFrame() {
     endTime = new Date();
     dif = (endTime - startTime);
     dif = (String(divme((endTime - startTime)/1000, 60)) + ":" + String((endTime - startTime)/1000 % 60));
-    console.log(dif);
+    //console.log(dif);
 
     requestAnimationFrame(drawFrame);}
     , 16)
@@ -321,6 +337,7 @@ function updateReduce() {
                     roundHTML.innerHTML = "FINISHED";
                     waiting.innerHTML = "waiting for the other players"
                     mspeed = 0;
+
                 } else {
                     roundHTML.innerHTML = curRound + "/" + maxRounds;
                 }
@@ -686,38 +703,67 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
-//    console.log(go);
+    //console.log(go);
     cars[go[3]].X = go[0];
     cars[go[3]].Y = go[1];
     cars[go[3]].Angle = go[2];
-    if (go[4].length == 1) {
+    if (go.length == 5) {
         table.first = go[4][0]
         notification.innerHTML = cars[table.first].Name + " finished first";
     }
-    if (go[4].length == 2) {
+    if (go.length == 6) {
         table.first = go[4][0]
-        table.second = go[4][1]
+        table.second = go[5][0]
         notification.innerHTML = cars[table.second].Name + " finished second";
     }
-    if (go[4].length == 3) {
+    if (go.length == 7) {
         table.first = go[4][0]
-        table.second = go[4][1]
-        table.third = go[4][2]
+        table.second = go[5][0]
+        table.third = go[6][0]
         notification.innerHTML = cars[table.third].Name + " finished third";
     }
-    if (go[4].length == 4) {
+    if (go.length == 8) {
         table.first = go[4][0]
-        table.second = go[4][1]
-        table.third = go[4][2]
-        table.forth = go[4][3]
+        table.second = go[5][0]
+        table.third = go[6][0]
+        table.forth = go[7][0]
         notification.innerHTML = cars[table.forth].Name + "finished forth";
     }
+    
+    if (((go.length - 4) == amountOfPlayers) && !sended && isLoaded) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/getTable');
+        xhr.addEventListener('load', () => {
+            console.log(xhr.responseText);
 
+        })
+        xhr.send(window.location.pathname.split('/')[2]);
+        if (go.length >= 5) {
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[4].split('/')[1].slice(0, 7);
+        }
+        if (go.length >= 6) {
+            name2.innerHTML = cars[table.second].Name;
+            time2.innerHTML = go[5].split('/')[1].slice(0, 7);
+        }
+        if (go.length >= 7) {
+            name3.innerHTML = cars[table.third].Name;
+            time3.innerHTML = go[6].split('/')[1].slice(0, 7);
+        }
+        if (go.length >= 8) {
+            name4.innerHTML = cars[table.forth].Name;
+            time4.innerHTML = go[7].split('/')[1].slice(0, 7);
+        }
+        //money.innerHTML = 
+
+        tabl.style.visibility = "visible";
+        sended = true;
+    }
 };
 
 socket.addEventListener("open", (event) => {
     sflag = true;
-    var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished
+    var message = window.location.pathname.split('/')[2] + " race " + String(speed) + " " + String(angle) + " " + String(y0) + " " + String(x0) + " " + String(y1) + " " + String(x1) + " " + String(myCar) + " " + finished + " " + dif;
     socket.send(JSON.stringify(message));
 
 });
