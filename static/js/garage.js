@@ -68,9 +68,12 @@ xhr.onload = function() {
   while(GarageCars[carArrowCnt].IsChoosen == '0'){
     carArrowCnt += 1;
   }
-  while(GarageCars[GarageCarsCount].Stock == '1'){
+  while(GarageCarsCount < 4){
     console.log(GarageCarsCount)
-    GarageCarsCount += 1;
+    if (GarageCars[GarageCarsCount].Stock == '1'){
+      GarageCarsCount += 1;
+    }
+    
   }
   PriceCarA = Data.Garage.ACarCost;
   PriceCarU = Data.Garage.UCarCost;
