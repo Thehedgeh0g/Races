@@ -39,6 +39,7 @@ func main() {
 	mux.HandleFunc("/api/buyCar", buyCar(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getGarageData", garageData(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/addFriend", addFriend(dbx)).Methods(http.MethodPost)
+	mux.HandleFunc("/api/getTable", getTable(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getHost", hostCheck(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/getPlayers", sendPlayers(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/getLobbyID", sendLobbyID(dbx)).Methods(http.MethodGet)
