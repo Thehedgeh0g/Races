@@ -229,7 +229,7 @@ function replaceCar() {
       xhrACar.send(JSON.stringify(car));
       xhrACar.onload = () => {
         let answer = JSON.parse(xhrACar.response);
-        if (answer) {
+        if (answer.response) {
           carArrowCnt = 1;
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
@@ -249,7 +249,7 @@ function replaceCar() {
       xhrUCar.send(JSON.stringify(car));
       xhrUCar.onload = () => {
         let answer = JSON.parse(xhrUCar.response);
-        if (answer) {
+        if (answer.response) {
           carArrowCnt = 2;
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
@@ -268,7 +268,8 @@ function replaceCar() {
       xhrBCar.send(JSON.stringify(car));
       xhrBCar.onload = () => {
         let answer = JSON.parse(xhrBCar.response);
-        if (answer) {
+        if (answer.response) {
+          console.log(answer.response);
           carArrowCnt = 3;
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
@@ -290,7 +291,7 @@ function replaceCar() {
     xhrGreyColor.send(JSON.stringify(src));
     xhrGreyColor.onload = () => {
       let answer = JSON.parse(xhrGreyColor.response);
-      if (answer) {
+      if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('greyCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src; 
         Money -= PriceColor;
@@ -306,7 +307,7 @@ function replaceCar() {
     xhrGreenColor.send(JSON.stringify(src));
     xhrGreenColor.onload = () => {
       let answer = JSON.parse(xhrGreenColor.response);
-      if (answer) {
+      if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('greenCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
         Money -= PriceColor;
@@ -322,7 +323,8 @@ function replaceCar() {
     xhrRedColor.send(JSON.stringify(src));
     xhrRedColor.onload = () => {
       let answer = JSON.parse(xhrRedColor.response);
-      if (answer) {
+      if (answer.response) {
+        console.log(answer);
         document.getElementById("currentCar").src = document.getElementById('redCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
         Money -= PriceColor;
@@ -338,7 +340,7 @@ function replaceCar() {
     xhrYellowColor.send(JSON.stringify(src));
     xhrYellowColor.onload = () => {
       let answer = JSON.parse(xhrYellowColor.response);
-      if (answer) {
+      if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('yellowCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
         Money -= PriceColor;
@@ -354,7 +356,7 @@ function replaceCar() {
     xhrBlueColor.send(JSON.stringify(src));
     xhrBlueColor.onload = () => {
       let answer = JSON.parse(xhrBlueColor.response);
-      if (answer) {
+      if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('blueCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
         Money -= PriceColor;

@@ -414,6 +414,8 @@ func updateColor(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 			}
 
 		}
+	} else {
+		return false, nil
 	}
 
 	return true, nil
