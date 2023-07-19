@@ -17,8 +17,8 @@ func AI(db *sqlx.DB, lobbyID string, x, y int) {
 	mapData, err := getMapData(db, mapID)
 	curTileID := (224 - (x/96+y/96)*15)
 	var botsMap [][]string
-	for i, tileID := strings.Split(mapData.MapKey, " "){
-		
+	for i, tileID := range strings.Split(mapData.MapKey, " ") {
+		botsMap[(i+1)%15-1][(i+1)/15-1] = tileID
 	}
 	log.Println(mapData.MapKey[curTileID])
 }

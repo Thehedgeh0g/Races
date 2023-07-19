@@ -111,6 +111,7 @@ func getCars(db *sqlx.DB, userID string) ([]Car, error) {
 	var car Car
 
 	for _, carStr := range strings.Split(carsStr, " ") {
+		log.Print(strings.Split(carStr, "/"))
 		car.Scr = strings.Split(carStr, "/")[0]
 		car.Transmission = strings.Split(carStr, "/")[1]
 		car.Engine = strings.Split(carStr, "/")[2]
@@ -569,6 +570,81 @@ func updateStats(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 
 func chooseCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		var req string
+
+		err = json.Unmarshal(reqData, &req)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		carID, err := strconv.Atoi(req)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		userID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		cars, err := getCars(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		updateChoose(db, cars[carID].Stock, userID, carID)
 
 	}
+}
+
+func updateChoose(db *sqlx.DB, stock, userID string, ID int) (bool, error) {
+	query := `
+		SELECT
+		  cars
+		FROM
+		  users
+		WHERE
+		  user_id = ?    
+	`
+
+	var carsStr string
+
+	row := db.QueryRow(query, userID)
+
+	err := row.Scan(&carsStr)
+	if err != nil {
+		return false, err
+	}
+
+	carsArr := strings.Split(carsStr, " ")
+
+	if stock == "1" {
+		for i, _ := range carsArr {
+			carsArr[i] = carsArr[i][:17] + "0"
+		}
+		carsArr[ID] = carsArr[ID][:17] + "1"
+		log.Println(carsArr[ID])
+		cars := strings.Join(carsArr, " ")
+
+		stmt := `UPDATE users SET cars = ? WHERE user_id = ?`
+
+		_, err = db.Exec(stmt, cars, userID)
+		if err != nil {
+			return false, err
+		}
+	} else {
+		return false, err
+	}
+	return true, nil
 }
