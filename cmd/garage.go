@@ -630,7 +630,7 @@ func updateChoose(db *sqlx.DB, stock, userID string, ID int) (bool, error) {
 	carsArr := strings.Split(carsStr, " ")
 
 	if stock == "1" {
-		for i, _ := range carsArr {
+		for i := range carsArr {
 			carsArr[i] = carsArr[i][:17] + "0"
 		}
 		carsArr[ID] = carsArr[ID][:17] + "1"
