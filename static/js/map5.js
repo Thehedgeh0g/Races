@@ -595,9 +595,9 @@ function onCanvasKey() {
 }
 
 function onCanvasKeyUp(event) {
+  Car.src = cars[myCar].Img;
   if (event.code === "KeyW") {
     wasd.w = 0;
-
     // vzhoom.src = '';
     // vzhoom.stop();
   }
@@ -615,18 +615,20 @@ function onCanvasKeyUp(event) {
 function onCanvasKeyDown(event) {
   if (event.code === "KeyW") {
     wasd.w = 1;
-
+    
     // vzhoom.src = '/static/sounds/jiga2k.mp3';
     // vzhoom.play();
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
+    Car.src = cars[myCar].Img.slice(0, -4) + 'L.png';
   }
   if (event.code === "KeyS") {
     wasd.s = 1;
   }
   if (event.code === "KeyD") {
     wasd.d = 1;
+    Car.src = cars[myCar].Img.slice(0, -4) + 'R.png';
   }
 }
 

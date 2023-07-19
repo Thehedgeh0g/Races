@@ -200,7 +200,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		_, err = db.Exec(query, settings.MapID, settings.Rounds, lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+			log.Println(err.Error(), "tut")
 			return
 		}
 
