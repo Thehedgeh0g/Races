@@ -453,13 +453,12 @@ function GarageCarDec() {
     }
     document.getElementById("currentCar").src = '/static/sprites/' + GarageCars[carArrowCnt].Scr + '.png';
     GarageCars[carArrowCnt].IsChoosen = '1';
-
-    xhrIsChoosen.open("POST", "");
-    xhrIsChoosen.send(JSON.stringify(carArrowCnt));
-    xhrIsChoosen.onload = () => {
-      currentStyle();
-      ShowPurchase();
-    }
+    let xhrIsChoosen = new XMLHttpRequest();
+    xhrIsChoosen.open("POST", "/api/chooseCar");
+    xhrIsChoosen.send(JSON.stringify(String(carArrowCnt)));
+    console.log(JSON.stringify(carArrowCnt));
+    currentStyle();
+    ShowPurchase();
   }
 }
 
@@ -472,8 +471,9 @@ function GarageCarInc() {
     }
     document.getElementById("currentCar").src = '/static/sprites/' + GarageCars[carArrowCnt].Scr + '.png';
     GarageCars[carArrowCnt].IsChoosen = '1';
-    xhrIsChoosen.open("POST", "");
-    xhrIsChoosen.send(JSON.stringify(carArrowCnt));
+    let xhrIsChoosen = new XMLHttpRequest();
+    xhrIsChoosen.open("POST", "/api/chooseCar");
+    xhrIsChoosen.send(JSON.stringify(String(carArrowCnt)));
     xhrIsChoosen.onload = () => {
       currentStyle();
       ShowPurchase();

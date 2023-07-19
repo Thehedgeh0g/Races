@@ -111,6 +111,7 @@ func getCars(db *sqlx.DB, userID string) ([]Car, error) {
 	var car Car
 
 	for _, carStr := range strings.Split(carsStr, " ") {
+		log.Print(strings.Split(carStr, "/"))
 		car.Scr = strings.Split(carStr, "/")[0]
 		car.Transmission = strings.Split(carStr, "/")[1]
 		car.Engine = strings.Split(carStr, "/")[2]
@@ -629,7 +630,10 @@ func updateChoose(db *sqlx.DB, stock, userID string, ID int) (bool, error) {
 	carsArr := strings.Split(carsStr, " ")
 
 	if stock == "1" {
-		carsArr[ID] = carsArr[ID][:16] + "1"
+		for i, _ := range carsArr {
+			carsArr[i] = carsArr[i][:17] + "0"
+		}
+		carsArr[ID] = carsArr[ID][:17] + "1"
 		log.Println(carsArr[ID])
 		cars := strings.Join(carsArr, " ")
 
