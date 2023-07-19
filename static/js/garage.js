@@ -323,6 +323,7 @@ function replaceCar() {
     xhrRedColor.onload = () => {
       let answer = JSON.parse(xhrRedColor.response);
       if (answer) {
+        console.log(answer);
         document.getElementById("currentCar").src = document.getElementById('redCar').src;
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
         Money -= PriceColor;
