@@ -44,6 +44,7 @@ var PriceCarU = 0;
 var PriceCarB = 0;
 var PriceColor = 0;
 var CostUpgrade = 0;
+var CostPurchase = 0;
 
 var TuningCar = {
   transmission: 1,
@@ -87,15 +88,13 @@ xhr.onload = function() {
   TuningCar.suspension = Number(GarageCars[carArrowCnt].Suspension);
   
 
-  engineCnt = GarageCars[carArrowCnt].Engine;
-  transmissionCnt = GarageCars[carArrowCnt].Transmission;
-  breaksCnt = GarageCars[carArrowCnt].Breaks;
-  suspensionCnt = GarageCars[carArrowCnt].Suspension;
-
-  console.log(engineCnt);  
+  engineCnt = TuningCar.transmission;
+  transmissionCnt = TuningCar.engine;
+  breaksCnt = TuningCar.breaks;
+  suspensionCnt = TuningCar.suspension; 
 
   document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
-  document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: '; 
+  document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: ' + CostPurchase; 
   document.getElementById("Money").innerHTML = 'Money: ' + Money;
 
   document.getElementById("engineCnt").innerHTML = engineCnt;
@@ -366,6 +365,7 @@ function engineInc() {
     document.getElementById("engineCnt").innerHTML = String(TuningCar.engine + 1);
     document.querySelector(".FutureAccelerationGraph").style.width =  String(TuningCar.engine + 1) + "vw";
     TuningCar.engine += 1;
+    CostPurchase += CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -384,6 +384,7 @@ function transmissionInc() {
     document.getElementById("transmissionCnt").innerHTML = String(TuningCar.transmission + 1);
     document.querySelector(".FutureMaxSpeedGraph").style.width =  String(TuningCar.transmission + 1) + "vw";
     TuningCar.transmission += 1;
+    CostPurchase += CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -402,6 +403,7 @@ function breaksInc() {
     document.getElementById("breaksCnt").innerHTML = String(TuningCar.breaks + 1);
     document.querySelector(".FutureBrakingGraph").style.width =  String(TuningCar.breaks + 1) + "vw";
     TuningCar.breaks += 1;
+    CostPurchase += CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -420,6 +422,7 @@ function suspensionInc() {
     document.getElementById("suspensionCnt").innerHTML = String(TuningCar.suspension + 1);
     document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension + 1) + "vw";
     TuningCar.suspension += 1;
+    CostPurchase += CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -475,24 +478,25 @@ function ShowPurchaseFututre() {
 }
 function ShowPurchase() {
   console.log(GarageCars[carArrowCnt]);
-  document.getElementById("engineCnt").innerHTML = String(GarageCars[carArrowCnt].Engine);
-  document.getElementById("transmissionCnt").innerHTML = String(GarageCars[carArrowCnt].Transmission);
-  document.getElementById("breaksCnt").innerHTML = String(GarageCars[carArrowCnt].Breaks);
-  document.getElementById("suspensionCnt").innerHTML = String(GarageCars[carArrowCnt].Suspension);
+  document.getElementById("engineCnt").innerHTML = Number(GarageCars[carArrowCnt].Engine);
+  document.getElementById("transmissionCnt").innerHTML = Number(GarageCars[carArrowCnt].Transmission);
+  document.getElementById("breaksCnt").innerHTML = Number(GarageCars[carArrowCnt].Breaks);
+  document.getElementById("suspensionCnt").innerHTML = Number(GarageCars[carArrowCnt].Suspension);
 
-  document.querySelector(".MaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].Transmission) + "vw";
-  document.querySelector(".FutureMaxSpeedGraph").style.width =  String(GarageCars[carArrowCnt].Transmission) + "vw";
-  document.querySelector(".AccelerationGraph").style.width =  String(GarageCars[carArrowCnt].Engine) + "vw";
-  document.querySelector(".FutureAccelerationGraph").style.width =  String(GarageCars[carArrowCnt].Engine) + "vw";
-  document.querySelector(".BrakingGraph").style.width =  String(GarageCars[carArrowCnt].Breaks) + "vw";
-  document.querySelector(".FutureBrakingGraph").style.width =  String(GarageCars[carArrowCnt].Breaks) + "vw";
-  document.querySelector(".ManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].Suspension) + "vw";
-  document.querySelector(".FutureManeuverabilityGraph").style.width =  String(GarageCars[carArrowCnt].Suspension) + "vw";
+  document.querySelector(".MaxSpeedGraph").style.width =  Number(GarageCars[carArrowCnt].Transmission) + "vw";
+  document.querySelector(".FutureMaxSpeedGraph").style.width =  Number(GarageCars[carArrowCnt].Transmission) + "vw";
+  document.querySelector(".AccelerationGraph").style.width =  Number(GarageCars[carArrowCnt].Engine) + "vw";
+  document.querySelector(".FutureAccelerationGraph").style.width =  Number(GarageCars[carArrowCnt].Engine) + "vw";
+  document.querySelector(".BrakingGraph").style.width =  Number(GarageCars[carArrowCnt].Breaks) + "vw";
+  document.querySelector(".FutureBrakingGraph").style.width =  Number(GarageCars[carArrowCnt].Breaks) + "vw";
+  document.querySelector(".ManeuverabilityGraph").style.width =  Number(GarageCars[carArrowCnt].Suspension) + "vw";
+  document.querySelector(".FutureManeuverabilityGraph").style.width =  Number(GarageCars[carArrowCnt].Suspension) + "vw";
 
   TuningCar.transmission = Number(GarageCars[carArrowCnt].Transmission);
   TuningCar.engine = Number(GarageCars[carArrowCnt].Engine);
   TuningCar.breaks = Number(GarageCars[carArrowCnt].Breaks);
   TuningCar.suspension = Number(GarageCars[carArrowCnt].Suspension);
+  CostPurchase = 0;
 }
 
 function AcceptPurchase() {
@@ -525,19 +529,19 @@ function AcceptPurchase() {
     str += String(TuningCar.breaks);
   }
   str += '/';
-  console.log(str);
   let xhrTuning = new XMLHttpRequest();
   xhrTuning.open("POST", "/api/buyStats");
   xhrTuning.send(JSON.stringify(str));
   xhrTuning.onload = () => {
-        let answer = JSON.parse(xhrTuning.response);
-    console.log(answer);
+    let answer = JSON.parse(xhrTuning.response);
     if (answer) {
-      GarageCars[carArrowCnt].Transmission = TuningCar.transmission;
-      GarageCars[carArrowCnt].Engine = TuningCar.engine;
-      GarageCars[carArrowCnt].Breaks = TuningCar.breaks;
-      GarageCars[carArrowCnt].Suspension = TuningCar.suspension;
+      GarageCars[carArrowCnt].Transmission = String(TuningCar.transmission);
+      GarageCars[carArrowCnt].Engine = String(TuningCar.engine);
+      GarageCars[carArrowCnt].Breaks = String(TuningCar.breaks);
+      GarageCars[carArrowCnt].Suspension = String(TuningCar.suspension);
+      document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: ' + CostPurchase; 
     }
+    ShowPurchase();
   }
-  ShowPurchase();
+  
 }
