@@ -527,8 +527,8 @@ func updateStats(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 	}
 
 	var tuneCost int
+	for _, tune := range strings.Split(req, "/")[1:5] {
 
-	for _, tune := range strings.Split(req, "/")[1:4] {
 		price, err := strconv.Atoi(tune)
 		if err != nil {
 			return false, err
@@ -536,6 +536,15 @@ func updateStats(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 		tuneCost += price * 200
 	}
 
+	for _, tune := range strings.Split(carsArr[ID][3:14], "/")[:4] {
+		itWas, err := strconv.Atoi(tune)
+		if err != nil {
+			return false, err
+		}
+		tuneCost -= itWas * 200
+	}
+
+	log.Println(tuneCost)
 	canBeBought := false
 
 	if usersMoney-tuneCost > 0 {
