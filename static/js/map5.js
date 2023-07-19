@@ -182,6 +182,13 @@ const button = document.getElementById("button");
 
 let vzhoom = new Audio();
 
+let bar = [];
+
+bar[0] = document.getElementById("bar0");
+bar[1] = document.getElementById("bar1");
+bar[2] = document.getElementById("bar3");
+bar[3] = document.getElementById("bar4");
+
 function drawFrame() {
   setTimeout(() => {
     onCanvasKey();
@@ -356,12 +363,15 @@ function drawCar(image, x, y) {
   canvasContext.rotate(angle);
   canvasContext.translate(-xcanvas, -ycanvas);
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-  // кажись сдесь можно впихнуть отрисовку других машин
+  // кажись здесь можно впихнуть отрисовку других машин
   for (let i = 0; i < amountOfPlayers; i++) {
     if (i != myCar) {
       canvasContext.translate(cars[i].X, cars[i].Y);
       canvasContext.rotate(-cars[i].Angle);
       canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
+      bar[i].style.top = cars[i].Y - 40 + "px";
+      bar[i].style.left = cars[i].X - 40 + "px";
+      bar[i].innerHTML = cars[i].Name
       canvasContext.rotate(cars[i].Angle);
       canvasContext.translate(-cars[i].X, -cars[i].Y);
     }
@@ -369,6 +379,9 @@ function drawCar(image, x, y) {
   // конец впихивания
   canvasContext.translate(xcanvas, ycanvas);
   canvasContext.rotate(-angle);
+  bar[myCar].style.top = ycanvas - 40 + "px";
+  bar[myCar].style.left = xcanvas - 40 + "px";
+  bar[myCar].innerHTML = cars[myCar].Name
   canvasContext.drawImage(image, x, y, carW, carH);
 }
 
