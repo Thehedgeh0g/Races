@@ -34,6 +34,7 @@ func main() {
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
 
+	mux.HandleFunc("/api/chooseCar", chooseCar(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/buyStats", tune(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/buyColor", buyColor(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/buyCar", buyCar(dbx)).Methods(http.MethodPost)
