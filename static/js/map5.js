@@ -264,11 +264,30 @@ function drawCar(image, x, y) {
     // кажись сдесь можно впихнуть отрисовку других машин
     for (let i = 0; i < amountOfPlayers; i++) {
         if (i != myCar) {
+
+            if((checkCrosses(cars[myCar].Border, cars[i].Border.A[0], cars[i].Border.A[1])) ||
+            (checkCrosses(cars[myCar].Border, cars[i].Border.B[0], cars[i].Border.B[1])) ||
+            (checkCrosses(cars[myCar].Border, cars[i].Border.C[0], cars[i].Border.C[1])) ||
+            (checkCrosses(cars[myCar].Border, cars[i].Border.D[0], cars[i].Border.D[1])) ||
+
+            (checkCrosses(cars[i].Border, cars[myCar].Border.A[0], cars[myCar].Border.A[1])) ||
+            (checkCrosses(cars[i].Border, cars[myCar].Border.B[0], cars[myCar].Border.B[1])) ||
+            (checkCrosses(cars[i].Border, cars[myCar].Border.C[0], cars[myCar].Border.C[1])) ||
+            (checkCrosses(cars[i].Border, cars[myCar].Border.D[0], cars[myCar].Border.D[1]))
+         ) {
+             angle = (cars[i].Angle + cars[myCar].Angle) / 2;
+             speed = (cars[i].Speed + cars[myCar].Speed) / 2;
+             xspeed = Math.sin(angle)*speed; 
+             yspeed = Math.cos(angle)*speed; 
+         }
             canvasContext.translate(cars[i].X, cars[i].Y);
             canvasContext.rotate(-cars[i].Angle);
             canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
             canvasContext.rotate(cars[i].Angle);
             canvasContext.translate(-cars[i].X, -cars[i].Y);
+
+
+
         }
     }
     // конец впихивания
@@ -579,24 +598,24 @@ function scrollToCenter() {
     x = Number(x);
 
 
-    carBorder = getBorders(x, y, angle, carH, carW);
+    // carBorder = getBorders(x, y, angle, carH, carW);
 
 
-    //r1.style.top = String(A[1]) + 'px';
-    //r1.style.left = String(A[0]) + 'px';
+    // // //r1.style.top = String(A[1]) + 'px';
+    // // //r1.style.left = String(A[0]) + 'px';
    
-    r1.style.top = String(206) + 'px';
-    r1.style.left = String(434) + 'px';
-    r2.style.top = String(carBorder.B[1]) + 'px';
-    r2.style.left = String(carBorder.B[0]) + 'px';
-    r3.style.top = String(carBorder.C[1]) + 'px';
-    r3.style.left = String(carBorder.C[0]) + 'px';
-    r4.style.top = String(carBorder.D[1]) + 'px';
-    r4.style.left = String(carBorder.D[0]) + 'px';
+    // // r1.style.top = String(206) + 'px';
+    // // r1.style.left = String(434) + 'px';
+    // // r2.style.top = String(carBorder.B[1]) + 'px';
+    // // r2.style.left = String(carBorder.B[0]) + 'px';
+    // // r3.style.top = String(carBorder.C[1]) + 'px';
+    // // r3.style.left = String(carBorder.C[0]) + 'px';
+    // // r4.style.top = String(carBorder.D[1]) + 'px';
+    // // r4.style.left = String(carBorder.D[0]) + 'px';
 
-    if (checkCrosses(carBorder, 434, 206)) {
-        console.log('touching');
-    }
+    // // if (checkCrosses(carBorder, 434, 206)) {
+    // //     console.log('touching');
+    // }
 }
 
 function checkCrosses(border, x, y) {
@@ -693,6 +712,8 @@ function getTiles() {
             cars[i].X = startX+50;
             cars[i].Y = startY+5+carW/2+23*i;
             cars[i].Angle = (Math.PI / 2);
+            cars[i].Speed = 0;
+            cars[i].Border = getBorders(startX+50, startY+5+carW/2+23*i, Math.PI / 2, carH, carW)
         }
         console.log(cars)
         Car.src = cars[myCar].Img
@@ -748,7 +769,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
-    //console.log(go);
+    console.log(go);
     cars[go[4]].X = go[0];
     cars[go[4]].Y = go[1];
     cars[go[4]].Angle = go[2];

@@ -224,7 +224,7 @@ func verificatePos(posMessage string) string {
 	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
 		posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
 	} else {
-		posMessage = y0 + " " + x0 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
+		posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
 	}
 
 	return posMessage
