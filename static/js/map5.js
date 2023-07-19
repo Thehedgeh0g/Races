@@ -301,10 +301,24 @@ function UpdatePosition() {
       ) {
         if (!cars[i].cflag) {
           //angle = Number(cars[i].Angle);
-          speed = Number(cars[i].Speed);
+          //speed = Number(cars[i].Speed);
 
-          console.log(angle);
-          console.log(speed);
+          let angle1 = Number(cars[i].Angle);
+          let speed1 = Number(cars[i].Speed);
+
+          if (
+            (angle1 % Math.PI) - Math.PI / 2 < angle % Math.PI &&
+            (angle1 % Math.PI) + Math.PI / 2 > angle % Math.PI
+          ) {
+            speed = speed1;
+          } else {
+            if (Math.sign(speed1) == Math.sigт(speed)) {
+              speed = -(speed + speed1) / 2;
+            } else {
+              speed = -speed1;
+            }
+          }
+
           xspeed = Math.sin(angle) * speed;
           yspeed = Math.cos(angle) * speed;
         }
@@ -615,20 +629,20 @@ function onCanvasKeyUp(event) {
 function onCanvasKeyDown(event) {
   if (event.code === "KeyW") {
     wasd.w = 1;
-    
+
     // vzhoom.src = '/static/sounds/jiga2k.mp3';
     // vzhoom.play();
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
-    Car.src = cars[myCar].Img.slice(0, -4) + 'L.png';
+    Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
   }
   if (event.code === "KeyS") {
     wasd.s = 1;
   }
   if (event.code === "KeyD") {
     wasd.d = 1;
-    Car.src = cars[myCar].Img.slice(0, -4) + 'R.png';
+    Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
   }
 }
 
@@ -758,12 +772,12 @@ function getTiles() {
     maxRounds = info.Rounds;
     myCar = info.InSessionId;
 
-    let carss = info.Cars[myCar].split(" ")
-    for(let i = 0; i < carss.length; i++) {
-        if (carss[i].split("/")[6] == 1) {
-            mcarspeed = carss[i].split("/")[1];
-            mrspeed = carss[i].split("/")[3] * 0.006;
-        }
+    let carss = info.Cars[myCar].split(" ");
+    for (let i = 0; i < carss.length; i++) {
+      if (carss[i].split("/")[6] == 1) {
+        mcarspeed = carss[i].split("/")[1];
+        mrspeed = carss[i].split("/")[3] * 0.006;
+      }
     }
 
     rspeed = mrspeed;
@@ -787,17 +801,15 @@ function getTiles() {
     startY = divme(startingTile, 15) * 96;
     startX = (startingTile % 15) * 96;
     for (let i = 0; i < amountOfPlayers; i++) {
-
       cars[i].Name = info.Nicknames[i];
 
-      carss = info.Cars[i].split(" ")
-      for(let g = 0; g < cars.length; g++) {
+      carss = info.Cars[i].split(" ");
+      for (let g = 0; g < cars.length; g++) {
         if (carss[g].split("/")[6] == 1) {
-            cars[i].Img = "/static/sprites/" + carss[g].split("/")[0] + ".png";
+          cars[i].Img = "/static/sprites/" + carss[g].split("/")[0] + ".png";
         }
       }
 
-      
       console.log(cars[i].Img);
       cars[i].Imag = new Image();
       cars[i].Imag.src = cars[i].Img;
