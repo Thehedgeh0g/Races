@@ -19,6 +19,7 @@ var connMutex sync.Mutex
 var connections = make(map[*websocket.Conn]string)
 var groups = make(map[string][]*websocket.Conn)
 var races = make(map[string]string)
+var bots = make(map[string][3]Bot)
 
 func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +92,9 @@ func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID 
 		addToGroup(conn, group)
 		if strings.Split(message, " ")[1] == "race" {
 			message = verificatePos(message)
+		} else if strings.Split(message, " ")[1] == "botrace" {
+			message = verificatePosBots(db, message)
+			log.Println(message)
 		}
 		connMutex.Lock()
 		sendMessageToGroup(db, message, group)
@@ -183,6 +187,40 @@ func verificatePos(posMessage string) string {
 
 	sessionID := strings.Split(posMessage, " ")[0]
 
+	inSessionId := strings.Split(posMessage, " ")[8]
+	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
+		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
+	}
+
+	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
+
+	return posMessage
+
+}
+
+func verificatePosBots(db *sqlx.DB, posMessage string) string {
+
+	isFinished := strings.Split(posMessage, " ")[9]
+
+	speed := strings.Split(posMessage, " ")[2]
+
+	angle := strings.Split(posMessage, " ")[3]
+
+	y1 := strings.Split(posMessage, " ")[6]
+
+	x1 := strings.Split(posMessage, " ")[7]
+
+	sessionID := strings.Split(posMessage, " ")[0]
+
+	bot1 := bots[strings.Split(posMessage, " ")[0]][0]
+	bot1.x = 200
+	bot1.y = 430
+	bot1.angle = 1.5
+	//bot1.x, bot1.y, bot1.speed, bot1.angle = AI(db, strings.Split(posMessage, " ")[0], bot1.x, bot1.y, bot1.angle, bot1.speed)
+
+	botMessage := y1 + " " + x1 + " " + angle + " " + speed + " " + "1"
+	log.Println(botMessage)
+	sendMessageToGroup(db, botMessage, strings.Split(posMessage, " ")[0])
 	inSessionId := strings.Split(posMessage, " ")[8]
 	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]

@@ -1,5 +1,12 @@
 package main
 
+type Bot struct {
+	x     int
+	y     int
+	speed float64
+	angle float64
+}
+
 type ResultsTable struct {
 	Money string
 	Exp   string
