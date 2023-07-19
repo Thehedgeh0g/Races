@@ -116,12 +116,3 @@ func turnLeft(x, y int, speed, angle float64) (int, int, float64, float64) {
 	y1 := y + int(ySpeed)
 	return x1, y1, newSpeed, newAngle
 }
-
-func containsInStrings(a []string, x string) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
-	}
-	return false
-}
