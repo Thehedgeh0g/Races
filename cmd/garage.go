@@ -566,3 +566,9 @@ func updateStats(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 
 	return false, nil
 }
+
+func chooseCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+	}
+}
