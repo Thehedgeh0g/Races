@@ -755,8 +755,15 @@ function getTiles() {
     console.log(info);
     maxRounds = info.Rounds;
     myCar = info.InSessionId;
-    mcarspeed = info.Cars[myCar].split("/")[1];
-    mrspeed = info.Cars[myCar].split("/")[3] * 0.006;
+
+    let carss = info.Cars[myCar].split(" ")
+    for(let i = 0; i < carss.length; i++) {
+        if (carss[i].split("/")[6] == 1) {
+            mcarspeed = carss[i].split("/")[1];
+            mrspeed = carss[i].split("/")[3] * 0.006;
+        }
+    }
+
     rspeed = mrspeed;
     console.log(mcarspeed, mrspeed);
     roundHTML.innerHTML = curRound + "/" + maxRounds;
@@ -778,8 +785,17 @@ function getTiles() {
     startY = divme(startingTile, 15) * 96;
     startX = (startingTile % 15) * 96;
     for (let i = 0; i < amountOfPlayers; i++) {
+
       cars[i].Name = info.Nicknames[i];
-      cars[i].Img = "/static/sprites/" + info.Cars[i].split("/")[0] + ".png";
+
+      carss = info.Cars[i].split(" ")
+      for(let g = 0; g < cars.length; g++) {
+        if (carss[g].split("/")[6] == 1) {
+            cars[i].Img = "/static/sprites/" + carss[g].split("/")[0] + ".png";
+        }
+      }
+
+      
       console.log(cars[i].Img);
       cars[i].Imag = new Image();
       cars[i].Imag.src = cars[i].Img;
