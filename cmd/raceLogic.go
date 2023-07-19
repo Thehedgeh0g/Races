@@ -217,17 +217,14 @@ func verificatePos(posMessage string) string {
 	inSessionId := strings.Split(posMessage, " ")[8]
 	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
-		log.Println(inSessionId, races[sessionID])
-	} else if inSessionId == "0" {
-		log.Println(inSessionId, strings.Contains(races[sessionID], inSessionId+"/"))
 	}
 
 	xSpeed := math.Sin(deg) * V
 	ySpeed := math.Cos(deg) * V
 	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
-		posMessage = y1 + " " + x1 + " " + angle + " " + inSessionId + races[sessionID]
+		posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
 	} else {
-		posMessage = y0 + " " + x0 + " " + angle + " " + inSessionId + races[sessionID]
+		posMessage = y0 + " " + x0 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
 	}
 
 	return posMessage
