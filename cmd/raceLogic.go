@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"log"
-	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -178,39 +177,9 @@ func verificatePos(posMessage string) string {
 
 	angle := strings.Split(posMessage, " ")[3]
 
-	V, err := strconv.ParseFloat(speed, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	deg, err := strconv.ParseFloat(angle, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	y0 := strings.Split(posMessage, " ")[4]
-	yOld, err := strconv.ParseFloat(y0, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
-	x0 := strings.Split(posMessage, " ")[5]
-	xOld, err := strconv.ParseFloat(x0, 64)
-	if err != nil {
-		log.Println(err)
-	}
-
 	y1 := strings.Split(posMessage, " ")[6]
-	yNew, err := strconv.ParseFloat(y1, 64)
-	if err != nil {
-		log.Println(err)
-	}
 
 	x1 := strings.Split(posMessage, " ")[7]
-	xNew, err := strconv.ParseFloat(x1, 64)
-	if err != nil {
-		log.Println(err)
-	}
 
 	sessionID := strings.Split(posMessage, " ")[0]
 
@@ -219,13 +188,7 @@ func verificatePos(posMessage string) string {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
 	}
 
-	xSpeed := math.Sin(deg) * V
-	ySpeed := math.Cos(deg) * V
-	if ((xOld+xSpeed-1 <= xNew) || (xOld+xSpeed+1 >= xNew)) && ((yOld+ySpeed-1 <= yNew) || (yOld+ySpeed+1 >= yNew)) {
-		posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
-	} else {
-		posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
-	}
+	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
 
 	return posMessage
 
