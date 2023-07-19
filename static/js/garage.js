@@ -554,7 +554,7 @@ function AcceptPurchase() {
   xhrTuning.send(JSON.stringify(str));
   xhrTuning.onload = () => {
     let answer = JSON.parse(xhrTuning.response);
-    if (answer) {
+    if (answer.response) {
       GarageCars[carArrowCnt].Transmission = String(TuningCar.transmission);
       GarageCars[carArrowCnt].Engine = String(TuningCar.engine);
       GarageCars[carArrowCnt].Breaks = String(TuningCar.breaks);
