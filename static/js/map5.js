@@ -312,7 +312,7 @@ function UpdatePosition() {
           ) {
             speed = speed1;
           } else {
-            if (Math.sign(speed1) == Math.sigт(speed)) {
+            if (Math.sign(speed1) == Math.sign(speed)) {
               speed = -(speed + speed1) / 2;
             } else {
               speed = -speed1;
