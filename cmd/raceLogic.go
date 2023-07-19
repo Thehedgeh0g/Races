@@ -313,9 +313,35 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUserTable(db *sqlx.DB, userID string, modificator int) error {
+	const query = `
+		SELECT
+		  money,
+		  exp
+		FROM
+		  users
+		WHERE
+		  user_id = ?    
+	`
+	var moneyStr, expStr string
+	row := db.QueryRow(query, userID)
+	err := row.Scan(&moneyStr, &expStr)
+	if err != nil {
+		return err
+	}
+
+	money, err := strconv.Atoi(moneyStr)
+	if err != nil {
+		return err
+	}
+
+	exp, err := strconv.Atoi(expStr)
+	if err != nil {
+		return err
+	}
+
 	stmt := `UPDATE users SET money = ?, exp = ? WHERE user_id = ?`
 
-	_, err := db.Exec(stmt, strconv.Itoa(15*modificator), strconv.Itoa(13*modificator), userID)
+	_, err = db.Exec(stmt, strconv.Itoa(15*modificator+money), strconv.Itoa(13*modificator+exp), userID)
 	if err != nil {
 		return err
 	}
