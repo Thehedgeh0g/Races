@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -95,6 +94,7 @@ func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID 
 			message = verificatePos(message)
 		} else if strings.Split(message, " ")[1] == "botrace" {
 			message = verificatePosBots(db, message)
+			log.Println(message)
 		}
 		connMutex.Lock()
 		sendMessageToGroup(db, message, group)
@@ -200,13 +200,6 @@ func verificatePos(posMessage string) string {
 
 func verificatePosBots(db *sqlx.DB, posMessage string) string {
 
-	bot1 := bots[strings.Split(posMessage, " ")[0]][0]
-
-	bot1.x, bot1.y, bot1.speed, bot1.angle = AI(db, strings.Split(posMessage, " ")[0], bot1.x, bot1.y, bot1.angle, bot1.speed)
-
-	botMessage := string(bot1.y) + " " + string(bot1.x) + " " + fmt.Sprintf("%f", bot1.angle) + " " + fmt.Sprintf("%f", bot1.speed) + " " + "1"
-	sendMessageToGroup(db, botMessage, strings.Split(posMessage, " ")[0])
-
 	isFinished := strings.Split(posMessage, " ")[9]
 
 	speed := strings.Split(posMessage, " ")[2]
@@ -219,6 +212,15 @@ func verificatePosBots(db *sqlx.DB, posMessage string) string {
 
 	sessionID := strings.Split(posMessage, " ")[0]
 
+	bot1 := bots[strings.Split(posMessage, " ")[0]][0]
+	bot1.x = 200
+	bot1.y = 430
+	bot1.angle = 1.5
+	//bot1.x, bot1.y, bot1.speed, bot1.angle = AI(db, strings.Split(posMessage, " ")[0], bot1.x, bot1.y, bot1.angle, bot1.speed)
+
+	botMessage := y1 + " " + x1 + " " + angle + " " + speed + " " + "1"
+	log.Println(botMessage)
+	sendMessageToGroup(db, botMessage, strings.Split(posMessage, " ")[0])
 	inSessionId := strings.Split(posMessage, " ")[8]
 	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]

@@ -26,9 +26,9 @@ func AI(db *sqlx.DB, lobbyID string, x, y int, angle, speed float64) (int, int, 
 	curTileID := (224 - (x/96+y/96)*15)
 	curTileIDI := (curTileID+1)%15 + 1
 	curTileIDJ := (curTileID+1)/15 + 1
-	var botsMap [][]string
+	var botsMap [15][15]string
 	for i, tileID := range strings.Split(mapData.MapKey, " ") {
-		botsMap[(i+1)%15-1][(i+1)/15-1] = tileID
+		botsMap[(i)%15][(i)/15] = tileID
 	}
 
 	log.Println(botsMap, botsMap[curTileIDI][curTileIDJ])
@@ -67,13 +67,15 @@ func AI(db *sqlx.DB, lobbyID string, x, y int, angle, speed float64) (int, int, 
 	return x1, y1, speed, angle
 }
 
-func getNextTile(botsMap [][]string, angle, speed float64, x, y, i, j int) (int, int) {
+func getNextTile(botsMap [15][15]string, angle, speed float64, x, y, i, j int) (int, int) {
+
 	xSpeed := math.Sin(angle) * speed
 	ySpeed := math.Cos(angle) * speed
 	curTileID := (224 - (x/96+y/96)*15)
 	i1 := (curTileID+1)%15 + 1
 	j1 := (curTileID+1)/15 + 1
 	for (i1 == i) && (j1 == j) {
+		log.Println(x, y)
 		x += int(xSpeed)
 		y += int(ySpeed)
 		curTileID = (224 - (x/96+y/96)*15)
