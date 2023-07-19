@@ -356,6 +356,7 @@ function engineDec() {
     document.getElementById("engineCnt").innerHTML = String(TuningCar.engine - 1);
     document.querySelector(".FutureAccelerationGraph").style.width =  String(TuningCar.engine - 1) + "vw";
     TuningCar.engine -= 1;
+    CostPurchase -= CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -375,6 +376,7 @@ function transmissionDec() {
     document.getElementById("transmissionCnt").innerHTML = String(TuningCar.transmission - 1);
     document.querySelector(".FutureMaxSpeedGraph").style.width =  String(TuningCar.transmission - 1) + "vw";
     TuningCar.transmission -= 1;
+    CostPurchase -= CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -394,6 +396,7 @@ function breaksDec() {
     document.getElementById("breaksCnt").innerHTML = String(TuningCar.breaks - 1);
     document.querySelector(".FutureBrakingGraph").style.width =  String(TuningCar.breaks - 1) + "vw";
     TuningCar.breaks -= 1;
+    CostPurchase -= CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -413,6 +416,7 @@ function suspensionDec() {
     document.getElementById("suspensionCnt").innerHTML = String(TuningCar.suspension - 1);
     document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension - 1) + "vw";
     TuningCar.suspension -= 1;
+    CostPurchase -= CostUpgrade;
     ShowPurchaseFututre();
   }
 }
@@ -475,6 +479,7 @@ function ShowPurchaseFututre() {
   document.querySelector(".FutureAccelerationGraph").style.width =  String(TuningCar.engine) + "vw";
   document.querySelector(".FutureBrakingGraph").style.width =  String(TuningCar.breaks) + "vw";
   document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension) + "vw";
+  document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: ' + CostPurchase; 
 }
 function ShowPurchase() {
   console.log(GarageCars[carArrowCnt]);
@@ -496,11 +501,14 @@ function ShowPurchase() {
   TuningCar.engine = Number(GarageCars[carArrowCnt].Engine);
   TuningCar.breaks = Number(GarageCars[carArrowCnt].Breaks);
   TuningCar.suspension = Number(GarageCars[carArrowCnt].Suspension);
+  Money -= CostPurchase;
+  document.getElementById("Money").innerHTML = 'Money: ' + Money;
   CostPurchase = 0;
 }
 
 function AcceptPurchase() {
-  var str = '/';
+  var str = document.getElementById("currentCar").src;
+  str = str[str.length-6] + '/';
   if (String(TuningCar.transmission).length == 1){
     str += '0' + String(TuningCar.transmission);
   }

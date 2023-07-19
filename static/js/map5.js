@@ -83,6 +83,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
     {
     Name: null,
@@ -91,6 +93,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
     {
     Name: null,
@@ -99,6 +103,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
     {
     Name: null,
@@ -107,6 +113,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
 ]
 
@@ -172,6 +180,7 @@ const money = document.getElementById("money");
 const button = document.getElementById("button");
 
 let vzhoom = new Audio();
+
 
 function drawFrame() {
     setTimeout( () => {
@@ -569,14 +578,48 @@ function scrollToCenter() {
     y = Number(y);
     x = Number(x);
 
-    O=[1440-x, 1440-y];
-    D=[O[0]+Math.cos(angle)*8.5, O[1]-Math.sin(angle)*8.5];
-    A=[O[0]-Math.cos(angle)*8.5, O[1]+Math.sin(angle)*8.5];
-    C=[D[0]+Math.sin(angle)*24, D[1]+Math.cos(angle)*24];
-    B=[A[0]+Math.sin(angle)*24, A[1]+Math.cos(angle)*24];
+
+    carBorder = getBorders(x, y, angle, carH, carW);
+
+
+    //r1.style.top = String(A[1]) + 'px';
+    //r1.style.left = String(A[0]) + 'px';
+   
+    r1.style.top = String(206) + 'px';
+    r1.style.left = String(434) + 'px';
+    r2.style.top = String(carBorder.B[1]) + 'px';
+    r2.style.left = String(carBorder.B[0]) + 'px';
+    r3.style.top = String(carBorder.C[1]) + 'px';
+    r3.style.left = String(carBorder.C[0]) + 'px';
+    r4.style.top = String(carBorder.D[1]) + 'px';
+    r4.style.left = String(carBorder.D[0]) + 'px';
+
+    if (checkCrosses(carBorder, 434, 206)) {
+        console.log('touching');
+    }
+}
+
+function checkCrosses(border, x, y) {
+    if ((((border.AB.k * x + border.AB.b) <= y) && ((border.BC.k * x + border.BC.b) <= y) && ((border.CD.k * x + border.CD.b) >= y) && ((border.DA.k * x + border.DA.b) >= y)) ||
+        (((border.AB.k * x + border.AB.b) >= y) && ((border.BC.k * x + border.BC.b) <= y) && ((border.CD.k * x + border.CD.b) <= y) && ((border.DA.k * x + border.DA.b) >= y)) ||
+        (((border.AB.k * x + border.AB.b) >= y) && ((border.BC.k * x + border.BC.b) >= y) && ((border.CD.k * x + border.CD.b) <= y) && ((border.DA.k * x + border.DA.b) <= y)) ||
+        (((border.AB.k * x + border.AB.b) <= y) && ((border.BC.k * x + border.BC.b) >= y) && ((border.CD.k * x + border.CD.b) >= y) && ((border.DA.k * x + border.DA.b) <= y)))
+    {
+        return true
+    } else {
+        return false
+    }
+}
+
+function getBorders(x, y, angle, height, width) {
+    let O=[1440-x, 1440-y];
+    let D=[O[0] + Math.cos(angle) * (width / 2), O[1] - Math.sin(angle) * (width / 2)];
+    let A=[O[0] - Math.cos(angle) * (width / 2), O[1] + Math.sin(angle) * (width / 2)];
+    let C=[D[0] + Math.sin(angle) * height, D[1] + Math.cos(angle) * height];
+    let B=[A[0] + Math.sin(angle) * height, A[1] + Math.cos(angle) * height];
     //console.log(O, A, B, C, D);
 
-    carBorder = {
+    return {
         O: O,
         A: A,
         B: B,
@@ -600,37 +643,8 @@ function scrollToCenter() {
             b: getB(A[0], A[1], getK(D[0], A[0], D[1], A[1])),
         }
     }
-
-    //console.log(carBorder.A, carBorder.B, carBorder.C, carBorder.D);
-
-    //r1.style.top = String(A[1]) + 'px';
-    //r1.style.left = String(A[0]) + 'px';
-   
-    r1.style.top = String(206) + 'px';
-    r1.style.left = String(434) + 'px';
-    r2.style.top = String(B[1]) + 'px';
-    r2.style.left = String(B[0]) + 'px';
-    r3.style.top = String(C[1]) + 'px';
-    r3.style.left = String(C[0]) + 'px';
-    r4.style.top = String(D[1]) + 'px';
-    r4.style.left = String(D[0]) + 'px';
-
-    if (checkCrosses(carBorder, 434, 206)) {
-        console.log('touching');
-    }
 }
 
-function checkCrosses(border, x, y) {
-    if ((((border.AB.k * x + border.AB.b) <= y) && ((border.BC.k * x + border.BC.b) <= y) && ((border.CD.k * x + border.CD.b) >= y) && ((border.DA.k * x + border.DA.b) >= y)) ||
-        (((border.AB.k * x + border.AB.b) >= y) && ((border.BC.k * x + border.BC.b) <= y) && ((border.CD.k * x + border.CD.b) <= y) && ((border.DA.k * x + border.DA.b) >= y)) ||
-        (((border.AB.k * x + border.AB.b) >= y) && ((border.BC.k * x + border.BC.b) >= y) && ((border.CD.k * x + border.CD.b) <= y) && ((border.DA.k * x + border.DA.b) <= y)) ||
-        (((border.AB.k * x + border.AB.b) <= y) && ((border.BC.k * x + border.BC.b) >= y) && ((border.CD.k * x + border.CD.b) >= y) && ((border.DA.k * x + border.DA.b) <= y)))
-    {
-        return true
-    } else {
-        return false
-    }
-}
 function getK(x1, x2, y1, y2) {
     return ((y1-y2)/(x1-x2));
 }
@@ -735,33 +749,35 @@ socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
     //console.log(go);
-    cars[go[3]].X = go[0];
-    cars[go[3]].Y = go[1];
-    cars[go[3]].Angle = go[2];
-    if (go.length == 5) {
-        table.first = go[4][0]
+    cars[go[4]].X = go[0];
+    cars[go[4]].Y = go[1];
+    cars[go[4]].Angle = go[2];
+    cars[go[4]].Speed = go[3];
+    cars[go[4]].Border = getBorders(go[0], go[1], go[2], carH, carW);
+    if (go.length == 6) {
+        table.first = go[5][0]
         notification.innerHTML = cars[table.first].Name + " finished first";
     }
-    if (go.length == 6) {
-        table.first = go[4][0]
-        table.second = go[5][0]
+    if (go.length == 7) {
+        table.first = go[5][0]
+        table.second = go[6][0]
         notification.innerHTML = cars[table.second].Name + " finished second";
     }
-    if (go.length == 7) {
-        table.first = go[4][0]
-        table.second = go[5][0]
-        table.third = go[6][0]
+    if (go.length == 8) {
+        table.first = go[5][0]
+        table.second = go[6][0]
+        table.third = go[7][0]
         notification.innerHTML = cars[table.third].Name + " finished third";
     }
-    if (go.length == 8) {
-        table.first = go[4][0]
-        table.second = go[5][0]
-        table.third = go[6][0]
-        table.forth = go[7][0]
+    if (go.length == 9) {
+        table.first = go[5][0]
+        table.second = go[6][0]
+        table.third = go[7][0]
+        table.forth = go[8][0]
         notification.innerHTML = cars[table.forth].Name + "finished forth";
     }
     
-    if (((go.length - 4) == amountOfPlayers) && !sended && isLoaded) {
+    if (((go.length - 5) == amountOfPlayers) && !sended && isLoaded) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/getTable');
         xhr.addEventListener('load', () => {
@@ -771,21 +787,21 @@ socket.onmessage = function(event) {
             exp.innerHTML = ' ' + String(infor.response.Exp);
         })
         xhr.send(JSON.stringify(window.location.pathname.split('/')[2]));
-        if (go.length >= 5) {
-            name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[4].split('/')[1].slice(0, 7);
-        }
         if (go.length >= 6) {
-            name2.innerHTML = cars[table.second].Name;
-            time2.innerHTML = go[5].split('/')[1].slice(0, 7);
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[5].split('/')[1].slice(0, 7);
         }
         if (go.length >= 7) {
-            name3.innerHTML = cars[table.third].Name;
-            time3.innerHTML = go[6].split('/')[1].slice(0, 7);
+            name2.innerHTML = cars[table.second].Name;
+            time2.innerHTML = go[6].split('/')[1].slice(0, 7);
         }
         if (go.length >= 8) {
+            name3.innerHTML = cars[table.third].Name;
+            time3.innerHTML = go[7].split('/')[1].slice(0, 7);
+        }
+        if (go.length >= 9) {
             name4.innerHTML = cars[table.forth].Name;
-            time4.innerHTML = go[7].split('/')[1].slice(0, 7);
+            time4.innerHTML = go[8].split('/')[1].slice(0, 7);
         }
         
 
