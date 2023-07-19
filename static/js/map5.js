@@ -83,6 +83,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
     {
     Name: null,
@@ -91,6 +93,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
     {
     Name: null,
@@ -99,6 +103,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
     {
     Name: null,
@@ -107,6 +113,8 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Speed: null,
+    Border: null,
     },
 ]
 
@@ -172,6 +180,7 @@ const money = document.getElementById("money");
 const button = document.getElementById("button");
 
 let vzhoom = new Audio();
+
 
 function drawFrame() {
     setTimeout( () => {
@@ -740,33 +749,35 @@ socket.onmessage = function(event) {
     var message = JSON.parse(event.data);
     let go = message.split(' ')
     //console.log(go);
-    cars[go[3]].X = go[0];
-    cars[go[3]].Y = go[1];
-    cars[go[3]].Angle = go[2];
-    if (go.length == 5) {
-        table.first = go[4][0]
+    cars[go[4]].X = go[0];
+    cars[go[4]].Y = go[1];
+    cars[go[4]].Angle = go[2];
+    cars[go[4]].Speed = go[3];
+    cars[go[4]].Border = getBorders(go[0], go[1], go[2], carH, carW);
+    if (go.length == 6) {
+        table.first = go[5][0]
         notification.innerHTML = cars[table.first].Name + " finished first";
     }
-    if (go.length == 6) {
-        table.first = go[4][0]
-        table.second = go[5][0]
+    if (go.length == 7) {
+        table.first = go[5][0]
+        table.second = go[6][0]
         notification.innerHTML = cars[table.second].Name + " finished second";
     }
-    if (go.length == 7) {
-        table.first = go[4][0]
-        table.second = go[5][0]
-        table.third = go[6][0]
+    if (go.length == 8) {
+        table.first = go[5][0]
+        table.second = go[6][0]
+        table.third = go[7][0]
         notification.innerHTML = cars[table.third].Name + " finished third";
     }
-    if (go.length == 8) {
-        table.first = go[4][0]
-        table.second = go[5][0]
-        table.third = go[6][0]
-        table.forth = go[7][0]
+    if (go.length == 9) {
+        table.first = go[5][0]
+        table.second = go[6][0]
+        table.third = go[7][0]
+        table.forth = go[8][0]
         notification.innerHTML = cars[table.forth].Name + "finished forth";
     }
     
-    if (((go.length - 4) == amountOfPlayers) && !sended && isLoaded) {
+    if (((go.length - 5) == amountOfPlayers) && !sended && isLoaded) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/getTable');
         xhr.addEventListener('load', () => {
@@ -776,21 +787,21 @@ socket.onmessage = function(event) {
             exp.innerHTML = ' ' + String(infor.response.Exp);
         })
         xhr.send(JSON.stringify(window.location.pathname.split('/')[2]));
-        if (go.length >= 5) {
-            name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[4].split('/')[1].slice(0, 7);
-        }
         if (go.length >= 6) {
-            name2.innerHTML = cars[table.second].Name;
-            time2.innerHTML = go[5].split('/')[1].slice(0, 7);
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[5].split('/')[1].slice(0, 7);
         }
         if (go.length >= 7) {
-            name3.innerHTML = cars[table.third].Name;
-            time3.innerHTML = go[6].split('/')[1].slice(0, 7);
+            name2.innerHTML = cars[table.second].Name;
+            time2.innerHTML = go[6].split('/')[1].slice(0, 7);
         }
         if (go.length >= 8) {
+            name3.innerHTML = cars[table.third].Name;
+            time3.innerHTML = go[7].split('/')[1].slice(0, 7);
+        }
+        if (go.length >= 9) {
             name4.innerHTML = cars[table.forth].Name;
-            time4.innerHTML = go[7].split('/')[1].slice(0, 7);
+            time4.innerHTML = go[8].split('/')[1].slice(0, 7);
         }
         
 
