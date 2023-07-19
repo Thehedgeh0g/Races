@@ -550,7 +550,7 @@ func updateStats(db *sqlx.DB, userID, req string, ID int, cars []Car) (bool, err
 		log.Println(ID)
 		if ID != 404 {
 
-			carsArr[ID] = string(carsArr[ID][:2]) + req + carsArr[ID][15:]
+			carsArr[ID] = string(carsArr[ID][:2]) + req[1:] + carsArr[ID][15:]
 			log.Println(carsArr[ID])
 			cars := strings.Join(carsArr, " ")
 			stmt = `UPDATE users SET cars = ? WHERE user_id = ?`
