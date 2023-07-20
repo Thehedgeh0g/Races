@@ -192,6 +192,8 @@ func verificatePos(posMessage string) string {
 	inSessionId := strings.Split(posMessage, " ")[8]
 	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
+	} else if (strings.Split(isFinished, "/")[0] == "2") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
+		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + "н/ф"
 	}
 
 	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
