@@ -20,12 +20,24 @@ func getSprites(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		`
 		var sprites []Sprite
 		rows, err := db.Query(query)
-		for rows.Next() {
-			var id, path string
-
-		}
-		err := db.QueryRow(&sprites, query)
 		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		for rows.Next() {
+			var sprite Sprite
+			err = rows.Scan(&sprite.id, &sprite.path)
+			if err != nil {
+				http.Error(w, "Server Error", 500)
+				log.Println(err.Error())
+				return
+			}
+			sprites = append(sprites, sprite)
+		}
+
+		if err := rows.Err(); err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
