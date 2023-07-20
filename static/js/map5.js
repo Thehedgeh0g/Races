@@ -880,7 +880,7 @@ function findStartTile() {
     if (startArr.includes(tiles[i])) {
       startingTile = i;
       if (startStraightArr.includes(tiles[i])) {
-        angle = Math.PI / 2;
+        angle = Math.PI / 2 + 0.001;
       }
     }
   }
@@ -899,7 +899,6 @@ socket.onmessage = function (event) {
   cars[go[4]].X = go[0];
   cars[go[4]].Y = go[1];
   cars[go[4]].Angle = go[2];
-  cars[go[4]].Angle += 0.000000000000000000000001;
   cars[go[4]].Speed = go[3];
   cars[go[4]].Border = getBorders(go[0], go[1], go[2], carH, carW);
 
