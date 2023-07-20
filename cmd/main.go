@@ -32,6 +32,7 @@ func main() {
 	mux.HandleFunc("/account", accountHandler(dbx))
 	mux.HandleFunc("/garage", garageHandler)
 	mux.HandleFunc("/registration", handleReg)
+	mux.HandleFunc("/constructor", handleconstruct)
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
 
