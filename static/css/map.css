@@ -229,4 +229,8 @@ table tr:nth-child(4) td {
     position: absolute;
     top: 0px;
     left: 0px;
+    font-size: 7px;
+    background-color: red;
+    opacity: 0.6;
+    transform: rotate(0);
 }
