@@ -290,7 +290,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		deleteSession(db, req)
+		//deleteSession(db, req)
 
 		response := struct {
 			Response ResultsTable `json:"response"`
@@ -343,6 +343,7 @@ func updateUserTable(db *sqlx.DB, userID string, modificator int) error {
 
 	_, err = db.Exec(stmt, strconv.Itoa(15*modificator+money), strconv.Itoa(13*modificator+exp), userID)
 	if err != nil {
+		log.Println("tuta")
 		return err
 	}
 	return nil
@@ -366,7 +367,7 @@ func getIDs(db *sqlx.DB, sessionID string) ([4]string, error) {
 	row := db.QueryRow(query, sessionID)
 	err := row.Scan(&IDs[0], &IDs[1], &IDs[2], &IDs[3])
 	if err != nil {
-		log.Println(err.Error())
+		log.Println(err.Error(), "tutb")
 		return IDs, err
 	}
 	return IDs, nil

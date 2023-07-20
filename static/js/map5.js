@@ -84,6 +84,7 @@ let cars = [
     Speed: null,
     Border: null,
     cflag: false,
+    HP: 100,
   },
   {
     Name: null,
@@ -95,6 +96,7 @@ let cars = [
     Speed: null,
     Border: null,
     cflag: false,
+    HP: 100,
   },
   {
     Name: null,
@@ -106,6 +108,7 @@ let cars = [
     Speed: null,
     Border: null,
     cflag: false,
+    HP: 100,
   },
   {
     Name: null,
@@ -117,6 +120,7 @@ let cars = [
     Speed: null,
     Border: null,
     cflag: false,
+    HP: 10,
   },
 ];
 
