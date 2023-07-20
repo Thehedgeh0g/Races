@@ -191,8 +191,22 @@ let bar = [];
 
 bar[0] = document.getElementById("bar0");
 bar[1] = document.getElementById("bar1");
-bar[2] = document.getElementById("bar3");
-bar[3] = document.getElementById("bar4");
+bar[2] = document.getElementById("bar2");
+bar[3] = document.getElementById("bar3");
+
+let barName = [];
+
+barName[0] = document.getElementById("barName0");
+barName[1] = document.getElementById("barName1");
+barName[2] = document.getElementById("barName2");
+barName[3] = document.getElementById("barname3");
+
+let barHP = [];
+
+barHP[0] = document.getElementById("barHP0");
+barHP[1] = document.getElementById("barHP1");
+barHP[2] = document.getElementById("barHP2");
+barHP[3] = document.getElementById("barHP3");
 
 function drawFrame() {
   setTimeout(() => {
@@ -218,6 +232,8 @@ function drawFrame() {
         String(x1) +
         " " +
         String(myCar) +
+        " " +
+        String(cars[myCar].HP) +
         " " +
         finished +
         "/" +
@@ -321,6 +337,12 @@ function UpdatePosition() {
             }
           }
 
+          if (cars[myCar].HP > 0) {
+            cars[myCar].HP -= 10;
+            barHP[myCar].style.width = cars[myCar].HP + "%"
+          }
+
+
           xspeed = Math.sin(angle) * speed;
           yspeed = Math.cos(angle) * speed;
         }
@@ -378,7 +400,7 @@ function drawCar(image, x, y) {
       canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
       bar[i].style.top = Number(cars[i].Y) - 25 + 15 * Math.cos(Number(cars[i].Angle)) + "px";
       bar[i].style.left = Number(cars[i].X) - 25 + 15 * Math.sin(Number(cars[i].Angle)) + "px";
-      bar[i].innerHTML = cars[i].Name
+      barName[i].innerHTML = cars[i].Name
       canvasContext.rotate(cars[i].Angle);
       canvasContext.translate(-cars[i].X, -cars[i].Y);
     }
@@ -388,7 +410,7 @@ function drawCar(image, x, y) {
   canvasContext.rotate(-angle);
   bar[myCar].style.top = ycanvas - 25 + 15 * Math.cos(angle) + "px";
   bar[myCar].style.left = xcanvas - 25 + 15 * Math.sin(angle) + "px";
-  bar[myCar].innerHTML = cars[myCar].Name;
+  barName[myCar].innerHTML = cars[myCar].Name;
   canvasContext.drawImage(image, x, y, carW, carH);
 }
 
@@ -901,11 +923,12 @@ socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   let go = message.split(" ");
   //console.log(go);
-  cars[go[4]].X = go[0];
-  cars[go[4]].Y = go[1];
-  cars[go[4]].Angle = go[2];
-  cars[go[4]].Speed = go[3];
-  cars[go[4]].Border = getBorders(go[0], go[1], go[2], carH, carW);
+  cars[go[5]].X = go[0];
+  cars[go[5]].Y = go[1];
+  cars[go[5]].Angle = go[2];
+  cars[go[5]].Speed = go[3];
+  cars[go[5]].Border = getBorders(go[0], go[1], go[2], carH, carW);
+  cars[go[5]].HP = go[4];
 
   r1.style.top = String(1440 - cars[go[4]].Border.A[1]) + 'px';
   r1.style.left = String(1440 - cars[go[4]].Border.A[0]) + 'px';
@@ -916,30 +939,30 @@ socket.onmessage = function (event) {
   r4.style.top = String(1440 - cars[go[4]].Border.D[1]) + 'px';
   r4.style.left = String(1440 - cars[go[4]].Border.D[0]) + 'px';
 
-  if (go.length == 6) {
-    table.first = go[5][0];
+  if (go.length == 7) {
+    table.first = go[6][0];
     notification.innerHTML = cars[table.first].Name + " finished first";
   }
-  if (go.length == 7) {
-    table.first = go[5][0];
-    table.second = go[6][0];
+  if (go.length == 8) {
+    table.first = go[6][0];
+    table.second = go[7][0];
     notification.innerHTML = cars[table.second].Name + " finished second";
   }
-  if (go.length == 8) {
-    table.first = go[5][0];
-    table.second = go[6][0];
-    table.third = go[7][0];
+  if (go.length == 9) {
+    table.first = go[6][0];
+    table.second = go[7][0];
+    table.third = go[8][0];
     notification.innerHTML = cars[table.third].Name + " finished third";
   }
-  if (go.length == 9) {
-    table.first = go[5][0];
-    table.second = go[6][0];
-    table.third = go[7][0];
-    table.forth = go[8][0];
+  if (go.length == 10) {
+    table.first = go[6][0];
+    table.second = go[7][0];
+    table.third = go[8][0];
+    table.forth = go[9][0];
     notification.innerHTML = cars[table.forth].Name + "finished forth";
   }
 
-  if (go.length - 5 == amountOfPlayers && !sended && isLoaded) {
+  if (go.length - 6 == amountOfPlayers && !sended && isLoaded) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/getTable");
     xhr.addEventListener("load", () => {
@@ -949,21 +972,21 @@ socket.onmessage = function (event) {
       exp.innerHTML = " " + String(infor.response.Exp);
     });
     xhr.send(JSON.stringify(window.location.pathname.split("/")[2]));
-    if (go.length >= 6) {
-      name1.innerHTML = cars[table.first].Name;
-      time1.innerHTML = go[5].split("/")[1].slice(0, 7);
-    }
     if (go.length >= 7) {
-      name2.innerHTML = cars[table.second].Name;
-      time2.innerHTML = go[6].split("/")[1].slice(0, 7);
+      name1.innerHTML = cars[table.first].Name;
+      time1.innerHTML = go[6].split("/")[1].slice(0, 7);
     }
     if (go.length >= 8) {
-      name3.innerHTML = cars[table.third].Name;
-      time3.innerHTML = go[7].split("/")[1].slice(0, 7);
+      name2.innerHTML = cars[table.second].Name;
+      time2.innerHTML = go[7].split("/")[1].slice(0, 7);
     }
     if (go.length >= 9) {
+      name3.innerHTML = cars[table.third].Name;
+      time3.innerHTML = go[8].split("/")[1].slice(0, 7);
+    }
+    if (go.length >= 10) {
       name4.innerHTML = cars[table.forth].Name;
-      time4.innerHTML = go[8].split("/")[1].slice(0, 7);
+      time4.innerHTML = go[9].split("/")[1].slice(0, 7);
     }
 
     tabl.style.visibility = "visible";
@@ -989,6 +1012,8 @@ socket.addEventListener("open", (event) => {
     String(x1) +
     " " +
     String(myCar) +
+    " " +
+    String(cars[myCar].HP) +
     " " +
     finished +
     " " +
