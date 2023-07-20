@@ -13,16 +13,38 @@ func getSprites(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const query = `
 			SELECT
-			  sprite_id
 			  sprite_path
 			FROM
 			  sprites  
 		`
-		var sprites [][]string
-		db.Select(sprites, query)
+		var sprites []string
+		rows, err := db.Query(query)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		var path string
+		for rows.Next() {
+
+			err = rows.Scan(&path)
+			if err != nil {
+				http.Error(w, "Server Error", 500)
+				log.Println(err.Error())
+				return
+			}
+
+			sprites = append(sprites, path)
+		}
+
+		if err := rows.Err(); err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
 
 		response := struct {
-			Sprites [][]string `json:"Sprites"`
+			Sprites []string `json:"Sprites"`
 		}{
 			Sprites: sprites,
 		}

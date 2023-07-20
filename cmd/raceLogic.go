@@ -175,7 +175,9 @@ func generateClientID() string {
 
 func verificatePos(posMessage string) string {
 
-	isFinished := strings.Split(posMessage, " ")[9]
+	isFinished := strings.Split(posMessage, " ")[10]
+
+	hp := strings.Split(posMessage, " ")[9]
 
 	speed := strings.Split(posMessage, " ")[2]
 
@@ -190,9 +192,11 @@ func verificatePos(posMessage string) string {
 	inSessionId := strings.Split(posMessage, " ")[8]
 	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
+	} else if (strings.Split(isFinished, "/")[0] == "2") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
+		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + "NF"
 	}
 
-	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
+	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
 
 	return posMessage
 
@@ -276,21 +280,33 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		for place, inSessionId := range sequence {
 			if inSessionId < 4 {
-				if IDs[inSessionId] == userID {
-					err := updateUserTable(db, userID, 4-place)
-					if err != nil {
-						http.Error(w, "Server Error", 500)
-						log.Println(err.Error())
-						return
-					}
+				if tableStrings[place] != "NF" {
+					if IDs[inSessionId] == userID {
+						err := updateUserTable(db, userID, 4-place)
+						if err != nil {
+							http.Error(w, "Server Error", 500)
+							log.Println(err.Error())
+							return
+						}
 
-					results.Money = strconv.Itoa(15 * (4 - place))
-					results.Exp = strconv.Itoa(13 * (4 - place))
+						results.Money = strconv.Itoa(15 * (4 - place))
+						results.Exp = strconv.Itoa(13 * (4 - place))
+					}
+				} else {
+					if IDs[inSessionId] == userID {
+						err := updateUserTable(db, userID, 0)
+						if err != nil {
+							http.Error(w, "Server Error", 500)
+							log.Println(err.Error())
+							return
+						}
+
+						results.Money = strconv.Itoa(15 * (0))
+						results.Exp = strconv.Itoa(13 * (0))
+					}
 				}
 			}
 		}
-
-		deleteSession(db, req)
 
 		response := struct {
 			Response ResultsTable `json:"response"`
@@ -343,6 +359,7 @@ func updateUserTable(db *sqlx.DB, userID string, modificator int) error {
 
 	_, err = db.Exec(stmt, strconv.Itoa(15*modificator+money), strconv.Itoa(13*modificator+exp), userID)
 	if err != nil {
+		log.Println("tuta")
 		return err
 	}
 	return nil
@@ -366,7 +383,7 @@ func getIDs(db *sqlx.DB, sessionID string) ([4]string, error) {
 	row := db.QueryRow(query, sessionID)
 	err := row.Scan(&IDs[0], &IDs[1], &IDs[2], &IDs[3])
 	if err != nil {
-		log.Println(err.Error())
+		log.Println(err.Error(), "tutb")
 		return IDs, err
 	}
 	return IDs, nil

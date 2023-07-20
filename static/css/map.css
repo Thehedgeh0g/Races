@@ -211,7 +211,8 @@ table tr:nth-child(4) td {
     background-color: #f0d9ba;
 
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #waiting {
@@ -230,7 +231,14 @@ table tr:nth-child(4) td {
     top: 0px;
     left: 0px;
     font-size: 7px;
-    background-color: red;
+    background-color: gray;
     opacity: 0.6;
-    transform: rotate(0);
+    display: flex;
+    flex-direction: column;
+}
+
+.HP {
+    background-color: red;
+    width: 100%;
+    height: 2px;
 }

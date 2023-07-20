@@ -7,6 +7,14 @@ type Bot struct {
 	angle float64
 }
 
+type User struct {
+	Email      string
+	Password   string
+	Avatar     string
+	AvatarName string
+	Nickname   string
+}
+
 type ResultsTable struct {
 	Money string
 	Exp   string
