@@ -27,6 +27,31 @@ let canvasContext = canvas.getContext("2d");
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
 
+var audio = new Audio();
+var audioStart = new Audio();
+audioStart.src = '../static/sounds/jiga2kStart.mp3';
+var audioStay = new Audio();
+audioStay.src = '../static/sounds/jiga hol2Stay.wav';
+var audioGo = new Audio();
+audioGo.src = '../static/sounds/jiga 3kGo2.wav';
+var audioStop = new Audio();
+audioStop.src = '../static/sounds/jiga 3kStop.mp3';
+// audio.preload = 'auto';
+// audioStay.autoplay = true;
+// audio.play();
+// var sound = document.getElementById("beep");
+// sound.play();
+
+
+// audioStart.autoplay = false;
+
+
+// audioGo.src = '../static/sounds/jiga2kGo.mp3';
+// audioGo.autoplay = false;
+
+
+// audioStop.autoplay = false;
+
 myCar = 0;
 Car.src = "/static/sprites/AY.png";
 
@@ -630,9 +655,18 @@ function onCanvasKeyUp(event) {
   Car.src = cars[myCar].Img;
   if (event.code === "KeyW") {
     wasd.w = 0;
-    // vzhoom.src = '';
-    // vzhoom.stop();
+    audioGo.currentTime = 0;
+    audioStart.currentTime = 0;
+    audioStart.pause();
+    audioGo.pause();
+    // audioGo.src = '';
+    if (speed > 1) {
+      audioStop.play();
+    }
+    audioStay.loop = true;
+    audioStay.play();
   }
+  
   if (event.code === "KeyA") {
     wasd.a = 0;
   }
@@ -644,12 +678,32 @@ function onCanvasKeyUp(event) {
   }
 }
 
+function audioFix() {
+  if ((wasd.w == 1) && (speed > 3)){
+    if(audioGo.currentTime >= audioGo.duration - 0.05) {
+      audioStay.currentTime = 0;
+      audioStay.pause();
+      audioGo.currentTime = 0;
+      audioGo.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+  if (wasd.w == 0){
+    if(audioStay.currentTime >= audioStay.duration - 0.05) {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+      audioStay.currentTime = 0;
+      audioStay.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+}
 function onCanvasKeyDown(event) {
   if (event.code === "KeyW") {
     wasd.w = 1;
-
-    // vzhoom.src = '/static/sounds/jiga2k.mp3';
-    // vzhoom.play();
+    audioStart.play();
+    audioGo.loop = true;
+    audioGo.play();
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
