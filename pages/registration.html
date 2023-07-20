@@ -11,19 +11,20 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         
-        <script defer src="/static/js/registration.js"></script>
+        <script defer src="/static/js/reg.js"></script>
     </head>
     <body class="page">
         <span class="title">REGISTRATION</span>
-        <form class="forma">
-            <span>login</span>
-            <input id="login-field" class="login-box__field" type="text">
+        <form name="regForm" class="forma">
+            <span>Nickname</span>
+            <input name="nickname-field" class="login-box__field" type="text">
             <span>email</span>
-            <input id="login-field" class="login-box__field" type="email">
+            <input name="email-field" class="login-box__field" type="email">
             <span>password</span>
-            <input id="password-field" class="login-box__field" type="password">
+            <input name="password-field" class="login-box__field" type="password">
             <span>avatar</span>
-            <input type="file" class="hidden" id="upload-hero-hidden" />
+            <input type="file" class="hidden" name="avatar-field" />
         </form>
+        <button id="submit">submit</button>
     </body>
 </html>
