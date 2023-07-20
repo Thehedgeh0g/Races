@@ -29,7 +29,7 @@ submit.addEventListener("click",()=>
             },
             false
         );
-        if (verifyMailFormat(user.email)){
+        if (verifyMailFormat(user.email) && Loaded){
             let XHR = new XMLHttpRequest();
             XHR.open("POST", "/api/registrate");
             XHR.send(JSON.stringify(user));

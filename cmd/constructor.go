@@ -18,12 +18,24 @@ func getSprites(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			FROM
 			  sprites  
 		`
-		var sprites [][]string
-		db.Select(sprites, query)
+		var sprites []Sprite
+		rows, err := db.Query(query)
+		for rows.Next() {
+			var id, path string
+
+		}
+		err := db.QueryRow(&sprites, query)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
 
 		response := struct {
-			Sprites [][]string `json:"Sprites"`
+			resp    string
+			Sprites []Sprite `json:"Sprites"`
 		}{
+			resp:    "sad",
 			Sprites: sprites,
 		}
 
