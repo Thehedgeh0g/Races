@@ -922,22 +922,26 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   let go = message.split(" ");
-  //console.log(go);
+  console.log(go);
   cars[go[5]].X = go[0];
   cars[go[5]].Y = go[1];
   cars[go[5]].Angle = go[2];
   cars[go[5]].Speed = go[3];
   cars[go[5]].Border = getBorders(go[0], go[1], go[2], carH, carW);
-  cars[go[5]].HP = go[4];
+  if (go[5] != myCar) {
+    cars[go[5]].HP = go[4];
+    barHP[go[5]].style.width = go[4] + "%";
+  }
 
-  r1.style.top = String(1440 - cars[go[4]].Border.A[1]) + 'px';
-  r1.style.left = String(1440 - cars[go[4]].Border.A[0]) + 'px';
-  r2.style.top = String(1440 - cars[go[4]].Border.B[1]) + 'px';
-  r2.style.left = String(1440 - cars[go[4]].Border.B[0]) + 'px';
-  r3.style.top = String(1440 - cars[go[4]].Border.C[1]) + 'px';
-  r3.style.left = String(1440 - cars[go[4]].Border.C[0]) + 'px';
-  r4.style.top = String(1440 - cars[go[4]].Border.D[1]) + 'px';
-  r4.style.left = String(1440 - cars[go[4]].Border.D[0]) + 'px';
+
+  r1.style.top = String(1440 - cars[go[5]].Border.A[1]) + 'px';
+  r1.style.left = String(1440 - cars[go[5]].Border.A[0]) + 'px';
+  r2.style.top = String(1440 - cars[go[5]].Border.B[1]) + 'px';
+  r2.style.left = String(1440 - cars[go[5]].Border.B[0]) + 'px';
+  r3.style.top = String(1440 - cars[go[5]].Border.C[1]) + 'px';
+  r3.style.left = String(1440 - cars[go[5]].Border.C[0]) + 'px';
+  r4.style.top = String(1440 - cars[go[5]].Border.D[1]) + 'px';
+  r4.style.left = String(1440 - cars[go[5]].Border.D[0]) + 'px';
 
   if (go.length == 7) {
     table.first = go[6][0];
