@@ -951,7 +951,7 @@ socket.onmessage = function (event) {
   r4.style.left = String(1440 - cars[go[5]].Border.D[0]) + 'px';
 
   if (go.length == 7) {
-    if  (go[6][1] == "NF") {
+    if  (go[6].split("/")[1] == "NF") {
         notification.innerHTML = cars[go[6][0]].Name + " exploded";
     } else {
         table.first = go[6][0];
@@ -962,7 +962,7 @@ socket.onmessage = function (event) {
     
   }
   if (go.length == 8) {
-    if  (go[7][1] == "NF") {
+    if  (go[7].split("/")[1] == "NF") {
         notification.innerHTML = cars[go[7][0]].Name + " exploded";
     } else {
         if (table.first == 4) {
@@ -979,7 +979,7 @@ socket.onmessage = function (event) {
     }
   }
   if (go.length == 9) {
-    if  (go[8][1] == "NF") {
+    if  (go[8].split("/")[1] == "NF") {
         notification.innerHTML = cars[go[8][0]].Name + " exploded";
     } else {
         if (table.first == 4) {
@@ -1003,7 +1003,7 @@ socket.onmessage = function (event) {
     }
   }
   if (go.length == 10) {
-    if  (go[9][1] == "NF") {
+    if  (go[9].split("/")[1] == "NF") {
         notification.innerHTML = cars[go[9][0]].Name + " exploded";
     } else {
         if (table.first == 4) {
