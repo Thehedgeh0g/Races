@@ -249,19 +249,9 @@ function drawMapDots() {
 
 function UpdatePosition() {
   bFlag = false;
-  updateReduce();
   reduceSpeed();
-
-  canvasContext.rotate(angle);
-  canvasContext.translate(xspeed, yspeed);
-  canvasContext.rotate(-angle);
-
-  y = window.getComputedStyle(move).top;
-  x = window.getComputedStyle(move).left;
-  y = y.slice(0, -2);
-  x = x.slice(0, -2);
-  y = Number(y);
-  x = Number(x);
+  
+  updateReduce();
 
   for (let i = 0; i < amountOfPlayers; i++) {
     if (i != myCar) {
@@ -338,10 +328,21 @@ function UpdatePosition() {
     }
   }
 
+  canvasContext.rotate(angle);
+  canvasContext.translate(xspeed, yspeed);
+  canvasContext.rotate(-angle);
+
+  y = window.getComputedStyle(move).top;
+  x = window.getComputedStyle(move).left;
+  y = y.slice(0, -2);
+  x = x.slice(0, -2);
+  y = Number(y);
+  x = Number(x);
+
   move.style.top = String(-yspeed + y) + "px";
   move.style.left = String(-xspeed + x) + "px";
 
-  displayDots();
+  //displayDots();
 
   y0 = xcanvas;
   x0 = ycanvas;
