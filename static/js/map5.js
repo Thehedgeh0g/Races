@@ -13,6 +13,7 @@ let mrspeed = 0.03;
 let rspeed = mrspeed;
 let mspeed = mcarspeed;
 let accel = mspeed / 160;
+let breakes = accel;
 let resist = accel / 4;
 const pi1 = Math.PI;
 const pi2 = 1 / 2;
@@ -330,6 +331,7 @@ function UpdatePosition() {
           yspeed = Math.cos(angle) * speed;
         }
         cars[i].cflag = true;
+        console.log(cars[i].cflag)
       } else {
         cars[i].cflag = false;
       }
@@ -369,8 +371,8 @@ function drawCar(image, x, y) {
       canvasContext.translate(cars[i].X, cars[i].Y);
       canvasContext.rotate(-cars[i].Angle);
       canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
-      bar[i].style.top = cars[i].Y - 40 + "px";
-      bar[i].style.left = cars[i].X - 40 + "px";
+      bar[i].style.top = Number(cars[i].Y) - 25 + 15 * Math.cos(Number(cars[i].Angle)) + "px";
+      bar[i].style.left = Number(cars[i].X) - 25 + 15 * Math.sin(Number(cars[i].Angle)) + "px";
       bar[i].innerHTML = cars[i].Name
       canvasContext.rotate(cars[i].Angle);
       canvasContext.translate(-cars[i].X, -cars[i].Y);
@@ -379,9 +381,9 @@ function drawCar(image, x, y) {
   // конец впихивания
   canvasContext.translate(xcanvas, ycanvas);
   canvasContext.rotate(-angle);
-  bar[myCar].style.top = ycanvas - 40 + "px";
-  bar[myCar].style.left = xcanvas - 40 + "px";
-  bar[myCar].innerHTML = cars[myCar].Name
+  bar[myCar].style.top = ycanvas - 25 + 15 * Math.cos(angle) + "px";
+  bar[myCar].style.left = xcanvas - 25 + 15 * Math.sin(angle) + "px";
+  bar[myCar].innerHTML = cars[myCar].Name;
   canvasContext.drawImage(image, x, y, carW, carH);
 }
 
@@ -390,7 +392,10 @@ function divme(a, b) {
 }
 
 function reduceSpeed() {
-  if (speed > 0) {
+  if (cars[0].cflag || cars[1].cflag || cars[2].cflag || cars[3].cflag) {
+      return
+  }
+  if (speed > 0 ) {
     if (speed - accel <= mspeed) {
       if (speed - resist > 0) {
         speed -= resist;
@@ -521,21 +526,21 @@ function diffDates(day_one, day_two) {
 }
 
 function onCanvasKey() {
-  if (wasd.w == 1) {
+  if (wasd.w == 1 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed < mspeed) {
       speed += accel;
       xspeed = Math.sin(angle) * speed;
       yspeed = Math.cos(angle) * speed;
     }
   }
-  if (wasd.s == 1) {
+  if (wasd.s == 1 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed > -mspeed) {
       speed -= accel;
       xspeed = Math.sin(angle) * speed;
       yspeed = Math.cos(angle) * speed;
     }
   }
-  if (wasd.d == 1 && speed > 0) {
+  if (wasd.d == 1 && speed > 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed >= pi1) {
       angle -= rspeed;
       canvasContext.rotate(rspeed);
@@ -552,7 +557,7 @@ function onCanvasKey() {
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
   }
-  if (wasd.a == 1 && speed > 0) {
+  if (wasd.a == 1 && speed > 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed >= pi1) {
       angle += rspeed;
       canvasContext.rotate(-rspeed);
@@ -577,7 +582,7 @@ function onCanvasKey() {
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
   }
-  if (wasd.d == 1 && speed < 0) {
+  if (wasd.d == 1 && speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed <= -pi1) {
       angle += rspeed;
       canvasContext.rotate(-rspeed);
@@ -592,7 +597,7 @@ function onCanvasKey() {
         speed = 0;
       }
     }
-    if (speed < 0) {
+    if (speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
       if (speed + resist < 0) {
         speed += resist;
       } else {
@@ -602,7 +607,7 @@ function onCanvasKey() {
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
   }
-  if (wasd.a == 1 && speed < 0) {
+  if (wasd.a == 1 && speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed <= -pi1) {
       angle -= rspeed;
       canvasContext.rotate(rspeed);
@@ -737,8 +742,8 @@ function getBorders(x, y, angle, height, width) {
     O[0] - Math.cos(angle) * (width / 2),
     O[1] + Math.sin(angle) * (width / 2),
   ];
-  let C = [D[0] + Math.sin(angle) * height, D[1] + Math.cos(angle) * height];
-  let B = [A[0] + Math.sin(angle) * height, A[1] + Math.cos(angle) * height];
+  let C = [D[0] - Math.sin(angle) * height, D[1] - Math.cos(angle) * height];
+  let B = [A[0] - Math.sin(angle) * height, A[1] - Math.cos(angle) * height];
   //console.log(O, A, B, C, D);
 
   return {
@@ -789,7 +794,9 @@ function getTiles() {
     for (let i = 0; i < carss.length; i++) {
       if (carss[i].split("/")[6] == 1) {
         mcarspeed = carss[i].split("/")[1];
-        mrspeed = carss[i].split("/")[3] * 0.006;
+        mrspeed = carss[i].split("/")[4] * 0.006;
+        accel = carss[i].split("/")[2] / 160;
+        breakes = carss[i].split("/")[3] / 160;
       }
     }
 
@@ -873,7 +880,7 @@ function findStartTile() {
     if (startArr.includes(tiles[i])) {
       startingTile = i;
       if (startStraightArr.includes(tiles[i])) {
-        angle = Math.PI / 2;
+        angle = Math.PI / 2 + 0.001;
       }
     }
   }
@@ -894,6 +901,16 @@ socket.onmessage = function (event) {
   cars[go[4]].Angle = go[2];
   cars[go[4]].Speed = go[3];
   cars[go[4]].Border = getBorders(go[0], go[1], go[2], carH, carW);
+
+  r1.style.top = String(1440 - cars[go[4]].Border.A[1]) + 'px';
+  r1.style.left = String(1440 - cars[go[4]].Border.A[0]) + 'px';
+  r2.style.top = String(1440 - cars[go[4]].Border.B[1]) + 'px';
+  r2.style.left = String(1440 - cars[go[4]].Border.B[0]) + 'px';
+  r3.style.top = String(1440 - cars[go[4]].Border.C[1]) + 'px';
+  r3.style.left = String(1440 - cars[go[4]].Border.C[0]) + 'px';
+  r4.style.top = String(1440 - cars[go[4]].Border.D[1]) + 'px';
+  r4.style.left = String(1440 - cars[go[4]].Border.D[0]) + 'px';
+
   if (go.length == 6) {
     table.first = go[5][0];
     notification.innerHTML = cars[table.first].Name + " finished first";
