@@ -957,7 +957,7 @@ socket.onmessage = function (event) {
         table.first = go[6][0];
         notification.innerHTML = cars[go[6][0]].Name + " finished first";
         name1.innerHTML = cars[table.first].Name;
-        time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+        time1.innerHTML = go[6].split("/")[1].slice(0, 7);
     }
     
   }
@@ -969,12 +969,12 @@ socket.onmessage = function (event) {
             table.first = go[7][0];
             notification.innerHTML = cars[go[7][0]].Name + " finished first";
             name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+            time1.innerHTML = go[7].split("/")[1].slice(0, 7);
         } else {
             table.second = go[7][0];
             notification.innerHTML = cars[table.second].Name + " finished second";
             name2.innerHTML = cars[table.second].Name;
-            time2.innerHTML = go[table.second].split("/")[1].slice(0, 7);
+            time2.innerHTML = go[7].split("/")[1].slice(0, 7);
         }
     }
   }
@@ -986,18 +986,18 @@ socket.onmessage = function (event) {
             table.first = go[8][0];
             notification.innerHTML = cars[go[8][0]].Name + " finished first";
             name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+            time1.innerHTML = go[8].split("/")[1].slice(0, 7);
         } else {
             if (table.second == 4) {
                 table.second = go[8][0];
                 notification.innerHTML = cars[go[8][0]].Name + " finished second";
                 name2.innerHTML = cars[table.second].Name;
-                time2.innerHTML = go[table.second].split("/")[1].slice(0, 7);
+                time2.innerHTML = go[8].split("/")[1].slice(0, 7);
             } else {
                 table.third = go[8][0];
                 notification.innerHTML = cars[go[8][0]].Name + " finished third";
                 name3.innerHTML = cars[table.third].Name;
-                time3.innerHTML = go[table.third].split("/")[1].slice(0, 7);
+                time3.innerHTML = go[8].split("/")[1].slice(0, 7);
             }
         }
     }
@@ -1010,24 +1010,24 @@ socket.onmessage = function (event) {
             table.first = go[9][0];
             notification.innerHTML = cars[go[9][0]].Name + " finished first";
             name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+            time1.innerHTML = go[9].split("/")[1].slice(0, 7);
         } else {
             if (table.second == 4) {
                 table.second = go[9][0];
                 notification.innerHTML = cars[go[9][0]].Name + " finished second";
                 name2.innerHTML = cars[table.second].Name;
-                time2.innerHTML = go[table.second].split("/")[1].slice(0, 7);
+                time2.innerHTML = go[9].split("/")[1].slice(0, 7);
             } else {
                 if (table.third == 4) {
                     table.third = go[9][0];
                     notification.innerHTML = cars[go[9][0]].Name + " finished third";
                     name3.innerHTML = cars[table.third].Name;
-                    time3.innerHTML = go[table.third].split("/")[1].slice(0, 7);
+                    time3.innerHTML = go[9].split("/")[1].slice(0, 7);
                 } else {
                     table.forth = go[9][0];
                     notification.innerHTML = cars[go[9][0]].Name + " finished forth";
                     name4.innerHTML = cars[table.forth].Name;
-                    time4.innerHTML = go[table.forth].split("/")[1].slice(0, 7);
+                    time4.innerHTML = go[9].split("/")[1].slice(0, 7);
                 }
             }
         }
