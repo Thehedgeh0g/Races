@@ -1,10 +1,5 @@
 package main
 
-type Sprite struct {
-	id   string
-	path string
-}
-
 type Bot struct {
 	x     int
 	y     int

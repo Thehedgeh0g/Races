@@ -280,16 +280,30 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		for place, inSessionId := range sequence {
 			if inSessionId < 4 {
-				if IDs[inSessionId] == userID {
-					err := updateUserTable(db, userID, 4-place)
-					if err != nil {
-						http.Error(w, "Server Error", 500)
-						log.Println(err.Error())
-						return
-					}
+				if tableStrings[place] != "NF" {
+					if IDs[inSessionId] == userID {
+						err := updateUserTable(db, userID, 4-place)
+						if err != nil {
+							http.Error(w, "Server Error", 500)
+							log.Println(err.Error())
+							return
+						}
 
-					results.Money = strconv.Itoa(15 * (4 - place))
-					results.Exp = strconv.Itoa(13 * (4 - place))
+						results.Money = strconv.Itoa(15 * (4 - place))
+						results.Exp = strconv.Itoa(13 * (4 - place))
+					}
+				} else {
+					if IDs[inSessionId] == userID {
+						err := updateUserTable(db, userID, 0)
+						if err != nil {
+							http.Error(w, "Server Error", 500)
+							log.Println(err.Error())
+							return
+						}
+
+						results.Money = strconv.Itoa(15 * (0))
+						results.Exp = strconv.Itoa(13 * (0))
+					}
 				}
 			}
 		}
