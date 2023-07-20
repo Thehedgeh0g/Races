@@ -340,7 +340,14 @@ function UpdatePosition() {
           if (cars[myCar].HP > 0) {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%"
+            if (cars[myCar].HP == 0) {
+                finished = 2;
+                roundHTML.innerHTML = "EXPLODED";
+                waiting.innerHTML = "waiting for the other players";
+                mspeed = 0;
+            }
           }
+
 
 
           xspeed = Math.sin(angle) * speed;
@@ -944,26 +951,87 @@ socket.onmessage = function (event) {
   r4.style.left = String(1440 - cars[go[5]].Border.D[0]) + 'px';
 
   if (go.length == 7) {
-    table.first = go[6][0];
-    notification.innerHTML = cars[table.first].Name + " finished first";
+    if  (go[6][1] == "NF") {
+        notification.innerHTML = cars[go[6][0]].Name + " exploded";
+    } else {
+        table.first = go[6][0];
+        notification.innerHTML = cars[go[6][0]].Name + " finished first";
+        name1.innerHTML = cars[table.first].Name;
+        time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+    }
+    
   }
   if (go.length == 8) {
-    table.first = go[6][0];
-    table.second = go[7][0];
-    notification.innerHTML = cars[table.second].Name + " finished second";
+    if  (go[7][1] == "NF") {
+        notification.innerHTML = cars[go[7][0]].Name + " exploded";
+    } else {
+        if (table.first == 4) {
+            table.first = go[7][0];
+            notification.innerHTML = cars[go[7][0]].Name + " finished first";
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+        } else {
+            table.second = go[7][0];
+            notification.innerHTML = cars[table.second].Name + " finished second";
+            name2.innerHTML = cars[table.second].Name;
+            time2.innerHTML = go[table.second].split("/")[1].slice(0, 7);
+        }
+    }
   }
   if (go.length == 9) {
-    table.first = go[6][0];
-    table.second = go[7][0];
-    table.third = go[8][0];
-    notification.innerHTML = cars[table.third].Name + " finished third";
+    if  (go[8][1] == "NF") {
+        notification.innerHTML = cars[go[8][0]].Name + " exploded";
+    } else {
+        if (table.first == 4) {
+            table.first = go[8][0];
+            notification.innerHTML = cars[go[8][0]].Name + " finished first";
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+        } else {
+            if (table.second == 4) {
+                table.second = go[8][0];
+                notification.innerHTML = cars[go[8][0]].Name + " finished second";
+                name2.innerHTML = cars[table.second].Name;
+                time2.innerHTML = go[table.second].split("/")[1].slice(0, 7);
+            } else {
+                table.third = go[8][0];
+                notification.innerHTML = cars[go[8][0]].Name + " finished third";
+                name3.innerHTML = cars[table.third].Name;
+                time3.innerHTML = go[table.third].split("/")[1].slice(0, 7);
+            }
+        }
+    }
   }
   if (go.length == 10) {
-    table.first = go[6][0];
-    table.second = go[7][0];
-    table.third = go[8][0];
-    table.forth = go[9][0];
-    notification.innerHTML = cars[table.forth].Name + "finished forth";
+    if  (go[9][1] == "NF") {
+        notification.innerHTML = cars[go[9][0]].Name + " exploded";
+    } else {
+        if (table.first == 4) {
+            table.first = go[9][0];
+            notification.innerHTML = cars[go[9][0]].Name + " finished first";
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[table.first].split("/")[1].slice(0, 7);
+        } else {
+            if (table.second == 4) {
+                table.second = go[9][0];
+                notification.innerHTML = cars[go[9][0]].Name + " finished second";
+                name2.innerHTML = cars[table.second].Name;
+                time2.innerHTML = go[table.second].split("/")[1].slice(0, 7);
+            } else {
+                if (table.third == 4) {
+                    table.third = go[9][0];
+                    notification.innerHTML = cars[go[9][0]].Name + " finished third";
+                    name3.innerHTML = cars[table.third].Name;
+                    time3.innerHTML = go[table.third].split("/")[1].slice(0, 7);
+                } else {
+                    table.forth = go[9][0];
+                    notification.innerHTML = cars[go[9][0]].Name + " finished forth";
+                    name4.innerHTML = cars[table.forth].Name;
+                    time4.innerHTML = go[table.forth].split("/")[1].slice(0, 7);
+                }
+            }
+        }
+    }
   }
 
   if (go.length - 6 == amountOfPlayers && !sended && isLoaded) {
@@ -976,22 +1044,7 @@ socket.onmessage = function (event) {
       exp.innerHTML = " " + String(infor.response.Exp);
     });
     xhr.send(JSON.stringify(window.location.pathname.split("/")[2]));
-    if (go.length >= 7) {
-      name1.innerHTML = cars[table.first].Name;
-      time1.innerHTML = go[6].split("/")[1].slice(0, 7);
-    }
-    if (go.length >= 8) {
-      name2.innerHTML = cars[table.second].Name;
-      time2.innerHTML = go[7].split("/")[1].slice(0, 7);
-    }
-    if (go.length >= 9) {
-      name3.innerHTML = cars[table.third].Name;
-      time3.innerHTML = go[8].split("/")[1].slice(0, 7);
-    }
-    if (go.length >= 10) {
-      name4.innerHTML = cars[table.forth].Name;
-      time4.innerHTML = go[9].split("/")[1].slice(0, 7);
-    }
+
 
     tabl.style.visibility = "visible";
     sended = true;
