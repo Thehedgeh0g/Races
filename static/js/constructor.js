@@ -6,13 +6,14 @@ let flagPaste = false;
 
 
 function loadPuzzles() {
-
+    console.log("12")
     const xhr = new XMLHttpRequest();
     
     xhr.open('GET', "/api/getSprites");
-
+    xhr.send()
     xhr.addEventListener('load', () => {
         response = JSON.parse(xhr.responseText)
+        console.log(response)
     });
   
   

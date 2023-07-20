@@ -175,7 +175,9 @@ func generateClientID() string {
 
 func verificatePos(posMessage string) string {
 
-	isFinished := strings.Split(posMessage, " ")[9]
+	isFinished := strings.Split(posMessage, " ")[10]
+
+	hp := strings.Split(posMessage, " ")[9]
 
 	speed := strings.Split(posMessage, " ")[2]
 
@@ -192,7 +194,7 @@ func verificatePos(posMessage string) string {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
 	}
 
-	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
+	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
 
 	return posMessage
 
