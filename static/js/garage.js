@@ -535,18 +535,18 @@ function AcceptPurchase() {
     str += String(TuningCar.engine);
   }
   str += '/';
-  if (String(TuningCar.suspension).length == 1){
-    str += '0' + String(TuningCar.suspension);
-  }
-  else {
-    str += String(TuningCar.suspension);
-  }
-  str += '/';
   if (String(TuningCar.breaks).length == 1){
     str += '0' + String(TuningCar.breaks);
   }
   else {
     str += String(TuningCar.breaks);
+  }
+  str += '/';
+  if (String(TuningCar.suspension).length == 1){
+    str += '0' + String(TuningCar.suspension);
+  }
+  else {
+    str += String(TuningCar.suspension);
   }
   str += '/';
   let xhrTuning = new XMLHttpRequest();
