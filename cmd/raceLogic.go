@@ -290,8 +290,6 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		//deleteSession(db, req)
-
 		response := struct {
 			Response ResultsTable `json:"response"`
 		}{
