@@ -1130,4 +1130,4 @@ socket.addEventListener("open", (event) => {
     " " +
     dif;
   socket.send(JSON.stringify(message));
-});
+})
