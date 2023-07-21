@@ -1,57 +1,53 @@
 
 const carousel = document.getElementById("carousel");
 const designField = document.querySelector('.design-field');
-let flagId = document.getElementById("opa"); // delete
+const createMap = document.getElementById("CreateMap");
+const menuButton = document.querySelector('.menu-button');
+let flagId;
 let flagPaste = false;
 
 
 function loadPuzzles() {
-    console.log("12")
+
     const xhr = new XMLHttpRequest();
     
     xhr.open('GET', "/api/getSprites");
     xhr.send()
     xhr.addEventListener('load', () => {
-        response = JSON.parse(xhr.responseText)
-        console.log(response)
+        let arPzl = JSON.parse(xhr.responseText);
+        setListOfPuzzles(arPzl);
+        showCarousel(); 
+        selectedPuzzle();
+        fillDesignField(); 
     });
   
   
     xhr.addEventListener('error', () => {
-      console.log('error');
+        console.log('error');
     });
 
 }
 
-loadPuzzles()
+
+loadPuzzles();
 
 
-function setListOfPuzzles() {
+
+function setListOfPuzzles(arr) {
     let ulList = carousel.querySelector('.gallery__ul');
 
-    //for () {
+    for (let i = 0; i < arr.Sprites.length; i++) {
         let listEl = document.createElement('li');
         let pzl = document.createElement('img');
-        pzl.src = "";
-        pzl.id = "";
+        pzl.src = `../static/map tiles sprites/${arr.Sprites[i]}.png`;
+        pzl.id = i+1;
         listEl.append(pzl);
         ulList.append(listEl);
-//  } 
+    } 
 }
 
 
-setListOfPuzzles();
-
-const ulList = carousel.querySelectorAll('.gallery__ul li img');
-
 function showCarousel() {
-
-    let i = 1;
-    for(let li of carousel.querySelectorAll('li')) {
-        li.style.position = 'relative';
-        li.insertAdjacentHTML('beforeend', `<span style="position:absolute;left:0;top:0">${i}</span>`);
-        i++;
-    }
 
     let width = 206; 
     let count = 3; 
@@ -73,12 +69,10 @@ function showCarousel() {
 
 }
 
-showCarousel();
 
 function selectedPuzzle() {
-
+    let ulList = carousel.querySelectorAll('.gallery__ul li img');   
     for (let i=0; i < ulList.length; i++) {
-        console.log(i, ulList[i].src);
         ulList[i].addEventListener("click", function () {
             flagId = document.getElementById(this.id);
             flagPaste = true;
@@ -86,32 +80,72 @@ function selectedPuzzle() {
     }
 }
 
-selectedPuzzle();
 
 function fillDesignField() {
+    let borderTiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 30, 31, 45, 46, 60, 61, 75, 76, 90, 91, 105, 106, 120, 121, 135, 136, 150, 151, 165, 166, 180, 181, 195, 196, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225]
     
     for (let i = 0; i < 225; i++) {
         let pzl = document.createElement('img');
+        pzl.className = "tile"
         pzl.style.width = '60px';
         pzl.style.height = '60px';
-        pzl.src = '../static/map tiles sprites/NE0.png'
-        pzl.id = `pzl-${i + 1}`;
-
-        pzl.addEventListener("click", function() {
-            if (flagPaste) {
-                this.src = flagId.src
-            }
-        });
-
+        
+        if (borderTiles.includes(i+1)) {
+            pzl.src = '../static/map tiles sprites/BBB.png';
+            pzl.id = `${i+1}-12`;
+        } else {
+            pzl.src = '../static/map tiles sprites/NE0.png';
+            pzl.id = `${i+1}-1`;
+            pzl.addEventListener("click", function() {
+                if (flagPaste) {
+                    this.src = flagId.src;
+                    let iD = this.id;
+                    this.id = `${iD.split('-')[0]}-${flagId.id}`
+                }
+            });
+        }
         designField.append(pzl);
     }
 }
 
-fillDesignField();
+
+createMap.addEventListener("click", saveMap);
+
+function sendMap (val) {
+    let data = { map: val };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', "/api/recordKey");
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.addEventListener('load', () => {
+        window.location.reload();
+    });
+
+    xhr.addEventListener('error', () => {
+        console.log('error');
+    });
+
+    xhr.send(JSON.stringify(data));
+}
 
 
+function saveMap() {
+    let field = document.querySelectorAll('.tile');
+    if (flagPaste) {
+        let tilesString = '';
+        for (let i=0; i < field.length; i++) {
+            let iD = field[i].id;
+            tilesString += iD.split('-')[1] + ' ';
+        }
+        sendMap(tilesString);
+    } else {
+        alert('Заполните поле!');
+    }
+}
 
-
-
+menuButton.addEventListener("click", () => 
+   window.location.href = "menu"
+)
 
 
