@@ -89,10 +89,7 @@ func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID 
 		}
 
 		group := determineGroup(clientID, strconv.Itoa(lobbyID))
-		if !botsInLobby(db, group) {
-			addToGroup(conn, group)
-		}
-
+		addToGroup(conn, group)
 		if strings.Split(message, " ")[1] == "race" {
 			message = verificatePos(message)
 		} else if strings.Split(message, " ")[1] == "botrace" {
