@@ -432,7 +432,7 @@ function drawCar(image, x, y) {
       canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
       bar[i].style.top = Number(cars[i].Y) - 25 + 15 * Math.cos(Number(cars[i].Angle)) + "px";
       bar[i].style.left = Number(cars[i].X) - 25 + 15 * Math.sin(Number(cars[i].Angle)) + "px";
-      barName[i].innerHTML = cars[i].Name
+      barName[i].innerHTML = cars[i].Name;
       canvasContext.rotate(cars[i].Angle);
       canvasContext.translate(-cars[i].X, -cars[i].Y);
     }

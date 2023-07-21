@@ -57,4 +57,8 @@ function verifyMailFormat(email){
     return isEmailValid
 }
 
-const hiddenUpload = document.getElementById("avatar-field")
+const hiddenUpload = document.getElementById("avatar-field");
+const visibleUpload = document.getElementById("upload");
+visibleUpload.addEventListener("click", () => {
+    hiddenUpload.click();
+})
