@@ -56,3 +56,5 @@ function verifyMailFormat(email){
 
     return isEmailValid
 }
+
+const hiddenUpload = document.getElementById("avatar-field")
