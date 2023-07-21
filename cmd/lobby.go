@@ -325,30 +325,29 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		IDs := []string{UserId1, UserId2, UserId3, UserId4}
 
 		for i, id := range IDs {
-			if id != "0" {
-				if userIdstr == id {
-					inSessionId = strconv.Itoa(i)
-				}
-				query = `
-					SELECT
-					  nickname,
-					  cars
-					FROM
-					  users
-					WHERE
-					  user_id = ?    
-				`
 
-				row = db.QueryRow(query, id)
-				err = row.Scan(&nickname, &car)
-				if err != nil {
-					http.Error(w, "Error", 500)
-					log.Println(err.Error())
-					return
-				}
-				nicknames = append(nicknames, nickname)
-				cars = append(cars, car)
+			if userIdstr == id {
+				inSessionId = strconv.Itoa(i)
 			}
+			query = `
+				SELECT
+					nickname,
+					cars
+				FROM
+					users
+				WHERE
+					user_id = ?    
+			`
+
+			row = db.QueryRow(query, id)
+			err = row.Scan(&nickname, &car)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
+			nicknames = append(nicknames, nickname)
+			cars = append(cars, car)
 
 		}
 
