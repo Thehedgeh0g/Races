@@ -36,6 +36,8 @@ var audioGo = new Audio();
 audioGo.src = '../static/sounds/jiga 3kGo2.wav';
 var audioStop = new Audio();
 audioStop.src = '../static/sounds/jiga 3kStop.mp3';
+var audioTires = new Audio();
+audioTires.src = '../static/sounds/tires.wav';
 // audio.preload = 'auto';
 // audioStay.autoplay = true;
 // audio.play();
@@ -713,17 +715,21 @@ function onCanvasKeyUp(event) {
   
   if (event.code === "KeyA") {
     wasd.a = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
   if (event.code === "KeyS") {
     wasd.s = 0;
   }
   if (event.code === "KeyD") {
     wasd.d = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
 }
 
 function audioFix() {
-  if ((wasd.w == 1) && (speed > 3) && (finished == 0)){
+  if ((wasd.w == 1) && (speed > 4) && (finished == 0)){
     if(audioGo.currentTime >= audioGo.duration - 0.05) {
       audioStay.currentTime = 0;
       audioStay.pause();
@@ -740,6 +746,17 @@ function audioFix() {
       audioStay.play();
     }
     requestAnimationFrame(audioFix);
+  }
+  if ((wasd.a == 1) && (wasd.d == 1) && (speed > 4)){
+    if(audioTires.currentTime >= audioTires.duration - 0.05) {
+      audioTires.currentTime = 0;
+      audioTires.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+  else {
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
   if (finished == 1){
     audioGo.currentTime = 0;
@@ -761,7 +778,16 @@ function onCanvasKeyDown(event) {
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
+    console.log(tiles[curTile]);
     Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
+    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
   if (event.code === "KeyS") {
     wasd.s = 1;
@@ -769,6 +795,14 @@ function onCanvasKeyDown(event) {
   if (event.code === "KeyD") {
     wasd.d = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
+    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
 }
 
