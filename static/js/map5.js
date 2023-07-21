@@ -693,16 +693,22 @@ function onCanvasKeyUp(event) {
   Car.src = cars[myCar].Img;
   if (event.code === "KeyW") {
     wasd.w = 0;
-    audioGo.currentTime = 0;
-    audioStart.currentTime = 0;
-    audioStart.pause();
-    audioGo.pause();
-    // audioGo.src = '';
-    if (speed > 1) {
-      audioStop.play();
+    if (finished == 0){
+      audioGo.currentTime = 0;
+      audioStart.currentTime = 0;
+      audioStart.pause();
+      audioGo.pause();
+      // audioGo.src = '';
+      if (speed > 1) {
+        audioStop.play();
+      }
+      audioStay.loop = true;
+      audioStay.play();
     }
-    audioStay.loop = true;
-    audioStay.play();
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   
   if (event.code === "KeyA") {
@@ -717,7 +723,7 @@ function onCanvasKeyUp(event) {
 }
 
 function audioFix() {
-  if ((wasd.w == 1) && (speed > 3)){
+  if ((wasd.w == 1) && (speed > 3) && (finished == 0)){
     if(audioGo.currentTime >= audioGo.duration - 0.05) {
       audioStay.currentTime = 0;
       audioStay.pause();
@@ -735,13 +741,23 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
+  if (finished == 1){
+    audioGo.currentTime = 0;
+    audioGo.pause();
+  }
 }
 function onCanvasKeyDown(event) {
   if (event.code === "KeyW") {
     wasd.w = 1;
-    audioStart.play();
-    audioGo.loop = true;
-    audioGo.play();
+    if (finished == 0){
+      audioStart.play();
+      audioGo.loop = true;
+      audioGo.play();
+    }
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
