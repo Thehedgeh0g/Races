@@ -192,6 +192,8 @@ func verificatePos(posMessage string) string {
 	inSessionId := strings.Split(posMessage, " ")[8]
 	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
+	} else if (strings.Split(isFinished, "/")[0] == "2") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
+		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + "NF"
 	}
 
 	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
@@ -278,16 +280,30 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		for place, inSessionId := range sequence {
 			if inSessionId < 4 {
-				if IDs[inSessionId] == userID {
-					err := updateUserTable(db, userID, 4-place)
-					if err != nil {
-						http.Error(w, "Server Error", 500)
-						log.Println(err.Error())
-						return
-					}
+				if tableStrings[place] != "NF" {
+					if IDs[inSessionId] == userID {
+						err := updateUserTable(db, userID, 4-place)
+						if err != nil {
+							http.Error(w, "Server Error", 500)
+							log.Println(err.Error())
+							return
+						}
 
-					results.Money = strconv.Itoa(15 * (4 - place))
-					results.Exp = strconv.Itoa(13 * (4 - place))
+						results.Money = strconv.Itoa(15 * (4 - place))
+						results.Exp = strconv.Itoa(13 * (4 - place))
+					}
+				} else {
+					if IDs[inSessionId] == userID {
+						err := updateUserTable(db, userID, 0)
+						if err != nil {
+							http.Error(w, "Server Error", 500)
+							log.Println(err.Error())
+							return
+						}
+
+						results.Money = strconv.Itoa(15 * (0))
+						results.Exp = strconv.Itoa(13 * (0))
+					}
 				}
 			}
 		}

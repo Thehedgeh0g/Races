@@ -43,6 +43,7 @@
     padding-left: 10px;
     outline: none;
     width: 40vw;
+    box-sizing: border-box;
 }
 
 .login-box__button {
@@ -58,4 +59,35 @@
     height: 40px;
     padding-left: 10px;
     outline: none;
+    box-sizing: border-box;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+#upload {
+    border-width:  3px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    width: 40vw;
+    cursor: pointer;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#submit {
+    border-width:  3px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    width: 40vw;
+    cursor: pointer;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: 'Press Start 2P';
+    color: #ffc30e;
+    font-size: 35px;
+    margin-top: 10px;
 }

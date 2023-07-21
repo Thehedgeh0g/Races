@@ -99,7 +99,7 @@ function fillDesignField() {
                 if (flagId) {
                     this.src = flagId.src;
                     let iD = this.id;
-                    this.id = `${iD.split('-')[0]}-${flagId.id}`
+                    this.id = `${iD.split('-')[0]}-${flagId.id}`;
                 }
             });
         }

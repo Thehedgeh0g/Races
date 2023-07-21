@@ -27,6 +27,33 @@ let canvasContext = canvas.getContext("2d");
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
 
+var audio = new Audio();
+var audioStart = new Audio();
+audioStart.src = '../static/sounds/jiga2kStart.mp3';
+var audioStay = new Audio();
+audioStay.src = '../static/sounds/jiga hol2Stay.wav';
+var audioGo = new Audio();
+audioGo.src = '../static/sounds/jiga 3kGo2.wav';
+var audioStop = new Audio();
+audioStop.src = '../static/sounds/jiga 3kStop.mp3';
+var audioTires = new Audio();
+audioTires.src = '../static/sounds/tires.wav';
+// audio.preload = 'auto';
+// audioStay.autoplay = true;
+// audio.play();
+// var sound = document.getElementById("beep");
+// sound.play();
+
+
+// audioStart.autoplay = false;
+
+
+// audioGo.src = '../static/sounds/jiga2kGo.mp3';
+// audioGo.autoplay = false;
+
+
+// audioStop.autoplay = false;
+
 myCar = 0;
 Car.src = "/static/sprites/AY.png";
 
@@ -340,7 +367,14 @@ function UpdatePosition() {
           if (cars[myCar].HP > 0) {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%"
+            if (cars[myCar].HP == 0) {
+                finished = 2;
+                roundHTML.innerHTML = "EXPLODED";
+                waiting.innerHTML = "waiting for the other players";
+                mspeed = 0;
+            }
           }
+
 
 
           xspeed = Math.sin(angle) * speed;
@@ -383,6 +417,10 @@ function UpdatePosition() {
 function initEventsListeners() {
   window.addEventListener("keydown", onCanvasKeyDown);
   window.addEventListener("keyup", onCanvasKeyUp);
+  document.body.addEventListener("mousemove", function () {
+    audioStay.loop = true;
+    audioStay.play();
+  });
   button.addEventListener("click", () => {
     window.location.href = "/menu";
   });
@@ -400,7 +438,7 @@ function drawCar(image, x, y) {
       canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
       bar[i].style.top = Number(cars[i].Y) - 25 + 15 * Math.cos(Number(cars[i].Angle)) + "px";
       bar[i].style.left = Number(cars[i].X) - 25 + 15 * Math.sin(Number(cars[i].Angle)) + "px";
-      barName[i].innerHTML = cars[i].Name
+      barName[i].innerHTML = cars[i].Name;
       canvasContext.rotate(cars[i].Angle);
       canvasContext.translate(-cars[i].X, -cars[i].Y);
     }
@@ -657,30 +695,99 @@ function onCanvasKeyUp(event) {
   Car.src = cars[myCar].Img;
   if (event.code === "KeyW") {
     wasd.w = 0;
-    // vzhoom.src = '';
-    // vzhoom.stop();
+    if (finished == 0){
+      audioGo.currentTime = 0;
+      audioStart.currentTime = 0;
+      audioStart.pause();
+      audioGo.pause();
+      // audioGo.src = '';
+      if (speed > 1) {
+        audioStop.play();
+      }
+      audioStay.loop = true;
+      audioStay.play();
+    }
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
+  
   if (event.code === "KeyA") {
     wasd.a = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
   if (event.code === "KeyS") {
     wasd.s = 0;
   }
   if (event.code === "KeyD") {
     wasd.d = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
 }
 
+function audioFix() {
+  if ((wasd.w == 1) && (speed > 4) && (finished == 0)){
+    if(audioGo.currentTime >= audioGo.duration - 0.05) {
+      audioStay.currentTime = 0;
+      audioStay.pause();
+      audioGo.currentTime = 0;
+      audioGo.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+  if (wasd.w == 0){
+    if(audioStay.currentTime >= audioStay.duration - 0.05) {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+      audioStay.currentTime = 0;
+      audioStay.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+  if ((wasd.a == 1) && (wasd.d == 1) && (speed > 4)){
+    if(audioTires.currentTime >= audioTires.duration - 0.05) {
+      audioTires.currentTime = 0;
+      audioTires.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+  else {
+    audioTires.currentTime = 0;
+    audioTires.pause();
+  }
+  if (finished == 1){
+    audioGo.currentTime = 0;
+    audioGo.pause();
+  }
+}
 function onCanvasKeyDown(event) {
   if (event.code === "KeyW") {
     wasd.w = 1;
-
-    // vzhoom.src = '/static/sounds/jiga2k.mp3';
-    // vzhoom.play();
+    if (finished == 0){
+      audioStart.play();
+      audioGo.loop = true;
+      audioGo.play();
+    }
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
+    console.log(tiles[curTile]);
     Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
+    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
   if (event.code === "KeyS") {
     wasd.s = 1;
@@ -688,6 +795,14 @@ function onCanvasKeyDown(event) {
   if (event.code === "KeyD") {
     wasd.d = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
+    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
 }
 
@@ -928,38 +1043,103 @@ socket.onmessage = function (event) {
   cars[go[5]].Angle = go[2];
   cars[go[5]].Speed = go[3];
   cars[go[5]].Border = getBorders(go[0], go[1], go[2], carH, carW);
-  cars[go[5]].HP = go[4];
+  if (go[5] != myCar) {
+    cars[go[5]].HP = go[4];
+    barHP[go[5]].style.width = go[4] + "%";
+  }
 
-  r1.style.top = String(1440 - cars[go[4]].Border.A[1]) + 'px';
-  r1.style.left = String(1440 - cars[go[4]].Border.A[0]) + 'px';
-  r2.style.top = String(1440 - cars[go[4]].Border.B[1]) + 'px';
-  r2.style.left = String(1440 - cars[go[4]].Border.B[0]) + 'px';
-  r3.style.top = String(1440 - cars[go[4]].Border.C[1]) + 'px';
-  r3.style.left = String(1440 - cars[go[4]].Border.C[0]) + 'px';
-  r4.style.top = String(1440 - cars[go[4]].Border.D[1]) + 'px';
-  r4.style.left = String(1440 - cars[go[4]].Border.D[0]) + 'px';
+
+  r1.style.top = String(1440 - cars[go[5]].Border.A[1]) + 'px';
+  r1.style.left = String(1440 - cars[go[5]].Border.A[0]) + 'px';
+  r2.style.top = String(1440 - cars[go[5]].Border.B[1]) + 'px';
+  r2.style.left = String(1440 - cars[go[5]].Border.B[0]) + 'px';
+  r3.style.top = String(1440 - cars[go[5]].Border.C[1]) + 'px';
+  r3.style.left = String(1440 - cars[go[5]].Border.C[0]) + 'px';
+  r4.style.top = String(1440 - cars[go[5]].Border.D[1]) + 'px';
+  r4.style.left = String(1440 - cars[go[5]].Border.D[0]) + 'px';
 
   if (go.length == 7) {
-    table.first = go[6][0];
-    notification.innerHTML = cars[table.first].Name + " finished first";
+    if  (go[6].split("/")[1] == "NF") {
+        notification.innerHTML = cars[go[6][0]].Name + " exploded";
+    } else {
+        table.first = go[6][0];
+        notification.innerHTML = cars[go[6][0]].Name + " finished first";
+        name1.innerHTML = cars[table.first].Name;
+        time1.innerHTML = go[6].split("/")[1].slice(0, 7);
+    }
+    
   }
   if (go.length == 8) {
-    table.first = go[6][0];
-    table.second = go[7][0];
-    notification.innerHTML = cars[table.second].Name + " finished second";
+    if  (go[7].split("/")[1] == "NF") {
+        notification.innerHTML = cars[go[7][0]].Name + " exploded";
+    } else {
+        if (table.first == 4) {
+            table.first = go[7][0];
+            notification.innerHTML = cars[go[7][0]].Name + " finished first";
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[7].split("/")[1].slice(0, 7);
+        } else {
+            table.second = go[7][0];
+            notification.innerHTML = cars[table.second].Name + " finished second";
+            name2.innerHTML = cars[table.second].Name;
+            time2.innerHTML = go[7].split("/")[1].slice(0, 7);
+        }
+    }
   }
   if (go.length == 9) {
-    table.first = go[6][0];
-    table.second = go[7][0];
-    table.third = go[8][0];
-    notification.innerHTML = cars[table.third].Name + " finished third";
+    if  (go[8].split("/")[1] == "NF") {
+        notification.innerHTML = cars[go[8][0]].Name + " exploded";
+    } else {
+        if (table.first == 4) {
+            table.first = go[8][0];
+            notification.innerHTML = cars[go[8][0]].Name + " finished first";
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[8].split("/")[1].slice(0, 7);
+        } else {
+            if (table.second == 4) {
+                table.second = go[8][0];
+                notification.innerHTML = cars[go[8][0]].Name + " finished second";
+                name2.innerHTML = cars[table.second].Name;
+                time2.innerHTML = go[8].split("/")[1].slice(0, 7);
+            } else {
+                table.third = go[8][0];
+                notification.innerHTML = cars[go[8][0]].Name + " finished third";
+                name3.innerHTML = cars[table.third].Name;
+                time3.innerHTML = go[8].split("/")[1].slice(0, 7);
+            }
+        }
+    }
   }
   if (go.length == 10) {
-    table.first = go[6][0];
-    table.second = go[7][0];
-    table.third = go[8][0];
-    table.forth = go[9][0];
-    notification.innerHTML = cars[table.forth].Name + "finished forth";
+    if  (go[9].split("/")[1] == "NF") {
+        notification.innerHTML = cars[go[9][0]].Name + " exploded";
+    } else {
+        if (table.first == 4) {
+            table.first = go[9][0];
+            notification.innerHTML = cars[go[9][0]].Name + " finished first";
+            name1.innerHTML = cars[table.first].Name;
+            time1.innerHTML = go[9].split("/")[1].slice(0, 7);
+        } else {
+            if (table.second == 4) {
+                table.second = go[9][0];
+                notification.innerHTML = cars[go[9][0]].Name + " finished second";
+                name2.innerHTML = cars[table.second].Name;
+                time2.innerHTML = go[9].split("/")[1].slice(0, 7);
+            } else {
+                if (table.third == 4) {
+                    table.third = go[9][0];
+                    notification.innerHTML = cars[go[9][0]].Name + " finished third";
+                    name3.innerHTML = cars[table.third].Name;
+                    time3.innerHTML = go[9].split("/")[1].slice(0, 7);
+                } else {
+                    table.forth = go[9][0];
+                    notification.innerHTML = cars[go[9][0]].Name + " finished forth";
+                    name4.innerHTML = cars[table.forth].Name;
+                    time4.innerHTML = go[9].split("/")[1].slice(0, 7);
+                }
+            }
+        }
+    }
   }
 
   if (go.length - 6 == amountOfPlayers && !sended && isLoaded) {
@@ -972,22 +1152,7 @@ socket.onmessage = function (event) {
       exp.innerHTML = " " + String(infor.response.Exp);
     });
     xhr.send(JSON.stringify(window.location.pathname.split("/")[2]));
-    if (go.length >= 7) {
-      name1.innerHTML = cars[table.first].Name;
-      time1.innerHTML = go[6].split("/")[1].slice(0, 7);
-    }
-    if (go.length >= 8) {
-      name2.innerHTML = cars[table.second].Name;
-      time2.innerHTML = go[7].split("/")[1].slice(0, 7);
-    }
-    if (go.length >= 9) {
-      name3.innerHTML = cars[table.third].Name;
-      time3.innerHTML = go[8].split("/")[1].slice(0, 7);
-    }
-    if (go.length >= 10) {
-      name4.innerHTML = cars[table.forth].Name;
-      time4.innerHTML = go[9].split("/")[1].slice(0, 7);
-    }
+
 
     tabl.style.visibility = "visible";
     sended = true;
@@ -1019,4 +1184,4 @@ socket.addEventListener("open", (event) => {
     " " +
     dif;
   socket.send(JSON.stringify(message));
-});
+})

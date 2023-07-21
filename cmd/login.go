@@ -143,7 +143,8 @@ func deleteUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
 			Name:    "authCookieName",
 			Path:    "/",
-			Expires: time.Now().AddDate(0, 0, -1),
+			Value:   "",
+			Expires: time.Unix(0, 0),
 		})
 	}
 }
