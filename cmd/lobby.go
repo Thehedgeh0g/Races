@@ -72,26 +72,19 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				  user_id = ?    
 			`
 
-			if element != "0" {
-				row := db.QueryRow(query, element)
-				err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
-				if err != nil {
-					http.Error(w, "Server Error", 500)
-					log.Println(err.Error())
-					return
-				}
-				lvl, err := strconv.Atoi(player.Level)
-				if err != nil {
-					log.Println(err)
-					return
-				}
-				player.Level = strconv.Itoa(lvl / 100)
-
-			} else {
-				player.ImgPath = "../static/sprites/plug.png"
-				player.Nickname = "Empty"
-				player.Level = "0"
+			row := db.QueryRow(query, element)
+			err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
+			if err != nil {
+				http.Error(w, "Server Error", 500)
+				log.Println(err.Error())
+				return
 			}
+			lvl, err := strconv.Atoi(player.Level)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			player.Level = strconv.Itoa(lvl / 100)
 
 			players = append(players, player)
 		}
@@ -768,4 +761,24 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonResponse)
 
 	}
+}
+
+func botsInLobby(db *sqlx.DB, lobbyID string) bool {
+
+	const query = `
+		SELECT
+		  bots
+		FROM
+		  sessions
+		WHERE
+		  session_id = ?  
+	`
+
+	row := db.QueryRow(query, lobbyID)
+	var bots bool
+	err := row.Scan(&bots)
+	if err != nil {
+		return false
+	}
+	return bots
 }
