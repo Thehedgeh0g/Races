@@ -36,6 +36,8 @@ var audioGo = new Audio();
 audioGo.src = '../static/sounds/jiga 3kGo2.wav';
 var audioStop = new Audio();
 audioStop.src = '../static/sounds/jiga 3kStop.mp3';
+var audioTires = new Audio();
+audioTires.src = '../static/sounds/tires.wav';
 // audio.preload = 'auto';
 // audioStay.autoplay = true;
 // audio.play();
@@ -415,6 +417,10 @@ function UpdatePosition() {
 function initEventsListeners() {
   window.addEventListener("keydown", onCanvasKeyDown);
   window.addEventListener("keyup", onCanvasKeyUp);
+  document.body.addEventListener("mousemove", function () {
+    audioStay.loop = true;
+    audioStay.play();
+  });
   button.addEventListener("click", () => {
     window.location.href = "/menu";
   });
@@ -689,31 +695,41 @@ function onCanvasKeyUp(event) {
   Car.src = cars[myCar].Img;
   if (event.code === "KeyW") {
     wasd.w = 0;
-    audioGo.currentTime = 0;
-    audioStart.currentTime = 0;
-    audioStart.pause();
-    audioGo.pause();
-    // audioGo.src = '';
-    if (speed > 1) {
-      audioStop.play();
+    if (finished == 0){
+      audioGo.currentTime = 0;
+      audioStart.currentTime = 0;
+      audioStart.pause();
+      audioGo.pause();
+      // audioGo.src = '';
+      if (speed > 1) {
+        audioStop.play();
+      }
+      audioStay.loop = true;
+      audioStay.play();
     }
-    audioStay.loop = true;
-    audioStay.play();
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   
   if (event.code === "KeyA") {
     wasd.a = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
   if (event.code === "KeyS") {
     wasd.s = 0;
   }
   if (event.code === "KeyD") {
     wasd.d = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
 }
 
 function audioFix() {
-  if ((wasd.w == 1) && (speed > 3)){
+  if ((wasd.w == 1) && (speed > 4) && (finished == 0)){
     if(audioGo.currentTime >= audioGo.duration - 0.05) {
       audioStay.currentTime = 0;
       audioStay.pause();
@@ -731,17 +747,47 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
+  if ((wasd.a == 1) && (wasd.d == 1) && (speed > 4)){
+    if(audioTires.currentTime >= audioTires.duration - 0.05) {
+      audioTires.currentTime = 0;
+      audioTires.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+  else {
+    audioTires.currentTime = 0;
+    audioTires.pause();
+  }
+  if (finished == 1){
+    audioGo.currentTime = 0;
+    audioGo.pause();
+  }
 }
 function onCanvasKeyDown(event) {
   if (event.code === "KeyW") {
     wasd.w = 1;
-    audioStart.play();
-    audioGo.loop = true;
-    audioGo.play();
+    if (finished == 0){
+      audioStart.play();
+      audioGo.loop = true;
+      audioGo.play();
+    }
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
+    console.log(tiles[curTile]);
     Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
+    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
   if (event.code === "KeyS") {
     wasd.s = 1;
@@ -749,6 +795,14 @@ function onCanvasKeyDown(event) {
   if (event.code === "KeyD") {
     wasd.d = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
+    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
 }
 
@@ -983,7 +1037,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   let go = message.split(" ");
-  console.log(go);
+  //console.log(go);
   cars[go[5]].X = go[0];
   cars[go[5]].Y = go[1];
   cars[go[5]].Angle = go[2];
