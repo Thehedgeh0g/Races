@@ -6,6 +6,7 @@ const borderPoints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 30,
 const checkTilesId = [31, 32, 33, 34, 35, 36];
 const necessaryGrassPoints = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 32, 44, 47, 59, 62, 74, 77, 89, 92, 104, 107, 119, 122, 134, 137, 149, 152, 164, 167, 179, 182, 194, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209];
 const grassTilesId = [1, 2, 3, 4];
+const finalTileId = 37;
 let flagId;
 
 
@@ -123,7 +124,7 @@ function saveMap() {
         let tilesString = '';
         for (let i=0; i < field.length; i++) {
             let iD = field[i].id;
-            if (iD.split('-')[1] == 37)
+            if (iD.split('-')[1] == finalTileId)
                 isStartTile = true;
             if (checkTilesId.includes(parseInt(iD.split('-')[1])))
                 isCheckPoint = true;
