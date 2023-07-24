@@ -134,7 +134,7 @@ function sendMap (val) {
         console.log('error');
     });
 
-    xhr.send(JSON.stringify(data));
+    xhr.send(JSON.stringify(data.map));
 }
 
 
