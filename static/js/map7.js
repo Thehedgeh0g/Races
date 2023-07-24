@@ -29,26 +29,23 @@ let Car = new Image();
 
 var audio = new Audio();
 var audioStart = new Audio();
-audioStart.src = '../static/sounds/jiga2kStart.mp3';
+audioStart.src = "../static/sounds/jiga2kStart.mp3";
 var audioStay = new Audio();
-audioStay.src = '../static/sounds/jiga hol2Stay.wav';
+audioStay.src = "../static/sounds/jiga hol2Stay.wav";
 var audioGo = new Audio();
-audioGo.src = '../static/sounds/jiga 3kGo2.wav';
+audioGo.src = "../static/sounds/jiga 3kGo2.wav";
 var audioStop = new Audio();
-audioStop.src = '../static/sounds/jiga 3kStop.mp3';
+audioStop.src = "../static/sounds/jiga 3kStop.mp3";
 // audio.preload = 'auto';
 // audioStay.autoplay = true;
 // audio.play();
 // var sound = document.getElementById("beep");
 // sound.play();
 
-
 // audioStart.autoplay = false;
-
 
 // audioGo.src = '../static/sounds/jiga2kGo.mp3';
 // audioGo.autoplay = false;
-
 
 // audioStop.autoplay = false;
 
@@ -235,16 +232,16 @@ barHP[1] = document.getElementById("barHP1");
 barHP[2] = document.getElementById("barHP2");
 barHP[3] = document.getElementById("barHP3");
 
-anglep = Math.PI/2 + 0.001;
+anglep = Math.PI / 2 + 0.001;
 function drawFrame() {
   setTimeout(() => {
     anglep = drawAngle;
     onCanvasKey();
-    
+
     UpdatePosition();
-    
+
     drawCar(Car, CarPosX, CarPosY);
-    
+
     drawMapDots();
     dial.style.transform = "rotate(" + Math.abs(speed * 18) + "deg)";
     if (sflag == true) {
@@ -281,7 +278,7 @@ function drawFrame() {
       ":" +
       String(((endTime - startTime) / 1000) % 60);
     //console.log(dif);
-    
+
     requestAnimationFrame(drawFrame);
   }, 16);
 }
@@ -300,8 +297,7 @@ function drawMapDots() {
 }
 
 function UpdatePosition() {
-  
-  if (CarPosY == 0 && (wasd.space == 1)) {
+  if (CarPosY == 0 && wasd.space == 1) {
     CarPosY = -carH;
     canvasContext.translate(0, carH);
 
@@ -323,7 +319,7 @@ function UpdatePosition() {
 
   bFlag = false;
   reduceSpeed();
-  
+
   updateReduce();
 
   for (let i = 0; i < amountOfPlayers; i++) {
@@ -392,30 +388,26 @@ function UpdatePosition() {
 
           if (cars[myCar].HP > 0) {
             cars[myCar].HP -= 10;
-            barHP[myCar].style.width = cars[myCar].HP + "%"
+            barHP[myCar].style.width = cars[myCar].HP + "%";
             if (cars[myCar].HP == 0) {
-                finished = 2;
-                roundHTML.innerHTML = "EXPLODED";
-                waiting.innerHTML = "waiting for the other players";
-                mspeed = 0;
+              finished = 2;
+              roundHTML.innerHTML = "EXPLODED";
+              waiting.innerHTML = "waiting for the other players";
+              mspeed = 0;
             }
           }
-
-
 
           xspeed = Math.sin(angle) * speed;
           yspeed = Math.cos(angle) * speed;
         }
         cars[i].cflag = true;
-        console.log(cars[i].cflag)
+        console.log(cars[i].cflag);
       } else {
         cars[i].cflag = false;
       }
     }
-    
   }
 
-  
   canvasContext.rotate(drawAngle);
   canvasContext.translate(xspeed, yspeed);
   canvasContext.rotate(-drawAngle);
@@ -427,24 +419,47 @@ function UpdatePosition() {
   y = Number(y);
   x = Number(x);
 
-  
-  if (CarPosY == '0') {
+  if (CarPosY == "0") {
     move.style.top = String(-yspeed + y) + "px";
     move.style.left = String(-xspeed + x) + "px";
 
     xcanvas += xspeed;
     ycanvas += yspeed;
   } else {
-
-    
     // move.style.top = String(y - yspeed + (Math.sin(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH - Math.sin(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
     // move.style.left = String(x - xspeed + (Math.cos(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.cos(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
 
-    xcanvas -= -xspeed - (Math.cos(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.cos(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH);
-    ycanvas -= -yspeed - (-Math.sin(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.sin(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH);
- 
-    move.style.top = String((-yspeed + y) - (-Math.sin(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.sin(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
-    move.style.left = String((-xspeed + x) - (Math.cos(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.cos(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
+    xcanvas -=
+      -xspeed -
+      (Math.cos(drawAngle) * Math.sin(anglep - drawAngle) * carH +
+        Math.cos(Math.PI / 2 - drawAngle) *
+          (1 - Math.cos(anglep - drawAngle)) *
+          carH);
+    ycanvas -=
+      -yspeed -
+      (-Math.sin(drawAngle) * Math.sin(anglep - drawAngle) * carH +
+        Math.sin(Math.PI / 2 - drawAngle) *
+          (1 - Math.cos(anglep - drawAngle)) *
+          carH);
+
+    move.style.top =
+      String(
+        -yspeed +
+          y -
+          (-Math.sin(drawAngle) * Math.sin(anglep - drawAngle) * carH +
+            Math.sin(Math.PI / 2 - drawAngle) *
+              (1 - Math.cos(anglep - drawAngle)) *
+              carH)
+      ) + "px";
+    move.style.left =
+      String(
+        -xspeed +
+          x -
+          (Math.cos(drawAngle) * Math.sin(anglep - drawAngle) * carH +
+            Math.cos(Math.PI / 2 - drawAngle) *
+              (1 - Math.cos(anglep - drawAngle)) *
+              carH)
+      ) + "px";
   }
 
   x0 = ycanvas;
@@ -453,6 +468,8 @@ function UpdatePosition() {
   y1 = xcanvas;
 
   displayDots();
+
+
 
 }
 
@@ -465,34 +482,48 @@ function initEventsListeners() {
 }
 
 function drawCar(image, x, y) {
+
+  if (CarPosY == -carH){
+    canvasContext.translate(0, -carH)
+  }
+
   canvasContext.rotate(drawAngle);
+
+
   canvasContext.translate(-xcanvas, -ycanvas);
+
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   // кажись здесь можно впихнуть отрисовку других машин
   for (let i = 0; i < amountOfPlayers; i++) {
     if (i != myCar) {
       canvasContext.translate(cars[i].X, cars[i].Y);
       canvasContext.rotate(-cars[i].Angle);
-      canvasContext.drawImage(cars[i].Imag, x, y, carW, carH);
-      bar[i].style.top = Number(cars[i].Y) - 25 + 15 * Math.cos(Number(cars[i].Angle)) + "px";
-      bar[i].style.left = Number(cars[i].X) - 25 + 15 * Math.sin(Number(cars[i].Angle)) + "px";
+      canvasContext.drawImage(cars[i].Imag, x, 0, carW, carH);
+      bar[i].style.top =
+        Number(cars[i].Y) - 25 + 15 * Math.cos(Number(cars[i].Angle)) + "px";
+      bar[i].style.left =
+        Number(cars[i].X) - 25 + 15 * Math.sin(Number(cars[i].Angle)) + "px";
       barName[i].innerHTML = cars[i].Name;
       canvasContext.rotate(cars[i].Angle);
       canvasContext.translate(-cars[i].X, -cars[i].Y);
     }
   }
   // конец впихивания
+
   canvasContext.translate(xcanvas, ycanvas);
+
+
   canvasContext.rotate(-drawAngle);
+
+  if (CarPosY == -carH){
+    canvasContext.translate(0, carH)
+  }
+
   bar[myCar].style.top = ycanvas - 25 + 15 * Math.cos(angle) + "px";
   bar[myCar].style.left = xcanvas - 25 + 15 * Math.sin(angle) + "px";
   barName[myCar].innerHTML = cars[myCar].Name;
-  
-
 
   canvasContext.drawImage(image, CarPosX, CarPosY, carW, carH);
-
-
 }
 
 function divme(a, b) {
@@ -501,9 +532,9 @@ function divme(a, b) {
 
 function reduceSpeed() {
   if (cars[0].cflag || cars[1].cflag || cars[2].cflag || cars[3].cflag) {
-      return
+    return;
   }
-  if (speed > 0 ) {
+  if (speed > 0) {
     if (speed - accel <= mspeed) {
       if (speed - resist > 0) {
         speed -= resist;
@@ -635,29 +666,48 @@ function diffDates(day_one, day_two) {
 }
 
 function onCanvasKey() {
-  if (wasd.w == 1 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
+  if (
+    wasd.w == 1 &&
+    !cars[0].cflag &&
+    !cars[1].cflag &&
+    !cars[2].cflag &&
+    !cars[3].cflag
+  ) {
     if (speed < mspeed) {
       speed += accel;
       xspeed = Math.sin(angle) * speed;
       yspeed = Math.cos(angle) * speed;
     }
   }
-  if (wasd.s == 1 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
+  if (
+    wasd.s == 1 &&
+    !cars[0].cflag &&
+    !cars[1].cflag &&
+    !cars[2].cflag &&
+    !cars[3].cflag
+  ) {
     if (speed > -mspeed) {
       speed -= accel;
       xspeed = Math.sin(angle) * speed;
       yspeed = Math.cos(angle) * speed;
     }
   }
-  if (wasd.d == 1 && speed > 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
+  if (
+    wasd.d == 1 &&
+    speed > 0 &&
+    !cars[0].cflag &&
+    !cars[1].cflag &&
+    !cars[2].cflag &&
+    !cars[3].cflag
+  ) {
     if (speed >= pi1) {
       angle -= rspeed;
       drawAngle -= rspeed;
       canvasContext.rotate(rspeed);
-      if ((wasd.space == 1) && (drawAngle > (angle - Math.PI/2))) {
-          drawAngle -= rspeed/4;
-          canvasContext.rotate(rspeed/4);
-        } 
+      if (wasd.space == 1 && drawAngle > angle - Math.PI / 2) {
+        drawAngle -= rspeed / 4;
+        canvasContext.rotate(rspeed / 4);
+      }
     } else {
       angle -= rspeed * Math.sin(speed / 2);
       drawAngle -= rspeed * Math.sin(speed / 2);
@@ -672,15 +722,22 @@ function onCanvasKey() {
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
   }
-  if (wasd.a == 1 && speed > 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
+  if (
+    wasd.a == 1 &&
+    speed > 0 &&
+    !cars[0].cflag &&
+    !cars[1].cflag &&
+    !cars[2].cflag &&
+    !cars[3].cflag
+  ) {
     if (speed >= pi1) {
       angle += rspeed;
       drawAngle += rspeed;
       canvasContext.rotate(-rspeed);
-      if ((wasd.space == 1) && (drawAngle < (angle + Math.PI/2))) {
-        drawAngle += rspeed/4;
-        canvasContext.rotate(-rspeed/4);
-      } 
+      if (wasd.space == 1 && drawAngle < angle + Math.PI / 2) {
+        drawAngle += rspeed / 4;
+        canvasContext.rotate(-rspeed / 4);
+      }
     } else {
       angle += rspeed * Math.sin(speed / 2);
       drawAngle += rspeed * Math.sin(speed / 2);
@@ -703,7 +760,14 @@ function onCanvasKey() {
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
   }
-  if (wasd.d == 1 && speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
+  if (
+    wasd.d == 1 &&
+    speed < 0 &&
+    !cars[0].cflag &&
+    !cars[1].cflag &&
+    !cars[2].cflag &&
+    !cars[3].cflag
+  ) {
     if (speed <= -pi1) {
       angle += rspeed;
       drawAngle += rspeed;
@@ -720,7 +784,13 @@ function onCanvasKey() {
         speed = 0;
       }
     }
-    if (speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
+    if (
+      speed < 0 &&
+      !cars[0].cflag &&
+      !cars[1].cflag &&
+      !cars[2].cflag &&
+      !cars[3].cflag
+    ) {
       if (speed + resist < 0) {
         speed += resist;
       } else {
@@ -730,7 +800,14 @@ function onCanvasKey() {
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
   }
-  if (wasd.a == 1 && speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
+  if (
+    wasd.a == 1 &&
+    speed < 0 &&
+    !cars[0].cflag &&
+    !cars[1].cflag &&
+    !cars[2].cflag &&
+    !cars[3].cflag
+  ) {
     if (speed <= -pi1) {
       angle -= rspeed;
       drawAngle -= rspeed;
@@ -749,32 +826,34 @@ function onCanvasKey() {
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
   }
-  if ((wasd.space == 0) || (Math.abs(speed) <= pi1)) {
-    if ((drawAngle + rspeed) < angle) {
-      drawAngle += rspeed/4;
-      canvasContext.rotate(-rspeed/4);
+  if (wasd.space == 0 || Math.abs(speed) <= pi1) {
+    if (drawAngle + rspeed < angle) {
+      drawAngle += rspeed / 4;
+      canvasContext.rotate(-rspeed / 4);
     } else {
-        if ((drawAngle + rspeed) > angle){
-        drawAngle -= rspeed/4;
-        canvasContext.rotate(rspeed/4);
+      if (drawAngle + rspeed > angle) {
+        drawAngle -= rspeed / 4;
+        canvasContext.rotate(rspeed / 4);
       } else {
         // console.log(angle, drawAngle)
         // drawAngle = angle;
         // canvasContext.rotate(-(angle - drawAngle));
       }
-    } 
+    }
   }
   if (wasd.space == 1) {
-    if (((speed - breakes) > 0) && (speed > 0)) {
+    if (speed - breakes > 0 && speed > 0) {
       speed -= breakes;
     }
-    if (((speed + breakes) < 0) && (speed < 0)) {
+    if (speed + breakes < 0 && speed < 0) {
       speed += breakes;
     }
-    if (((speed + breakes) > 0) && (speed <0) || ((speed - breakes) < 0) && (speed > 0)) {
+    if (
+      (speed + breakes > 0 && speed < 0) ||
+      (speed - breakes < 0 && speed > 0)
+    ) {
       speed -= 0;
     }
-    
   }
 }
 
@@ -793,7 +872,7 @@ function onCanvasKeyUp(event) {
     audioStay.loop = true;
     audioStay.play();
   }
-  
+
   if (event.code === "KeyA") {
     wasd.a = 0;
   }
@@ -809,8 +888,8 @@ function onCanvasKeyUp(event) {
 }
 
 function audioFix() {
-  if ((wasd.w == 1) && (speed > 3)){
-    if(audioGo.currentTime >= audioGo.duration - 0.05) {
+  if (wasd.w == 1 && speed > 3) {
+    if (audioGo.currentTime >= audioGo.duration - 0.05) {
       audioStay.currentTime = 0;
       audioStay.pause();
       audioGo.currentTime = 0;
@@ -818,8 +897,8 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
-  if (wasd.w == 0){
-    if(audioStay.currentTime >= audioStay.duration - 0.05) {
+  if (wasd.w == 0) {
+    if (audioStay.currentTime >= audioStay.duration - 0.05) {
       audioGo.currentTime = 0;
       audioGo.pause();
       audioStay.currentTime = 0;
@@ -877,14 +956,14 @@ function displayDots() {
 
   carBorder = getBorders(x, y, angle + Math.PI, carH, carW);
 
-  r1.style.top = String(carBorder.A[1]) + 'px';
-  r1.style.left = String(carBorder.A[0]) + 'px';
-  r2.style.top = String(carBorder.B[1]) + 'px';
-  r2.style.left = String(carBorder.B[0]) + 'px';
-  r3.style.top = String(carBorder.C[1]) + 'px';
-  r3.style.left = String(carBorder.C[0]) + 'px';
-  r4.style.top = String(carBorder.D[1]) + 'px';
-  r4.style.left = String(carBorder.D[0]) + 'px';
+  r1.style.top = String(carBorder.A[1]) + "px";
+  r1.style.left = String(carBorder.A[0]) + "px";
+  r2.style.top = String(carBorder.B[1]) + "px";
+  r2.style.left = String(carBorder.B[0]) + "px";
+  r3.style.top = String(carBorder.C[1]) + "px";
+  r3.style.left = String(carBorder.C[0]) + "px";
+  r4.style.top = String(carBorder.D[1]) + "px";
+  r4.style.left = String(carBorder.D[0]) + "px";
 
   // // if (checkCrosses(carBorder, 434, 206)) {
   // //     console.log('touching');
@@ -1044,7 +1123,7 @@ function getTiles() {
 }
 
 function prepareCanvas() {
-  if ((angle == Math.PI / 2 + 0.001)) {
+  if (angle == Math.PI / 2 + 0.001) {
     if ((curCar = 1)) {
       canvasContext.translate(
         startX + 50,
@@ -1091,89 +1170,86 @@ socket.onmessage = function (event) {
     barHP[go[5]].style.width = go[4] + "%";
   }
 
-
-
   if (go.length == 7) {
-    if  (go[6].split("/")[1] == "NF") {
-        notification.innerHTML = cars[go[6][0]].Name + " exploded";
+    if (go[6].split("/")[1] == "NF") {
+      notification.innerHTML = cars[go[6][0]].Name + " exploded";
     } else {
-        table.first = go[6][0];
-        notification.innerHTML = cars[go[6][0]].Name + " finished first";
-        name1.innerHTML = cars[table.first].Name;
-        time1.innerHTML = go[6].split("/")[1].slice(0, 7);
+      table.first = go[6][0];
+      notification.innerHTML = cars[go[6][0]].Name + " finished first";
+      name1.innerHTML = cars[table.first].Name;
+      time1.innerHTML = go[6].split("/")[1].slice(0, 7);
     }
-    
   }
   if (go.length == 8) {
-    if  (go[7].split("/")[1] == "NF") {
-        notification.innerHTML = cars[go[7][0]].Name + " exploded";
+    if (go[7].split("/")[1] == "NF") {
+      notification.innerHTML = cars[go[7][0]].Name + " exploded";
     } else {
-        if (table.first == 4) {
-            table.first = go[7][0];
-            notification.innerHTML = cars[go[7][0]].Name + " finished first";
-            name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[7].split("/")[1].slice(0, 7);
-        } else {
-            table.second = go[7][0];
-            notification.innerHTML = cars[table.second].Name + " finished second";
-            name2.innerHTML = cars[table.second].Name;
-            time2.innerHTML = go[7].split("/")[1].slice(0, 7);
-        }
+      if (table.first == 4) {
+        table.first = go[7][0];
+        notification.innerHTML = cars[go[7][0]].Name + " finished first";
+        name1.innerHTML = cars[table.first].Name;
+        time1.innerHTML = go[7].split("/")[1].slice(0, 7);
+      } else {
+        table.second = go[7][0];
+        notification.innerHTML = cars[table.second].Name + " finished second";
+        name2.innerHTML = cars[table.second].Name;
+        time2.innerHTML = go[7].split("/")[1].slice(0, 7);
+      }
     }
   }
   if (go.length == 9) {
-    if  (go[8].split("/")[1] == "NF") {
-        notification.innerHTML = cars[go[8][0]].Name + " exploded";
+    if (go[8].split("/")[1] == "NF") {
+      notification.innerHTML = cars[go[8][0]].Name + " exploded";
     } else {
-        if (table.first == 4) {
-            table.first = go[8][0];
-            notification.innerHTML = cars[go[8][0]].Name + " finished first";
-            name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[8].split("/")[1].slice(0, 7);
+      if (table.first == 4) {
+        table.first = go[8][0];
+        notification.innerHTML = cars[go[8][0]].Name + " finished first";
+        name1.innerHTML = cars[table.first].Name;
+        time1.innerHTML = go[8].split("/")[1].slice(0, 7);
+      } else {
+        if (table.second == 4) {
+          table.second = go[8][0];
+          notification.innerHTML = cars[go[8][0]].Name + " finished second";
+          name2.innerHTML = cars[table.second].Name;
+          time2.innerHTML = go[8].split("/")[1].slice(0, 7);
         } else {
-            if (table.second == 4) {
-                table.second = go[8][0];
-                notification.innerHTML = cars[go[8][0]].Name + " finished second";
-                name2.innerHTML = cars[table.second].Name;
-                time2.innerHTML = go[8].split("/")[1].slice(0, 7);
-            } else {
-                table.third = go[8][0];
-                notification.innerHTML = cars[go[8][0]].Name + " finished third";
-                name3.innerHTML = cars[table.third].Name;
-                time3.innerHTML = go[8].split("/")[1].slice(0, 7);
-            }
+          table.third = go[8][0];
+          notification.innerHTML = cars[go[8][0]].Name + " finished third";
+          name3.innerHTML = cars[table.third].Name;
+          time3.innerHTML = go[8].split("/")[1].slice(0, 7);
         }
+      }
     }
   }
   if (go.length == 10) {
-    if  (go[9].split("/")[1] == "NF") {
-        notification.innerHTML = cars[go[9][0]].Name + " exploded";
+    if (go[9].split("/")[1] == "NF") {
+      notification.innerHTML = cars[go[9][0]].Name + " exploded";
     } else {
-        if (table.first == 4) {
-            table.first = go[9][0];
-            notification.innerHTML = cars[go[9][0]].Name + " finished first";
-            name1.innerHTML = cars[table.first].Name;
-            time1.innerHTML = go[9].split("/")[1].slice(0, 7);
+      if (table.first == 4) {
+        table.first = go[9][0];
+        notification.innerHTML = cars[go[9][0]].Name + " finished first";
+        name1.innerHTML = cars[table.first].Name;
+        time1.innerHTML = go[9].split("/")[1].slice(0, 7);
+      } else {
+        if (table.second == 4) {
+          table.second = go[9][0];
+          notification.innerHTML = cars[go[9][0]].Name + " finished second";
+          name2.innerHTML = cars[table.second].Name;
+          time2.innerHTML = go[9].split("/")[1].slice(0, 7);
         } else {
-            if (table.second == 4) {
-                table.second = go[9][0];
-                notification.innerHTML = cars[go[9][0]].Name + " finished second";
-                name2.innerHTML = cars[table.second].Name;
-                time2.innerHTML = go[9].split("/")[1].slice(0, 7);
-            } else {
-                if (table.third == 4) {
-                    table.third = go[9][0];
-                    notification.innerHTML = cars[go[9][0]].Name + " finished third";
-                    name3.innerHTML = cars[table.third].Name;
-                    time3.innerHTML = go[9].split("/")[1].slice(0, 7);
-                } else {
-                    table.forth = go[9][0];
-                    notification.innerHTML = cars[go[9][0]].Name + " finished forth";
-                    name4.innerHTML = cars[table.forth].Name;
-                    time4.innerHTML = go[9].split("/")[1].slice(0, 7);
-                }
-            }
+          if (table.third == 4) {
+            table.third = go[9][0];
+            notification.innerHTML = cars[go[9][0]].Name + " finished third";
+            name3.innerHTML = cars[table.third].Name;
+            time3.innerHTML = go[9].split("/")[1].slice(0, 7);
+          } else {
+            table.forth = go[9][0];
+            notification.innerHTML = cars[go[9][0]].Name + " finished forth";
+            name4.innerHTML = cars[table.forth].Name;
+            time4.innerHTML = go[9].split("/")[1].slice(0, 7);
+          }
         }
+      }
     }
   }
 
@@ -1187,7 +1263,6 @@ socket.onmessage = function (event) {
       exp.innerHTML = " " + String(infor.response.Exp);
     });
     xhr.send(JSON.stringify(window.location.pathname.split("/")[2]));
-
 
     tabl.style.visibility = "visible";
     sended = true;
@@ -1219,4 +1294,4 @@ socket.addEventListener("open", (event) => {
     " " +
     dif;
   socket.send(JSON.stringify(message));
-})
+});
