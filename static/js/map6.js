@@ -64,6 +64,7 @@ let speed = 0;
 let xspeed = 0;
 let yspeed = 0;
 let angle = 0;
+let drawAngle = 0;
 
 let xcanvas = 0;
 let ycanvas = 0;
@@ -73,6 +74,7 @@ let wasd = {
   a: 0,
   s: 0,
   d: 0,
+  space: 0,
 };
 
 const dial = document.getElementById("dial");
@@ -233,11 +235,16 @@ barHP[1] = document.getElementById("barHP1");
 barHP[2] = document.getElementById("barHP2");
 barHP[3] = document.getElementById("barHP3");
 
+anglep = Math.PI/2 + 0.001;
 function drawFrame() {
   setTimeout(() => {
+    anglep = drawAngle;
     onCanvasKey();
+    
     UpdatePosition();
+    
     drawCar(Car, CarPosX, CarPosY);
+    
     drawMapDots();
     dial.style.transform = "rotate(" + Math.abs(speed * 18) + "deg)";
     if (sflag == true) {
@@ -274,7 +281,7 @@ function drawFrame() {
       ":" +
       String(((endTime - startTime) / 1000) % 60);
     //console.log(dif);
-
+    
     requestAnimationFrame(drawFrame);
   }, 16);
 }
@@ -293,6 +300,27 @@ function drawMapDots() {
 }
 
 function UpdatePosition() {
+  
+  if (CarPosY == 0 && (wasd.space == 1)) {
+    CarPosY = -carH;
+    canvasContext.translate(0, +carH);
+
+    // xcanvas += Math.sin(angle) * carH;
+    // ycanvas += Math.cos(angle) * carH;
+
+    console.log("WAH");
+  }
+
+  if (CarPosY == -carH && (wasd.space == 0 || Math.abs(speed) <= pi1)) {
+    CarPosY = 0;
+    canvasContext.translate(0, -carH);
+
+    // xcanvas -= Math.sin(angle) * carH;
+    // ycanvas -= Math.cos(angle) * carH;
+
+    console.log("HUY");
+  }
+
   bFlag = false;
   reduceSpeed();
   
@@ -384,11 +412,12 @@ function UpdatePosition() {
         cars[i].cflag = false;
       }
     }
+    
   }
 
-  canvasContext.rotate(angle);
+  canvasContext.rotate(drawAngle);
   canvasContext.translate(xspeed, yspeed);
-  canvasContext.rotate(-angle);
+  canvasContext.rotate(-drawAngle);
 
   y = window.getComputedStyle(move).top;
   x = window.getComputedStyle(move).left;
@@ -397,10 +426,19 @@ function UpdatePosition() {
   y = Number(y);
   x = Number(x);
 
-  move.style.top = String(-yspeed + y) + "px";
-  move.style.left = String(-xspeed + x) + "px";
+  
+  if (CarPosY == '0') {
+    move.style.top = String(-yspeed + y) + "px";
+    move.style.left = String(-xspeed + x) + "px";
+  } else {
 
-  //displayDots();
+    
+    move.style.top = String((-yspeed + y) + (Math.sin(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.sin(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
+    move.style.left = String((-xspeed + x) + (Math.cos(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH - Math.cos(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
+  }
+
+
+  displayDots();
 
   y0 = xcanvas;
   x0 = ycanvas;
@@ -421,7 +459,7 @@ function initEventsListeners() {
 }
 
 function drawCar(image, x, y) {
-  canvasContext.rotate(angle);
+  canvasContext.rotate(drawAngle);
   canvasContext.translate(-xcanvas, -ycanvas);
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   // кажись здесь можно впихнуть отрисовку других машин
@@ -439,11 +477,16 @@ function drawCar(image, x, y) {
   }
   // конец впихивания
   canvasContext.translate(xcanvas, ycanvas);
-  canvasContext.rotate(-angle);
+  canvasContext.rotate(-drawAngle);
   bar[myCar].style.top = ycanvas - 25 + 15 * Math.cos(angle) + "px";
   bar[myCar].style.left = xcanvas - 25 + 15 * Math.sin(angle) + "px";
   barName[myCar].innerHTML = cars[myCar].Name;
-  canvasContext.drawImage(image, x, y, carW, carH);
+  
+
+
+  canvasContext.drawImage(image, CarPosX, CarPosY, carW, carH);
+
+
 }
 
 function divme(a, b) {
@@ -572,6 +615,7 @@ function updateReduce() {
     if (borderArr.includes(curTile) && !bFlag) {
       //console.log('BORDER');
       angle += Math.PI;
+      drawAngle += Math.PI;
       canvasContext.rotate(Math.PI);
       xspeed *= -1;
       yspeed *= -1;
@@ -602,9 +646,15 @@ function onCanvasKey() {
   if (wasd.d == 1 && speed > 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed >= pi1) {
       angle -= rspeed;
+      drawAngle -= rspeed;
       canvasContext.rotate(rspeed);
+      if ((wasd.space == 1) && (drawAngle > (angle - Math.PI/2))) {
+          drawAngle -= rspeed/4;
+          canvasContext.rotate(rspeed/4);
+        } 
     } else {
       angle -= rspeed * Math.sin(speed / 2);
+      drawAngle -= rspeed * Math.sin(speed / 2);
       canvasContext.rotate(rspeed * Math.sin(speed / 2));
     }
     if (speed > 0) {
@@ -619,9 +669,15 @@ function onCanvasKey() {
   if (wasd.a == 1 && speed > 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed >= pi1) {
       angle += rspeed;
+      drawAngle += rspeed;
       canvasContext.rotate(-rspeed);
+      if ((wasd.space == 1) && (drawAngle < (angle + Math.PI/2))) {
+        drawAngle += rspeed/4;
+        canvasContext.rotate(-rspeed/4);
+      } 
     } else {
       angle += rspeed * Math.sin(speed / 2);
+      drawAngle += rspeed * Math.sin(speed / 2);
       canvasContext.rotate(-rspeed * Math.sin(speed / 2));
     }
     if (speed > 0) {
@@ -644,9 +700,11 @@ function onCanvasKey() {
   if (wasd.d == 1 && speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed <= -pi1) {
       angle += rspeed;
+      drawAngle += rspeed;
       canvasContext.rotate(-rspeed);
     } else {
       angle += rspeed * Math.sin(-speed / 2);
+      drawAngle += rspeed * Math.sin(-speed / 2);
       canvasContext.rotate(-rspeed * Math.sin(-speed / 2));
     }
     if (speed > 0) {
@@ -669,9 +727,11 @@ function onCanvasKey() {
   if (wasd.a == 1 && speed < 0 && (!cars[0].cflag && !cars[1].cflag && !cars[2].cflag && !cars[3].cflag)) {
     if (speed <= -pi1) {
       angle -= rspeed;
+      drawAngle -= rspeed;
       canvasContext.rotate(rspeed);
     } else {
       angle -= rspeed * Math.sin(-speed / 2);
+      drawAngle -= rspeed * Math.sin(-speed / 2);
       canvasContext.rotate(rspeed * Math.sin(-speed / 2));
     }
     if (speed > 0) {
@@ -682,6 +742,33 @@ function onCanvasKey() {
     }
     xspeed = Math.sin(angle) * speed;
     yspeed = Math.cos(angle) * speed;
+  }
+  if ((wasd.space == 0) || (Math.abs(speed) <= pi1)) {
+    if ((drawAngle + rspeed) < angle) {
+      drawAngle += rspeed/4;
+      canvasContext.rotate(-rspeed/4);
+    } else {
+        if ((drawAngle + rspeed) > angle){
+        drawAngle -= rspeed/4;
+        canvasContext.rotate(rspeed/4);
+      } else {
+        // console.log(angle, drawAngle)
+        // drawAngle = angle;
+        // canvasContext.rotate(-(angle - drawAngle));
+      }
+    } 
+  }
+  if (wasd.space == 1) {
+    if (((speed - breakes) > 0) && (speed > 0)) {
+      speed -= breakes;
+    }
+    if (((speed + breakes) < 0) && (speed < 0)) {
+      speed += breakes;
+    }
+    if (((speed + breakes) > 0) && (speed <0) || ((speed - breakes) < 0) && (speed > 0)) {
+      speed -= 0;
+    }
+    
   }
 }
 
@@ -709,6 +796,9 @@ function onCanvasKeyUp(event) {
   }
   if (event.code === "KeyD") {
     wasd.d = 0;
+  }
+  if (event.code === "Space") {
+    wasd.space = 0;
   }
 }
 
@@ -750,6 +840,9 @@ function onCanvasKeyDown(event) {
     wasd.d = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
   }
+  if (event.code === "Space") {
+    wasd.space = 1;
+  }
 }
 
 function scrollToCenter() {
@@ -776,19 +869,16 @@ function displayDots() {
   y = Number(y);
   x = Number(x);
 
-  // carBorder = getBorders(x, y, angle, carH, carW);
+  carBorder = getBorders(x, y, angle + Math.PI, carH, carW);
 
-  // // //r1.style.top = String(A[1]) + 'px';
-  // // //r1.style.left = String(A[0]) + 'px';
-
-  // // r1.style.top = String(206) + 'px';
-  // // r1.style.left = String(434) + 'px';
-  // // r2.style.top = String(carBorder.B[1]) + 'px';
-  // // r2.style.left = String(carBorder.B[0]) + 'px';
-  // // r3.style.top = String(carBorder.C[1]) + 'px';
-  // // r3.style.left = String(carBorder.C[0]) + 'px';
-  // // r4.style.top = String(carBorder.D[1]) + 'px';
-  // // r4.style.left = String(carBorder.D[0]) + 'px';
+  r1.style.top = String(carBorder.A[1]) + 'px';
+  r1.style.left = String(carBorder.A[0]) + 'px';
+  r2.style.top = String(carBorder.B[1]) + 'px';
+  r2.style.left = String(carBorder.B[0]) + 'px';
+  r3.style.top = String(carBorder.C[1]) + 'px';
+  r3.style.left = String(carBorder.C[0]) + 'px';
+  r4.style.top = String(carBorder.D[1]) + 'px';
+  r4.style.left = String(carBorder.D[0]) + 'px';
 
   // // if (checkCrosses(carBorder, 434, 206)) {
   // //     console.log('touching');
@@ -948,7 +1038,7 @@ function getTiles() {
 }
 
 function prepareCanvas() {
-  if ((angle = Math.PI / 2)) {
+  if ((angle == Math.PI / 2 + 0.001)) {
     if ((curCar = 1)) {
       canvasContext.translate(
         startX + 50,
@@ -969,6 +1059,7 @@ function findStartTile() {
       startingTile = i;
       if (startStraightArr.includes(tiles[i])) {
         angle = Math.PI / 2 + 0.001;
+        drawAngle = Math.PI / 2 + 0.001;
       }
     }
   }
@@ -983,7 +1074,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   let go = message.split(" ");
-  console.log(go);
+  //console.log(go);
   cars[go[5]].X = go[0];
   cars[go[5]].Y = go[1];
   cars[go[5]].Angle = go[2];
@@ -995,14 +1086,6 @@ socket.onmessage = function (event) {
   }
 
 
-  r1.style.top = String(1440 - cars[go[5]].Border.A[1]) + 'px';
-  r1.style.left = String(1440 - cars[go[5]].Border.A[0]) + 'px';
-  r2.style.top = String(1440 - cars[go[5]].Border.B[1]) + 'px';
-  r2.style.left = String(1440 - cars[go[5]].Border.B[0]) + 'px';
-  r3.style.top = String(1440 - cars[go[5]].Border.C[1]) + 'px';
-  r3.style.left = String(1440 - cars[go[5]].Border.C[0]) + 'px';
-  r4.style.top = String(1440 - cars[go[5]].Border.D[1]) + 'px';
-  r4.style.left = String(1440 - cars[go[5]].Border.D[0]) + 'px';
 
   if (go.length == 7) {
     if  (go[6].split("/")[1] == "NF") {
