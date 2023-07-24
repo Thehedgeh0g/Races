@@ -467,7 +467,7 @@ function UpdatePosition() {
   y0 = xcanvas;
   y1 = xcanvas;
 
-  displayDots();
+  //displayDots();
 
 
 
