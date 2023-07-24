@@ -59,24 +59,11 @@
 }
 
 .gallery img {
-    width: 200px;
-    height: 200px;
-    /* делаем этот элемент блочным, чтобы убрать лишнее пространство вокруг картинок */
+    width: 100px;
+    height: 100px;
     display: block;
 }
-  
-.arrow {
-    cursor: pointer;
-    height: 200px;
-}
-  
-.prev {
-    rotate: 180deg;
-}
-  
-.next {
-    margin-left: 2px;
-}
+
   
 .choose-tiles-block{
     display: flex;
@@ -88,22 +75,13 @@
 }
 
 .gallery {
-    width: 612px;
-    overflow: hidden;
-}
-  
-.gallery ul {
-    height: 200px;
-    width: 9999px;
-    list-style: none;
-    transition: margin-left 250ms;
-    font-size: 0;
+    width: 312px;
+    height: 318px;
+    overflow: auto;
 }
   
 .gallery li {
-    display: inline-block;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 3px;
 }
 
 
