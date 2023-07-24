@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -19,7 +20,7 @@ var connMutex sync.Mutex
 var connections = make(map[*websocket.Conn]string)
 var groups = make(map[string][]*websocket.Conn)
 var races = make(map[string]string)
-var bots = make(map[string][3]Bot)
+var bots = make(map[string][]Bot)
 
 func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -94,10 +95,7 @@ func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID 
 		}
 
 		if strings.Split(message, " ")[1] == "race" {
-			message = verificatePos(message)
-		} else if strings.Split(message, " ")[1] == "botrace" {
-			message = verificatePosBots(db, message)
-			log.Println(message)
+			message = verificatePos(db, message, group)
 		}
 		connMutex.Lock()
 		sendMessageToGroup(db, message, group)
@@ -106,7 +104,6 @@ func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID 
 }
 func sendMessageToGroup(db *sqlx.DB, message, group string) {
 	for _, conn := range groups[group] {
-
 		err := conn.WriteJSON(message)
 		if err != nil {
 			log.Println(err)
@@ -135,7 +132,6 @@ func Contains(a []*websocket.Conn, x *websocket.Conn) bool {
 func determineGroup(clientID, groupID string) string {
 	for group := range groups {
 		if strings.Split(clientID, " ")[0] == group {
-
 			return group
 		} else {
 			continue
@@ -176,7 +172,7 @@ func generateClientID() string {
 	return time.Now().Format("20060102150405")
 }
 
-func verificatePos(posMessage string) string {
+func verificatePos(db *sqlx.DB, posMessage, group string) string {
 
 	isFinished := strings.Split(posMessage, " ")[10]
 
@@ -201,39 +197,21 @@ func verificatePos(posMessage string) string {
 
 	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
 
-	return posMessage
-
-}
-
-func verificatePosBots(db *sqlx.DB, posMessage string) string {
-
-	isFinished := strings.Split(posMessage, " ")[9]
-
-	speed := strings.Split(posMessage, " ")[2]
-
-	angle := strings.Split(posMessage, " ")[3]
-
-	y1 := strings.Split(posMessage, " ")[6]
-
-	x1 := strings.Split(posMessage, " ")[7]
-
-	sessionID := strings.Split(posMessage, " ")[0]
-
-	bot1 := bots[strings.Split(posMessage, " ")[0]][0]
-	bot1.x = 200
-	bot1.y = 430
-	bot1.angle = 1.5
-	//bot1.x, bot1.y, bot1.speed, bot1.angle = AI(db, strings.Split(posMessage, " ")[0], bot1.x, bot1.y, bot1.angle, bot1.speed)
-
-	botMessage := y1 + " " + x1 + " " + angle + " " + speed + " " + "1"
-	log.Println(botMessage)
-	sendMessageToGroup(db, botMessage, strings.Split(posMessage, " ")[0])
-	inSessionId := strings.Split(posMessage, " ")[8]
-	if (strings.Split(isFinished, "/")[0] == "1") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
-		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + strings.Split(isFinished, "/")[1]
+	for i, bot := range bots[sessionID] {
+		//log.Println(bot.speed, bot.inSessionId)
+		bot.x, bot.y, bot.angle, bot.speed = AI(db, sessionID, bot.x, bot.y, bot.angle, bot.speed)
+		//log.Println(bot.speed, bot.inSessionId)
+		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
+		//log.Println(botMessage)
+		//log.Println(posMessage)
+		bots[sessionID][i].x = bot.x
+		bots[sessionID][i].y = bot.y
+		bots[sessionID][i].angle = bot.angle
+		bots[sessionID][i].speed = bot.speed
+		connMutex.Lock()
+		sendMessageToGroup(db, botMessage, group)
+		connMutex.Unlock()
 	}
-
-	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + inSessionId + races[sessionID]
 
 	return posMessage
 
