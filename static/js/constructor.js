@@ -99,6 +99,7 @@ function fillDesignField() {
             pzl.addEventListener("click", function() {
                 if (flagId) {
                     let iD = this.id;
+<<<<<<< Updated upstream
                     if (!necessaryGrassPoints.includes(parseInt(iD.split('-')[0]))) {
                         this.id = `${iD.split('-')[0]}-${flagId.id}`;
                         this.src = flagId.src;
@@ -109,6 +110,9 @@ function fillDesignField() {
                         } else
                             alert('По краям карты допустимы только непроезжие фрагменты (трава, песок и т.д.)');
                     }
+=======
+                    this.id = `${iD.split('-')[0]}-${flagId.id}`;
+>>>>>>> Stashed changes
                 }
             });
         }
