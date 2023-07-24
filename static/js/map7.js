@@ -415,6 +415,7 @@ function UpdatePosition() {
     
   }
 
+  
   canvasContext.rotate(drawAngle);
   canvasContext.translate(xspeed, yspeed);
   canvasContext.rotate(-drawAngle);
@@ -430,24 +431,29 @@ function UpdatePosition() {
   if (CarPosY == '0') {
     move.style.top = String(-yspeed + y) + "px";
     move.style.left = String(-xspeed + x) + "px";
+
+    xcanvas += xspeed;
+    ycanvas += yspeed;
   } else {
 
     
-    move.style.top = String((-yspeed + y) + (Math.sin(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH - Math.sin(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
-    move.style.left = String((-xspeed + x) + (Math.cos(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.cos(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
+    // move.style.top = String(y - yspeed + (Math.sin(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH - Math.sin(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
+    // move.style.left = String(x - xspeed + (Math.cos(Math.PI - drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.cos(drawAngle - Math.PI/2) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
+
+    xcanvas -= -xspeed - (Math.cos(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.cos(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH);
+    ycanvas -= -yspeed - (-Math.sin(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.sin(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH);
+ 
+    move.style.top = String((-yspeed + y) - (-Math.sin(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.sin(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
+    move.style.left = String((-xspeed + x) - (Math.cos(drawAngle) * Math.sin(anglep - drawAngle) * carH + Math.cos(Math.PI/2 - drawAngle) * (1 - Math.cos(anglep - drawAngle)) * carH)) + "px";
   }
 
+  x0 = ycanvas;
+  x1 = ycanvas;
+  y0 = xcanvas;
+  y1 = xcanvas;
 
   displayDots();
 
-  y0 = xcanvas;
-  x0 = ycanvas;
-
-  xcanvas += xspeed;
-  ycanvas += yspeed;
-
-  y1 = xcanvas;
-  x1 = ycanvas;
 }
 
 function initEventsListeners() {
