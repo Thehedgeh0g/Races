@@ -1,10 +1,11 @@
-
 const carousel = document.getElementById("carousel");
 const designField = document.querySelector('.design-field');
 const createMap = document.getElementById("CreateMap");
 const menuButton = document.querySelector('.menu-button');
-const borderTiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 30, 31, 45, 46, 60, 61, 75, 76, 90, 91, 105, 106, 120, 121, 135, 136, 150, 151, 165, 166, 180, 181, 195, 196, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225];
-const checkPoints = [31, 32, 33, 34, 35, 36];
+const borderPoints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 30, 31, 45, 46, 60, 61, 75, 76, 90, 91, 105, 106, 120, 121, 135, 136, 150, 151, 165, 166, 180, 181, 195, 196, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225];
+const checkTilesId = [31, 32, 33, 34, 35, 36];
+const necessaryGrassPoints = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 32, 44, 47, 59, 62, 74, 77, 89, 92, 104, 107, 119, 122, 134, 137, 149, 152, 164, 167, 179, 182, 194, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209];
+const grassTilesId = [1, 2, 3, 4];
 let flagId;
 
 
@@ -89,7 +90,7 @@ function fillDesignField() {
         pzl.style.width = '60px';
         pzl.style.height = '60px';
         
-        if (borderTiles.includes(i+1)) {
+        if (borderPoints.includes(i+1)) {
             pzl.src = '../static/map tiles sprites/BBB.png';
             pzl.id = `${i+1}-12`;
         } else {
@@ -97,9 +98,17 @@ function fillDesignField() {
             pzl.id = `${i+1}-1`;
             pzl.addEventListener("click", function() {
                 if (flagId) {
-                    this.src = flagId.src;
                     let iD = this.id;
-                    this.id = `${iD.split('-')[0]}-${flagId.id}`;
+                    if (!necessaryGrassPoints.includes(parseInt(iD.split('-')[0]))) {
+                        this.id = `${iD.split('-')[0]}-${flagId.id}`;
+                        this.src = flagId.src;
+                    } else {
+                        if (grassTilesId.includes(parseInt(flagId.id))) {
+                            this.id = `${iD.split('-')[0]}-${flagId.id}`;
+                            this.src = flagId.src;
+                        } else
+                            alert('По краям карты допустимы только непроезжие фрагменты (трава, песок и т.д.)');
+                    }
                 }
             });
         }
@@ -140,7 +149,7 @@ function saveMap() {
             let iD = field[i].id;
             if (iD.split('-')[1] == 37)
                 isStartTile = true;
-            if (checkPoints.includes(parseInt(iD.split('-')[1])))
+            if (checkTilesId.includes(parseInt(iD.split('-')[1])))
                 isCheckPoint = true;
             tilesString += iD.split('-')[1] + ' ';
         }
