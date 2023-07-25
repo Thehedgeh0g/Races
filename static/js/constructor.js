@@ -64,8 +64,8 @@ function fillDesignField() {
     for (let i = 0; i < 225; i++) {
         let pzl = document.createElement('img');
         pzl.className = "tile"
-        pzl.style.width = '60px';
-        pzl.style.height = '60px';
+        pzl.style.width = '100%';
+        pzl.style.height = '100%';
         
         if (borderPoints.includes(i+1)) {
             pzl.src = '../static/map tiles sprites/BBB.png';

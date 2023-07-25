@@ -10,7 +10,7 @@ let MapSettings = {
 
 function mapList() {
     if (!flag) {
-        list.style.height = '35vh';
+        list.style.height = '55vh';
         triangle.src="/static/sprites/triangle2.png"
         flag = true;
     } else {
@@ -40,9 +40,21 @@ function choosen(event) {
     }
 }
 
+const button = document.getElementById("button")
 
+button.addEventListener("mousedown", ()=> {
+    button.classList.add("pressed");
+})
+button.addEventListener("mouseup", ()=> {
+    button.classList.remove("pressed");
+})
+button.addEventListener("mouseleave", ()=> {
+    button.classList.remove("pressed");
+})
 const choose = document.getElementById("choose");
 const settings = document.getElementById("settings");
+
+let ready = false;
 
 var xhr1 = new XMLHttpRequest();
 // var lobbyId = response.lobbyId
@@ -54,7 +66,7 @@ xhr1.addEventListener("load", () =>{
     console.log(response);
     if (response.Host) {
         triangle.addEventListener('click', mapList);
-        document.getElementById("button").addEventListener("click", function() {
+        button.addEventListener("click", function() {
             let id = chosenMap.slice(1);
             console.log(id);
             var xhr = new XMLHttpRequest();
@@ -77,15 +89,24 @@ xhr1.addEventListener("load", () =>{
             })
         });
     } else {
-        document.getElementById("button").style.backgroundColor = '#6e6a5d';
+        
         document.getElementById("settings").style.backgroundColor = '#6e6a5d';
-        document.getElementById("maps").style.backgroundColor = '#6e6a5d';
-        document.getElementById("rounds").disabled = true;
-        document.getElementById("rounds").style.backgroundColor = '#6e6a5d';
-        document.getElementById("rounds").type = "text";
-        document.getElementById("rounds").value = "Only host can change";
-        document.getElementById("button-text").innerHTML = "Only host can start a game";
-        choose.innerHTML = "Only host can choose a map";
+        document.getElementById("settings").innerHTML = "Only host can change settings";
+        document.getElementById("settings").style.justifyContent = "center";
+        document.getElementById("settings").style.padding = "30px";
+        document.getElementById("button-text").innerHTML = "NOT READY";
+        button.style.backgroundColor = "#eb9054"
+        button.addEventListener("click", ()=> {
+            if (ready) {
+                ready = false;
+                button.style.backgroundColor = "#eb9054"
+                document.getElementById("button-text").innerHTML = "NOT READY";
+            } else {
+                ready = true;
+                button.style.backgroundColor = "#d2ffc8"
+                document.getElementById("button-text").innerHTML = "READY";
+            }
+        })
     }
 });
 
@@ -150,3 +171,40 @@ socket.addEventListener("open", (event) => {
   socket.send(JSON.stringify(data.Message));
 });
 
+const collision = document.getElementById("collision-input");
+const hp = document.getElementById("hp-input");
+
+const collisionDot = document.getElementById("col-dot");
+const hpDot = document.getElementById("hp-dot");
+
+let isCollision = false;
+let isHp = false;
+
+collision.addEventListener("click", switchCollision);
+hp.addEventListener("click", switchHp);
+
+function switchCollision() {
+    if (isCollision) {
+        collisionDot.style.visibility = "hidden"
+        isCollision = false;
+    } else {
+        collisionDot.style.visibility = "visible"
+        isCollision = true;
+    }
+}
+
+function switchHp() {
+    if (isHp) {
+        hpDot.style.visibility = "hidden"
+        isHp = false;
+    } else {
+        hpDot.style.visibility = "visible"
+        isHp = true;
+    }
+}
+const token = document.getElementById("token");
+const copy = document.getElementById("copy");
+copy.addEventListener("click", ()=> {
+    navigator.clipboard.writeText(token.innerHTML.slice(6));
+    copy.innerHTML = "Copied"
+})

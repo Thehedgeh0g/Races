@@ -21,6 +21,12 @@
     vertical-align:baseline;
     margin: 0;
 }
+
+.NotMoney{
+    display: none;
+    margin-top: 1vh;
+    /* block */
+}
 .button-list { 
     display: flex;
     flex-direction: row;

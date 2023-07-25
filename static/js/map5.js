@@ -27,7 +27,6 @@ let canvasContext = canvas.getContext("2d");
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
 
-var audio = new Audio();
 var audioStart = new Audio();
 audioStart.src = '../static/sounds/jiga2kStart.mp3';
 var audioStay = new Audio();
@@ -701,8 +700,7 @@ function onCanvasKeyUp(event) {
       audioStart.currentTime = 0;
       audioStart.pause();
       audioGo.pause();
-      // audioGo.src = '';
-      if (speed > 1) {
+      if (Math.abs(speed) > 1) {
         audioStop.play();
       }
       audioStay.loop = true;
@@ -721,6 +719,21 @@ function onCanvasKeyUp(event) {
   }
   if (event.code === "KeyS") {
     wasd.s = 0;
+    if (finished == 0){
+      audioGo.currentTime = 0;
+      audioStart.currentTime = 0;
+      audioStart.pause();
+      audioGo.pause();
+      if (Math.abs(speed) > 1) {
+        audioStop.play();
+      }
+      audioStay.loop = true;
+      audioStay.play();
+    }
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   if (event.code === "KeyD") {
     wasd.d = 0;
@@ -730,7 +743,7 @@ function onCanvasKeyUp(event) {
 }
 
 function audioFix() {
-  if ((wasd.w == 1) && (speed > 4) && (finished == 0)){
+  if ((wasd.w == 1) && (Math.abs(speed) > 4) && (finished == 0)){
     if(audioGo.currentTime >= audioGo.duration - 0.05) {
       audioStay.currentTime = 0;
       audioStay.pause();
@@ -739,7 +752,7 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
-  if (wasd.w == 0){
+  if ((wasd.w == 0) && (wasd.s == 0)){
     if(audioStay.currentTime >= audioStay.duration - 0.05) {
       audioGo.currentTime = 0;
       audioGo.pause();
@@ -748,7 +761,7 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
-  if ((wasd.a == 1) && (wasd.d == 1) && (speed > 4)){
+  if ((wasd.a == 1) && (wasd.d == 1) && (Math.abs(speed) > 4)){
     if(audioTires.currentTime >= audioTires.duration - 0.05) {
       audioTires.currentTime = 0;
       audioTires.play();
@@ -781,7 +794,7 @@ function onCanvasKeyDown(event) {
     wasd.a = 1;
     console.log(tiles[curTile]);
     Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
-    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+    if ((finished == 0)  && (Math.abs(speed) > 4) && (!(grassArr.includes(curTile)))){
       audioTires.loop = true;
       audioTires.play();
     }
@@ -792,11 +805,20 @@ function onCanvasKeyDown(event) {
   }
   if (event.code === "KeyS") {
     wasd.s = 1;
+    if (finished == 0){
+      audioStart.play();
+      audioGo.loop = true;
+      audioGo.play();
+    }
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   if (event.code === "KeyD") {
     wasd.d = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
-    if ((finished == 0)  && (speed > 4) && (!(grassArr.includes(curTile)))){
+    if ((finished == 0)  && (Math.abs(speed) > 4) && (!(grassArr.includes(curTile)))){
       audioTires.loop = true;
       audioTires.play();
     }

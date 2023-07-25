@@ -27,27 +27,18 @@ let canvasContext = canvas.getContext("2d");
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
 
-var audio = new Audio();
 var audioStart = new Audio();
-audioStart.src = "../static/sounds/jiga2kStart.mp3";
+audioStart.src = '../static/sounds/jiga2kStart.mp3';
 var audioStay = new Audio();
-audioStay.src = "../static/sounds/jiga hol2Stay.wav";
+audioStay.src = '../static/sounds/jiga hol2Stay.wav';
 var audioGo = new Audio();
-audioGo.src = "../static/sounds/jiga 3kGo2.wav";
+audioGo.src = '../static/sounds/jiga 3kGo2.wav';
 var audioStop = new Audio();
-audioStop.src = "../static/sounds/jiga 3kStop.mp3";
-// audio.preload = 'auto';
-// audioStay.autoplay = true;
-// audio.play();
-// var sound = document.getElementById("beep");
-// sound.play();
-
-// audioStart.autoplay = false;
-
-// audioGo.src = '../static/sounds/jiga2kGo.mp3';
-// audioGo.autoplay = false;
-
-// audioStop.autoplay = false;
+audioStop.src = '../static/sounds/jiga 3kStop.mp3';
+var audioTires = new Audio();
+audioTires.src = '../static/sounds/tires.wav';
+var audioEngineOn = new Audio();
+audioEngineOn.src = '../static/sounds/jigaEngineOn.wav';
 
 myCar = 0;
 Car.src = "/static/sprites/AY.png";
@@ -72,6 +63,7 @@ let wasd = {
   s: 0,
   d: 0,
   space: 0,
+  r: 0,
 };
 
 const dial = document.getElementById("dial");
@@ -250,7 +242,7 @@ function drawFrame() {
         " race " +
         String(speed) +
         " " +
-        String(angle) +
+        String(drawAngle) +
         " " +
         String(y0) +
         " " +
@@ -467,7 +459,7 @@ function UpdatePosition() {
   y0 = xcanvas;
   y1 = xcanvas;
 
-  displayDots();
+  //displayDots();
 
 
 
@@ -861,26 +853,49 @@ function onCanvasKeyUp(event) {
   Car.src = cars[myCar].Img;
   if (event.code === "KeyW") {
     wasd.w = 0;
-    audioGo.currentTime = 0;
-    audioStart.currentTime = 0;
-    audioStart.pause();
-    audioGo.pause();
-    // audioGo.src = '';
-    if (speed > 1) {
-      audioStop.play();
+    if ((finished == 0) && (wasd.r == 1)){
+      audioGo.currentTime = 0;
+      audioStart.currentTime = 0;
+      audioStart.pause();
+      audioGo.pause();
+      if (Math.abs(speed) > 1) {
+        audioStop.play();
+      }
+      audioStay.loop = true;
+      audioStay.play();
     }
-    audioStay.loop = true;
-    audioStay.play();
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
 
   if (event.code === "KeyA") {
     wasd.a = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
   if (event.code === "KeyS") {
     wasd.s = 0;
+    if ((finished == 0) && (wasd.r == 1)){
+      audioGo.currentTime = 0;
+      audioStart.currentTime = 0;
+      audioStart.pause();
+      audioGo.pause();
+      if (Math.abs(speed) > 1) {
+        audioStop.play();
+      }
+      audioStay.play();
+    }
+    else {
+      audioGo.currentTime = 0;
+      audioGo.pause();
+    }
   }
   if (event.code === "KeyD") {
     wasd.d = 0;
+    audioTires.currentTime = 0;
+    audioTires.pause();
   }
   if (event.code === "Space") {
     wasd.space = 0;
@@ -888,8 +903,8 @@ function onCanvasKeyUp(event) {
 }
 
 function audioFix() {
-  if (wasd.w == 1 && speed > 3) {
-    if (audioGo.currentTime >= audioGo.duration - 0.05) {
+  if ((wasd.w == 1) && (Math.abs(speed) > 4) && (finished == 0)){
+    if(audioGo.currentTime >= audioGo.duration - 0.05) {
       audioStay.currentTime = 0;
       audioStay.pause();
       audioGo.currentTime = 0;
@@ -897,8 +912,8 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
-  if (wasd.w == 0) {
-    if (audioStay.currentTime >= audioStay.duration - 0.05) {
+  if ((wasd.w == 0) && (wasd.s == 0) && (wasd.r == 1)){
+    if(audioStay.currentTime >= audioStay.duration - 0.05) {
       audioGo.currentTime = 0;
       audioGo.pause();
       audioStay.currentTime = 0;
@@ -906,24 +921,96 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
+  if ((wasd.a == 1) && (wasd.d == 1) && (Math.abs(speed) > 4)){
+    if(audioTires.currentTime >= audioTires.duration - 0.05) {
+      audioTires.currentTime = 0;
+      audioTires.play();
+    }
+    requestAnimationFrame(audioFix);
+  }
+  else {
+    audioTires.currentTime = 0;
+    audioTires.pause();
+  }
+  if (finished == 1){
+    audioGo.currentTime = 0;
+    audioGo.pause();
+  }
 }
 function onCanvasKeyDown(event) {
-  if (event.code === "KeyW") {
-    wasd.w = 1;
-    audioStart.play();
-    audioGo.loop = true;
-    audioGo.play();
+  if (event.code === "KeyR") {
+    if (wasd.r == 0) {
+      wasd.r = 1;
+      audioEngineOn.currentTime = 0;
+      audioEngineOn.play();
+      audioStay.loop = true;
+      audioStay.play();
+    }
+    else {
+      wasd.r = 0;
+      wasd.w = 0;
+      wasd.a = 0;
+      wasd.s = 0;
+      wasd.d = 0;
+      wasd.space = 0;
+      audioStart.pause();
+      audioEngineOn.pause();
+      audioGo.pause();
+      audioStay.pause();
+      audioStop.pause();
+    }
+  }
+  if (wasd.r == 1) {
+    if (event.code === "KeyW") {
+      wasd.w = 1;
+      if (finished == 0){
+        audioStart.play();
+        audioGo.loop = true;
+        audioGo.play();
+      }
+      else {
+        audioGo.currentTime = 0;
+        audioGo.pause();
+      }
+    }
+    
+    if (event.code === "KeyS") {
+      wasd.s = 1;
+      if (finished == 0){
+        audioStart.play();
+        audioGo.loop = true;
+        audioGo.play();
+      }
+      else {
+        audioGo.currentTime = 0;
+        audioGo.pause();
+      }
+    }
+    
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
-  }
-  if (event.code === "KeyS") {
-    wasd.s = 1;
+    if ((finished == 0)  && (Math.abs(speed) > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
   if (event.code === "KeyD") {
     wasd.d = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
+    if ((finished == 0)  && (Math.abs(speed) > 4) && (!(grassArr.includes(curTile)))){
+      audioTires.loop = true;
+      audioTires.play();
+    }
+    else {
+      audioTires.currentTime = 0;
+      audioTires.pause();
+    }
   }
   if (event.code === "Space") {
     wasd.space = 1;
@@ -1276,7 +1363,7 @@ socket.addEventListener("open", (event) => {
     " race " +
     String(speed) +
     " " +
-    String(angle) +
+    String(drawAngle) +
     " " +
     String(y0) +
     " " +
