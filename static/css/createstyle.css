@@ -47,6 +47,7 @@
     align-items: center;
     gap: 20px;
     background-color: #ffe6bf;
+    display: none;
 }
 
 .avatar {
@@ -267,5 +268,5 @@
     border-width:  3px;
     border-style: solid;
     border-color: #ffc30e;
-    background-color: #ffe6bf;
+    background-color: #eb9054;
 }
