@@ -60,7 +60,8 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
 		var player Player
 
-		for _, element := range IDs {
+		var myId string
+		for i, element := range IDs {
 			query = `
 				SELECT
 				  avatar,
@@ -72,27 +73,39 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				  user_id = ?    
 			`
 
-			row := db.QueryRow(query, element)
-			err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
-			if err != nil {
-				http.Error(w, "Server Error", 500)
-				log.Println(err.Error())
-				return
+			if element != "0" {
+				row := db.QueryRow(query, element)
+				err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
+				if err != nil {
+					http.Error(w, "Server Error", 500)
+					log.Println(err.Error())
+					return
+				}
+				lvl, err := strconv.Atoi(player.Level)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				if element == userIdstr {
+					myId = strconv.Itoa(i)
+				}
+				player.Level = strconv.Itoa(lvl / 100)
+
+			} else {
+				player.ImgPath = "../static/sprites/plug.png"
+				player.Nickname = "Empty"
+				player.Level = "0"
 			}
-			lvl, err := strconv.Atoi(player.Level)
-			if err != nil {
-				log.Println(err)
-				return
-			}
-			player.Level = strconv.Itoa(lvl / 100)
 
 			players = append(players, player)
 		}
 
 		response := struct {
 			Players []Player `json:"User"`
+			Id      string
 		}{
 			Players: players,
+			Id:      myId,
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -351,6 +364,7 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
+
 		response := struct {
 			Rounds      string   `json:"Rounds"`
 			MapKey      string   `json:"MapKey"`
