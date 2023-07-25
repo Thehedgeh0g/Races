@@ -66,10 +66,11 @@ xhr1.addEventListener("load", () => {
   if (response.Host) {
     triangle.addEventListener("click", mapList);
     button.addEventListener("click", function () {
-      if (document.getElementById("ready-1") == "ready" &&
-      document.getElementById("ready-2") == "ready" &&
-      document.getElementById("ready-3") == "ready" &&
-      document.getElementById("ready-4") == "ready"
+      if (
+        document.getElementById("ready-0").innerHTML == "host" &&
+        document.getElementById("ready-1").innerHTML == "ready" &&
+        document.getElementById("ready-2").innerHTML == "ready" &&
+        document.getElementById("ready-3").innerHTML == "ready"
       ) {
         let id = chosenMap.slice(1);
         console.log(id);
@@ -79,40 +80,44 @@ xhr1.addEventListener("load", () => {
         MapSettings.MapID = id;
         MapSettings.Rounds = document.getElementById("rounds").value;
         xhr.send(JSON.stringify(MapSettings));
-  
+
         xhr.addEventListener("load", () => {
           //console.log(xhr.responseText.substring(12, 18))
-  
+
           var message = window.location.pathname.split("/")[2] + " start";
           console.log(message);
           var data = {
             Message: message,
           };
-  
+
           socket.send(JSON.stringify(data.Message));
         });
       } else {
         if (document.getElementById("ready-1").innerHTML != "ready") {
-            document.getElementById("ready-1").classList.add("rotor")
-            document.getElementById("ready-1").addEventListener("animationend", () => {
-                document.getElementById("ready-1").classList.remove("rotor")
-              });
+          document.getElementById("ready-1").classList.add("rotor");
+          document
+            .getElementById("ready-1")
+            .addEventListener("animationend", () => {
+              document.getElementById("ready-1").classList.remove("rotor");
+            });
         }
         if (document.getElementById("ready-2").innerHTML != "ready") {
-            document.getElementById("ready-2").classList.add("rotor")
-            document.getElementById("ready-2").addEventListener("animationend", () => {
-                document.getElementById("ready-2").classList.remove("rotor")
-              });
+          document.getElementById("ready-2").classList.add("rotor");
+          document
+            .getElementById("ready-2")
+            .addEventListener("animationend", () => {
+              document.getElementById("ready-2").classList.remove("rotor");
+            });
         }
         if (document.getElementById("ready-3").innerHTML != "ready") {
-            document.getElementById("ready-3").classList.add("rotor")
-            document.getElementById("ready-3").addEventListener("animationend", () => {
-                document.getElementById("ready-3").classList.remove("rotor")
-              });
+          document.getElementById("ready-3").classList.add("rotor");
+          document
+            .getElementById("ready-3")
+            .addEventListener("animationend", () => {
+              document.getElementById("ready-3").classList.remove("rotor");
+            });
         }
-        
       }
-
     });
   } else {
     document.getElementById("settings").style.backgroundColor = "#6e6a5d";
@@ -165,8 +170,19 @@ socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   console.log(message);
   if (message.split(" ")[1] == "reboot") {
+    var message =
+    window.location.pathname.split("/")[2] +
+    " " +
+    String(myID) +
+    " " +
+    String(ready);
+    socket.send(JSON.stringify(message));
+
+
+
     var xhr = new XMLHttpRequest();
     // var lobbyId = response.lobbyId
+    
     xhr.open("GET", "/api/getPlayers");
     xhr.send();
 
@@ -189,19 +205,19 @@ socket.onmessage = function (event) {
       lvl4.innerHTML = players.User[3].Level + "lvl";
       if (nickName1.innerHTML != "Empty") {
         document.getElementById("player-1").style.display = "flex";
-        document.getElementById("ready-1").innerHTML = "not ready";
+        document.getElementById("ready-0").innerHTML = "host";
       }
       if (nickName2.innerHTML != "Empty") {
         document.getElementById("player-2").style.display = "flex";
-        document.getElementById("ready-2").innerHTML = "not ready";
+        document.getElementById("ready-1").innerHTML = "not ready";
       }
       if (nickName3.innerHTML != "Empty") {
         document.getElementById("player-3").style.display = "flex";
-        document.getElementById("ready-3").innerHTML = "not ready";
+        document.getElementById("ready-2").innerHTML = "not ready";
       }
       if (nickName4.innerHTML != "Empty") {
         document.getElementById("player-4").style.display = "flex";
-        document.getElementById("ready-4").innerHTML = "not ready";
+        document.getElementById("ready-3").innerHTML = "not ready";
       }
     });
   } else {
