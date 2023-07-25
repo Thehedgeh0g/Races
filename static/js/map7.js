@@ -250,7 +250,7 @@ function drawFrame() {
         " race " +
         String(speed) +
         " " +
-        String(angle) +
+        String(drawAngle) +
         " " +
         String(y0) +
         " " +
@@ -1276,7 +1276,7 @@ socket.addEventListener("open", (event) => {
     " race " +
     String(speed) +
     " " +
-    String(angle) +
+    String(drawAngle) +
     " " +
     String(y0) +
     " " +
