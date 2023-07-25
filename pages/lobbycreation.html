@@ -66,41 +66,46 @@
             </div>
             <div>
                 <div class="settings" id="settings">
-                    <span class="set-header">settings</span>
-                    <div class="maps" id="maps">
-                        <div>
-                            <img src="/static/sprites/triangle.png" class="triangle" id="triangle">
-                            <span id="choose">map</span>
-                            
-                            <div class="list" id="list">
-                                {{ range .Maps}}
-                                    <div id="m{{ .MapID }}" class="map-choose-line" onclick="choosen(event)">
-                                        <span class="id">{{ .MapID }}</span>
-                                        <div class="preview">
-                                            {{ range .MapPreview }}
-                                                <img class="tile__pic" src="../static/map tiles sprites/{{ .CellPath }}.png">
-                                            {{ end }}
+                    <div id="inner-settings">
+                        <span class="set-header">settings</span>
+                        <div class="maps" id="maps">
+                            <div>
+                                <img src="/static/sprites/triangle.png" class="triangle" id="triangle">
+                                <span id="choose">map</span>
+                                
+                                <div class="list" id="list">
+                                    {{ range .Maps}}
+                                        <div id="m{{ .MapID }}" class="map-choose-line" onclick="choosen(event)">
+                                            <span class="id">{{ .MapID }}</span>
+                                            <div class="preview">
+                                                {{ range .MapPreview }}
+                                                    <img class="tile__pic" src="../static/map tiles sprites/{{ .CellPath }}.png">
+                                                {{ end }}
+                                            </div>
                                         </div>
-                                    </div>
-                                {{ end }}
+                                    {{ end }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-block">
+                            <span id="rounds-span">Rounds</span>
+                            <input type="number" id="rounds" min="1" max="100" value="1" oninput="validity.valid||(value='1');">
+                        </div>
+                        <div class="col-block">
+                            <span id="Collision">No collision</span>
+                            <div id="collision-input" class="box">
+                                <div class="dot" id="col-dot"></div>
+                            </div>
+                        </div>
+                        <div class="col-block">
+                            <span id="Collision">Infinity HP</span>
+                            <div id="hp-input" class="box">
+                                <div class="dot" id="hp-dot"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-block">
-                        <span id="rounds-span">Rounds</span>
-                        <input type="number" id="rounds" min="1" max="100" value="1" oninput="validity.valid||(value='1');">
-                    </div>
-                    <div class="col-block">
-                        <span id="Collision">No collision</span>
-                        <div id="collision-input" class="box">
-                            <div class="dot" id="col-dot"></div>
-                        </div>
-                    </div>
-                    <div class="col-block">
-                        <span id="Collision">Infinity HP</span>
-                        <div id="hp-input" class="box">
-                            <div class="dot" id="hp-dot"></div>
-                        </div>
+                    <div id="future-map">
+
                     </div>
                 </div>
                 <div id="button" class="button">
