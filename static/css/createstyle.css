@@ -86,7 +86,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-    min-width: 30vw;
+    width: 30vw;
 }
 
 .maps {
@@ -117,7 +117,7 @@
     background-color: #ffe6bf;
     border-width:  5px;
     border-style: solid;
-    border-color: #ffc30e;
+    border-color: rgb(235, 144, 84);
     margin-bottom: 5px;
     margin-right: 5px;
     cursor: pointer;
@@ -241,6 +241,7 @@
 
 .set-header {
     margin-bottom: 10px;
+    font-size: 40px;
 }
 
 .id {
@@ -254,4 +255,12 @@
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffe6bf;
+}
+
+.pressed {
+    transform: matrix(0.95, 0, 0, 0.95, 0, 0);
+  }
+
+.ready-info {
+
 }

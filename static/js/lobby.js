@@ -40,9 +40,21 @@ function choosen(event) {
     }
 }
 
+const button = document.getElementById("button")
 
+button.addEventListener("mousedown", ()=> {
+    button.classList.add("pressed");
+})
+button.addEventListener("mouseup", ()=> {
+    button.classList.remove("pressed");
+})
+button.addEventListener("mouseleave", ()=> {
+    button.classList.remove("pressed");
+})
 const choose = document.getElementById("choose");
 const settings = document.getElementById("settings");
+
+let ready = false;
 
 var xhr1 = new XMLHttpRequest();
 // var lobbyId = response.lobbyId
@@ -54,7 +66,7 @@ xhr1.addEventListener("load", () =>{
     console.log(response);
     if (response.Host) {
         triangle.addEventListener('click', mapList);
-        document.getElementById("button").addEventListener("click", function() {
+        button.addEventListener("click", function() {
             let id = chosenMap.slice(1);
             console.log(id);
             var xhr = new XMLHttpRequest();
@@ -77,15 +89,24 @@ xhr1.addEventListener("load", () =>{
             })
         });
     } else {
-        document.getElementById("button").style.backgroundColor = '#6e6a5d';
+        
         document.getElementById("settings").style.backgroundColor = '#6e6a5d';
-        document.getElementById("maps").style.backgroundColor = '#6e6a5d';
-        document.getElementById("rounds").disabled = true;
-        document.getElementById("rounds").style.backgroundColor = '#6e6a5d';
-        document.getElementById("rounds").type = "text";
-        document.getElementById("rounds").value = "Only host can change";
-        document.getElementById("button-text").innerHTML = "Only host can start a game";
-        choose.innerHTML = "Only host can choose a map";
+        document.getElementById("settings").innerHTML = "Only host can change settings";
+        document.getElementById("settings").style.justifyContent = "center";
+        document.getElementById("settings").style.padding = "30px";
+        document.getElementById("button-text").innerHTML = "NOT READY";
+        button.style.backgroundColor = "#eb9054"
+        button.addEventListener("click", ()=> {
+            if (ready) {
+                ready = false;
+                button.style.backgroundColor = "#eb9054"
+                document.getElementById("button-text").innerHTML = "NOT READY";
+            } else {
+                ready = true;
+                button.style.backgroundColor = "#d2ffc8"
+                document.getElementById("button-text").innerHTML = "READY";
+            }
+        })
     }
 });
 
