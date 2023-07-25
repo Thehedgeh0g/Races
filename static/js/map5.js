@@ -27,7 +27,6 @@ let canvasContext = canvas.getContext("2d");
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
 
-var audio = new Audio();
 var audioStart = new Audio();
 audioStart.src = '../static/sounds/jiga2kStart.mp3';
 var audioStay = new Audio();
