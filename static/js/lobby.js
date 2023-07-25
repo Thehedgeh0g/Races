@@ -170,15 +170,6 @@ socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   console.log(message);
   if (message.split(" ")[1] == "reboot") {
-    var message =
-    window.location.pathname.split("/")[2] +
-    " " +
-    String(myID) +
-    " " +
-    String(ready);
-    socket.send(JSON.stringify(message));
-
-
 
     var xhr = new XMLHttpRequest();
     // var lobbyId = response.lobbyId
@@ -219,6 +210,13 @@ socket.onmessage = function (event) {
         document.getElementById("player-4").style.display = "flex";
         document.getElementById("ready-3").innerHTML = "not ready";
       }
+      var message =
+      window.location.pathname.split("/")[2] +
+      " " +
+      String(myID) +
+      " " +
+      String(ready);
+      socket.send(JSON.stringify(message));
     });
   } else {
     if (message == window.location.pathname.split("/")[2] + " start") {
@@ -243,8 +241,14 @@ socket.onmessage = function (event) {
         readyText.innerHTML = "ready";
         readyText.style.backgroundColor = "#d2ffc8";
       } else {
-        readyText.innerHTML = "not ready";
-        readyText.style.backgroundColor = "#eb9054";
+        if (id != "0") {
+            readyText.innerHTML = "not ready";
+            readyText.style.backgroundColor = "#eb9054";
+        } else {
+            readyText.innerHTML = "host";
+            readyText.style.backgroundColor = "#eb9054";
+        }
+
       }
     }
   }
