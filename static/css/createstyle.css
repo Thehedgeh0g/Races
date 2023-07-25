@@ -86,7 +86,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-    min-width: 30vw;
+    width: 30vw;
 }
 
 .maps {
@@ -241,6 +241,7 @@
 
 .set-header {
     margin-bottom: 10px;
+    font-size: 40px;
 }
 
 .id {
@@ -251,6 +252,19 @@
     cursor: pointer;
     padding: 10px;
     border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffe6bf;
+}
+
+.pressed {
+    transform: matrix(0.95, 0, 0, 0.95, 0, 0);
+  }
+
+.ready-info {
+    font-size: 20px;
+    padding: 3px;
+    border-width:  3px;
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffe6bf;
