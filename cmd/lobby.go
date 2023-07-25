@@ -59,8 +59,8 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
 		var player Player
-		var myId string
-		for i, element := range IDs {
+
+		for _, element := range IDs {
 			query = `
 				SELECT
 				  avatar,
@@ -72,39 +72,27 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				  user_id = ?    
 			`
 
-			if element != "0" {
-				row := db.QueryRow(query, element)
-				err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
-				if err != nil {
-					http.Error(w, "Server Error", 500)
-					log.Println(err.Error())
-					return
-				}
-				lvl, err := strconv.Atoi(player.Level)
-				if err != nil {
-					log.Println(err)
-					return
-				}
-				if element == userIdstr {
-					myId = strconv.Itoa(i)
-				}
-				player.Level = strconv.Itoa(lvl / 100)
-
-			} else {
-				player.ImgPath = "../static/sprites/plug.png"
-				player.Nickname = "Empty"
-				player.Level = "0"
+			row := db.QueryRow(query, element)
+			err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
+			if err != nil {
+				http.Error(w, "Server Error", 500)
+				log.Println(err.Error())
+				return
 			}
+			lvl, err := strconv.Atoi(player.Level)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			player.Level = strconv.Itoa(lvl / 100)
 
 			players = append(players, player)
 		}
 
 		response := struct {
 			Players []Player `json:"User"`
-			Id      string
 		}{
 			Players: players,
-			Id:      myId,
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -337,34 +325,32 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		IDs := []string{UserId1, UserId2, UserId3, UserId4}
 
 		for i, id := range IDs {
+			if id != "0" {
+				if userIdstr == id {
+					inSessionId = strconv.Itoa(i)
+				}
+				query = `
+					SELECT
+					  nickname,
+					  cars
+					FROM
+					  users
+					WHERE
+					  user_id = ?    
+				`
 
-			if userIdstr == id {
-				inSessionId = strconv.Itoa(i)
+				row = db.QueryRow(query, id)
+				err = row.Scan(&nickname, &car)
+				if err != nil {
+					http.Error(w, "Error", 500)
+					log.Println(err.Error())
+					return
+				}
+				nicknames = append(nicknames, nickname)
+				cars = append(cars, car)
 			}
-			query = `
-				SELECT
-					nickname,
-					cars
-				FROM
-					users
-				WHERE
-					user_id = ?    
-			`
-
-			row = db.QueryRow(query, id)
-			err = row.Scan(&nickname, &car)
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err.Error())
-				return
-			}
-			nicknames = append(nicknames, nickname)
-			cars = append(cars, car)
 
 		}
-
-		addAI(db, strconv.Itoa(lobbyID))
-
 		response := struct {
 			Rounds      string   `json:"Rounds"`
 			MapKey      string   `json:"MapKey"`
