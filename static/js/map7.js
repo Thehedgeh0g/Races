@@ -1012,6 +1012,9 @@ function onCanvasKeyDown(event) {
       audioTires.pause();
     }
   }
+  if (event.code === "Space") {
+    wasd.space = 1;
+  }
 }
 
 function scrollToCenter() {

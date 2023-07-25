@@ -28,6 +28,8 @@ const suspensionArrowRight = document.getElementById("suspensionArrowRight");
 const carArrowLeft = document.getElementById("carArrowLeft");
 const carArrowRight = document.getElementById("carArrowRight");
 
+const NotMoney = document.getElementById("NotMoney");
+
 let Data = '';
 let GarageCars = [
   {},
@@ -155,6 +157,8 @@ BackToMenu.addEventListener('click', ()=> {
   window.location.href = "/menu"
 });
 
+showShop();
+showShop();
 
 function showShop() {
   document.querySelector(".style-field").style.visibility = "hidden";
@@ -239,6 +243,9 @@ function replaceCar() {
           document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
         }
+        else {
+          NotMoney.style.display = "block";
+        }
       }
     }
 
@@ -258,6 +265,9 @@ function replaceCar() {
           Money -= PriceCarU;
           document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
+        }
+        else {
+          NotMoney.style.display = "block";
         }
       }
     }
@@ -279,6 +289,9 @@ function replaceCar() {
           document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
         }
+        else {
+          NotMoney.style.display = "block";
+        }
       }
     }
 
@@ -297,6 +310,9 @@ function replaceCar() {
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
       }
+      else {
+        NotMoney.style.display = "block";
+      }
     }
   }
   if (this == GreenCarField){
@@ -312,6 +328,9 @@ function replaceCar() {
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
+      }
+      else {
+        NotMoney.style.display = "block";
       }
     }
   }
@@ -330,6 +349,9 @@ function replaceCar() {
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
       }
+      else {
+        NotMoney.style.display = "block";
+      }
     }
   }
   if (this == YellowCarField){
@@ -346,6 +368,9 @@ function replaceCar() {
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
       }
+      else {
+        NotMoney.style.display = "block";
+      }
     }
   }
   if (this == BlueCarField){
@@ -361,6 +386,9 @@ function replaceCar() {
         GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
+      }
+      else {
+        NotMoney.style.display = "block";
       }
     }
   }
@@ -458,7 +486,6 @@ function GarageCarDec() {
     let xhrIsChoosen = new XMLHttpRequest();
     xhrIsChoosen.open("POST", "/api/chooseCar");
     xhrIsChoosen.send(JSON.stringify(String(carArrowCnt)));
-    console.log(JSON.stringify(carArrowCnt));
     currentStyle();
     ShowPurchase();
   }
@@ -516,6 +543,7 @@ function ShowPurchase() {
   TuningCar.suspension = Number(GarageCars[carArrowCnt].Suspension);
   CostPurchase = 0;
   document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: ' + CostPurchase; 
+  NotMoney.style.display = "none";
 }
 
 function AcceptPurchase() {
@@ -561,8 +589,12 @@ function AcceptPurchase() {
       GarageCars[carArrowCnt].Suspension = String(TuningCar.suspension);
       Money -= CostPurchase;
       document.getElementById("Money").innerHTML = 'Money: ' + Money;
+      ShowPurchase();
     }
-    ShowPurchase();
+    else {
+      ShowPurchase();
+      NotMoney.style.display = "block";
+    }
   }
   
 }
