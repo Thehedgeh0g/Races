@@ -10,7 +10,7 @@ let MapSettings = {
 
 function mapList() {
     if (!flag) {
-        list.style.height = '35vh';
+        list.style.height = '55vh';
         triangle.src="/static/sprites/triangle2.png"
         flag = true;
     } else {
@@ -150,3 +150,40 @@ socket.addEventListener("open", (event) => {
   socket.send(JSON.stringify(data.Message));
 });
 
+const collision = document.getElementById("collision-input");
+const hp = document.getElementById("hp-input");
+
+const collisionDot = document.getElementById("col-dot");
+const hpDot = document.getElementById("hp-dot");
+
+let isCollision = false;
+let isHp = false;
+
+collision.addEventListener("click", switchCollision);
+hp.addEventListener("click", switchHp);
+
+function switchCollision() {
+    if (isCollision) {
+        collisionDot.style.visibility = "hidden"
+        isCollision = false;
+    } else {
+        collisionDot.style.visibility = "visible"
+        isCollision = true;
+    }
+}
+
+function switchHp() {
+    if (isHp) {
+        hpDot.style.visibility = "hidden"
+        isHp = false;
+    } else {
+        hpDot.style.visibility = "visible"
+        isHp = true;
+    }
+}
+const token = document.getElementById("token");
+const copy = document.getElementById("copy");
+copy.addEventListener("click", ()=> {
+    navigator.clipboard.writeText(token.innerHTML.slice(6));
+    copy.innerHTML = "Copied"
+})

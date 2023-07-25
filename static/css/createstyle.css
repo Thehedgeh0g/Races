@@ -23,7 +23,12 @@
     font-family: 'Press Start 2P';
     color: #ffc30e;
     font-size: 30px;
-
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently */
 }
 
 .centering {
@@ -45,8 +50,8 @@
 }
 
 .avatar {
-    height: 40px;
-    width: 40px;
+    height: 8vh;
+    width: 8vh;
 }
 
 #m1 {
@@ -55,7 +60,6 @@
 
 .title {
     font-size: 50px;
-    margin: 0 auto;
 }
 
 .window {
@@ -72,7 +76,7 @@
 
 .settings {
     box-sizing: border-box;
-    height: 50vh;
+    height: 70vh;
     border-radius: 0;
     border-width:  6px;
     border-style: solid;
@@ -82,6 +86,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
+    min-width: 30vw;
 }
 
 .maps {
@@ -109,7 +114,6 @@
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
     background-color: #ffe6bf;
     border-width:  5px;
     border-style: solid;
@@ -117,6 +121,7 @@
     margin-bottom: 5px;
     margin-right: 5px;
     cursor: pointer;
+    padding: 10px;
 }
 
 .triangle { 
@@ -127,9 +132,9 @@
 
 .button {
     box-sizing: border-box;
-    margin-top: 5vh;
+    margin-top: 3vh;
     width: 100%;
-    height: 15vh;
+    height: 10vh;
     border-radius: 0;
     border-width:  6px;
     border-style: solid;
@@ -151,8 +156,8 @@
 }
 
 .preview {
-    height: 60px;
-    width: 60px;
+    height: 15vw;
+    width: 15vw;
     display: flex;
     flex-wrap: wrap;
 }
@@ -163,8 +168,8 @@
 }
 
 .tile__pic {
-    width: 4px;
-    height: 4px;
+    width: 1vw;
+    height: 1vw;
 }
 
 #rounds-span {
@@ -174,7 +179,7 @@
 
 #rounds {
     border-radius: 0;
-    border-width:  6px;
+    border-width:  3px;
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffe6bf;
@@ -190,8 +195,8 @@
     margin-top: 10px;
     margin-bottom: 10px;
     display: flex;
-    justify-content: space-between;
-    align-items: space;
+    gap: 10px;
+    align-items: center;
 
 }
 
@@ -203,4 +208,50 @@
     background-color: #ffe6bf;
     height: 20px;
     width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dot {
+    width: 15px;
+    height: 15px;
+    background-color: #ffc30e;
+    visibility: hidden;
+}
+
+.token-window {
+    box-sizing: border-box;
+    margin-top: 3vh;
+    width: 100%;
+    height: 10vh;
+    border-radius: 0;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffdb7f;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 35px;
+
+}
+
+.set-header {
+    margin-bottom: 10px;
+}
+
+.id {
+    font-size: 3vw;
+}
+
+#copy {
+    cursor: pointer;
+    padding: 10px;
+    border-width:  6px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffe6bf;
 }
