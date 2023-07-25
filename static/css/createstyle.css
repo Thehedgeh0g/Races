@@ -117,7 +117,7 @@
     background-color: #ffe6bf;
     border-width:  5px;
     border-style: solid;
-    border-color: rgb(235, 144, 84);
+    border-color: #ffc30e;
     margin-bottom: 5px;
     margin-right: 5px;
     cursor: pointer;
@@ -262,5 +262,10 @@
   }
 
 .ready-info {
-
+    font-size: 20px;
+    padding: 3px;
+    border-width:  3px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffe6bf;
 }

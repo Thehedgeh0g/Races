@@ -97,6 +97,7 @@ xhr1.addEventListener("load", () =>{
         document.getElementById("button-text").innerHTML = "NOT READY";
         button.style.backgroundColor = "#eb9054"
         button.addEventListener("click", ()=> {
+            
             if (ready) {
                 ready = false;
                 button.style.backgroundColor = "#eb9054"
@@ -106,6 +107,9 @@ xhr1.addEventListener("load", () =>{
                 button.style.backgroundColor = "#d2ffc8"
                 document.getElementById("button-text").innerHTML = "READY";
             }
+            var message = window.location.pathname.split('/')[2] + ' ' + String(myID) + ' ' + String(ready)
+
+            socket.send(JSON.stringify(message));
         })
     }
 });
@@ -123,12 +127,14 @@ const avatar4 = document.getElementById("avatar4");
 const nickName4 = document.getElementById("nickName4");
 const lvl4 = document.getElementById("lvl4");
 
+let myID = 0;
+
 var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 
 socket.onmessage = function(event) {
   var message = JSON.parse(event.data);
   console.log(message)
-  if (true) {
+  if (message.split(" ")[1] == 'reboot') {
       var xhr = new XMLHttpRequest();
       // var lobbyId = response.lobbyId
       xhr.open("GET", "/api/getPlayers");
@@ -152,10 +158,32 @@ socket.onmessage = function(event) {
           nickName4.innerHTML = players.User[3].Nickname;
           lvl4.innerHTML = players.User[3].Level + 'lvl';
       });
+  } else {
+    if (message == window.location.pathname.split('/')[2] + ' start') {
+        window.location.href = "/race/" + window.location.pathname.split('/')[2];
+      } else {
+        id = message.split(' ')[1]
+        if (id == '0') {
+            let readyText = document.getElementById("ready-0")
+        }
+        if (id == '1') {
+            let readyText = document.getElementById("ready-1")
+        }
+        if (id == '2') {
+            let readyText = document.getElementById("ready-2")
+        }
+        if (id == '3') {
+            let readyText = document.getElementById("ready-3")
+        }
+        if (message.split(' ')[2] == true) {
+            readyText.innerHTML = "ready"
+        } else {
+            readyText.innerHTML = "not ready"
+        }
+        
+      }
   }
-  if (message == window.location.pathname.split('/')[2] + ' start') {
-    window.location.href = "/race/" + window.location.pathname.split('/')[2];
-  }
+
 
 
 };
@@ -164,11 +192,9 @@ socket.addEventListener("open", (event) => {
 
   var message = window.location.pathname.split('/')[2] + ' reboot'
 
-  var data = {
-    Message: message
-  };
 
-  socket.send(JSON.stringify(data.Message));
+
+  socket.send(JSON.stringify(message));
 });
 
 const collision = document.getElementById("collision-input");
