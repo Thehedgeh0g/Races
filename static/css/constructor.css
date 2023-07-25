@@ -19,7 +19,7 @@
 
 .main{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
@@ -27,14 +27,14 @@
 
 .design-field{
     background-color: rgb(218, 172, 121);
-    width: 900px;
-    height: 900px;
     display: grid;
-    grid-template-columns: repeat(15, 60px);
-    grid-template-rows: repeat(15, 60px);
+    grid-template-columns: repeat(15, 6.666%);
+    grid-template-rows: repeat(15, 6.666%);
     padding: 5px;
-    margin-left: 50px;
-    margin-top: 10px;
+    margin-left: 12vw;
+    margin-top: 2.5vh;
+    width: 90vh;
+    height: 90vh;
 }
 
 .design-field img{
@@ -43,10 +43,10 @@
 
 .heading{
     position: absolute;
-    top: 2vh;
+    top: 2.5vh;
     left: 2vh;
     margin: 25px 0 0 2.3%;
-    font-size: 78px;
+    font-size: 7.6vh;
 }
 
 
@@ -59,24 +59,12 @@
 }
 
 .gallery img {
-    width: 200px;
-    height: 200px;
-    /* делаем этот элемент блочным, чтобы убрать лишнее пространство вокруг картинок */
+    width: 120px;
+    height: 120px;
     display: block;
-}
-  
-.arrow {
     cursor: pointer;
-    height: 200px;
 }
-  
-.prev {
-    rotate: 180deg;
-}
-  
-.next {
-    margin-left: 2px;
-}
+
   
 .choose-tiles-block{
     display: flex;
@@ -85,28 +73,39 @@
     gap: 40px;
     color: #ffa826;
     margin-top: 72px;
+    margin-left: 7vw;
 }
 
 .gallery {
-    width: 612px;
-    overflow: hidden;
+    width: 398px;
+    height: 379px;
+    overflow: auto;
 }
-  
-.gallery ul {
-    height: 200px;
-    width: 9999px;
-    list-style: none;
-    transition: margin-left 250ms;
-    /* удаляем пустое пространство между элементами li, у которых установлен inline-block */
-    /* http://davidwalsh.name/remove-whitespace-inline-block */
-    font-size: 0;
+
+.gallery::-webkit-scrollbar {
+    width: 12px; /* устанавливаем ширину полосы прокрутки */
+}
+
+.gallery::-webkit-scrollbar-track {
+    background-color: #fdcf84; /* устанавливаем цвет фона полосы прокрутки */
+}
+
+.gallery::-webkit-scrollbar-thumb {
+    background-color: rgb(241, 153, 81); /* устанавливаем цвет полосы прокрутки */
+}
+
+.gallery__ul {
+    display: grid;
+    grid-template-columns: repeat(3, 125px);
+
 }
   
 .gallery li {
-    display: inline-block;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 3px 5px;
+    list-style-type: none;
 }
+
+
 
 
 .buttons-box{

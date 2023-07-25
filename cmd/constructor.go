@@ -85,7 +85,7 @@ func recordKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		const stmt = `INSERT INTO maps (map_data)
 		VALUES(?)`
 
-		_, err = db.Exec(stmt, key)
+		_, err = db.Exec(stmt, key[:len(key)-1])
 
 		if err != nil {
 			http.Error(w, "Server Error", 500)
