@@ -270,3 +270,27 @@
     border-color: #ffc30e;
     background-color: #eb9054;
 }
+
+.rotor {
+    animation: rotors 0.2s;
+}
+
+@keyframes rotors 
+{
+    from 
+    {
+        transform: rotate(0deg) scale(1, 1);
+    }
+    33% 
+    {
+        transform: rotate(11deg) scale(1.1, 1.1);
+    }
+    66%
+    {
+        transform: rotate(-11deg) scale(1.1, 1.1);
+    }
+    to 
+    {
+        transform: rotate(0deg) scale(1, 1);
+    }
+}
