@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -192,7 +193,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
+		fmt.Printf("settings: %v\n", settings)
 		query := `
 			UPDATE
 			  brainless_races.sessions
