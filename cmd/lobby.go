@@ -198,12 +198,14 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			  brainless_races.sessions
 			SET
 			  map_id = ?,
-			  rounds = ?
+			  rounds = ?,
+			  hp = ?,
+			  collision = ?
 			WHERE
 			  session_id = ?    
 		`
 
-		_, err = db.Exec(query, settings.MapID, settings.Rounds, lobbyId)
+		_, err = db.Exec(query, settings.MapID, settings.Rounds, settings.HP, settings.Collision, lobbyId)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error(), "tut")
@@ -316,7 +318,9 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			  host_id,
 			  player2_id,
 			  player3_id,
-			  player4_id
+			  player4_id,
+			  hp,
+			  collision
 			FROM
 			  brainless_races.sessions
 			WHERE
@@ -324,9 +328,9 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		`
 
 		var UserId1, UserId2, UserId3, UserId4 string
-
+		var hp, collision bool
 		row := db.QueryRow(query, lobbyID)
-		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4)
+		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4, &hp, &collision)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
@@ -358,6 +362,9 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, "Error", 500)
 					log.Println(err.Error())
 					return
+				}
+				if id == "10" {
+					addAI(db, strconv.Itoa(lobbyID))
 				}
 				nicknames = append(nicknames, nickname)
 				cars = append(cars, car)

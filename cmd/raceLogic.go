@@ -90,7 +90,10 @@ func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID 
 		}
 
 		group := determineGroup(clientID, strconv.Itoa(lobbyID))
-		addToGroup(conn, group)
+		if !botsInLobby(db, group) {
+			addToGroup(conn, group)
+		}
+
 		if strings.Split(message, " ")[1] == "race" {
 			message = verificatePos(db, message, group)
 		}
@@ -154,6 +157,7 @@ func removeConnectionFromGroups(db *sqlx.DB, conn *websocket.Conn) {
 }
 
 func deleteGroup(db *sqlx.DB, groupID string) {
+	fmt.Printf("groups[groupID]: %v\n", groups[groupID])
 	if groups[groupID] == nil {
 		delete(groups, groupID)
 		deleteSession(db, groupID)
@@ -181,7 +185,11 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 
 	y1 := strings.Split(posMessage, " ")[6]
 
+	y, _ := strconv.Atoi(y1)
+
 	x1 := strings.Split(posMessage, " ")[7]
+
+	x, _ := strconv.Atoi(x1)
 
 	sessionID := strings.Split(posMessage, " ")[0]
 
@@ -191,24 +199,30 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 	} else if (strings.Split(isFinished, "/")[0] == "2") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + "NF"
 	}
-
-	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
-
 	for i, bot := range bots[sessionID] {
 		//log.Println(bot.speed, bot.inSessionId)
-		bot.x, bot.y, bot.angle, bot.speed = AI(db, sessionID, bot.x, bot.y, bot.angle, bot.speed)
+		bot = collision(bot, x, y, hp)
+		if (bot.hp > 0) && !(strings.Contains(races[sessionID], bot.inSessionId+"/")) {
+			bot = AI(db, sessionID, bot)
+			if bot.laps <= 0 {
+				races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + strings.Split(isFinished, "/")[1]
+				log.Println(races[sessionID])
+			}
+		} else if bot.hp < 0 {
+			races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + "NF"
+		}
+
 		//log.Println(bot.speed, bot.inSessionId)
 		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
 		//log.Println(botMessage)
 		//log.Println(posMessage)
-		bots[sessionID][i].x = bot.x
-		bots[sessionID][i].y = bot.y
-		bots[sessionID][i].angle = bot.angle
-		bots[sessionID][i].speed = bot.speed
+		bots[sessionID][i] = bot
 		connMutex.Lock()
 		sendMessageToGroup(db, botMessage, group)
 		connMutex.Unlock()
 	}
+
+	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
 
 	return posMessage
 

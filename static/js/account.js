@@ -14,14 +14,13 @@ let user = {
 
 
 friendsListToggler.addEventListener("click", function() {
-  if (friendsData.style.display === "none" || friendsData.style.display === "") {
-    
-    friendsListTogglerClassList.style.transform = "rotate(360deg)";
-    friendsData.style.display = "block";
+    if (friendsData.style.maxHeight === "0px" || friendsData.style.maxHeight === "") {
+      friendsListTogglerClassList.style.transform = "rotate(360deg)";
+      friendsData.style.maxHeight = "23vh";
 
   } else {
-    friendsData.style.display = "none";
-    friendsListTogglerClassList.style.transform = "rotate(270deg)";
+      friendsListTogglerClassList.style.transform = "rotate(270deg)";
+      friendsData.style.maxHeight = "0px";
   }
 });
 
