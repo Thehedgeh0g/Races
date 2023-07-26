@@ -6,6 +6,8 @@ let flag = false;
 let MapSettings = {
   MapID: "",
   Rounds: "",
+  Hp: null,
+  Col: null,
 };
 
 function mapList() {
@@ -87,6 +89,8 @@ xhr1.addEventListener("load", () => {
         xhr.open("POST", "/api/chooseMap");
         MapSettings.MapID = id;
         MapSettings.Rounds = document.getElementById("rounds").value;
+        MapSettings.Hp = isHp;
+        MapSettings.Hp = isCollision;
         xhr.send(JSON.stringify(MapSettings));
 
         xhr.addEventListener("load", () => {
