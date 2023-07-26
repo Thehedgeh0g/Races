@@ -90,7 +90,7 @@ xhr1.addEventListener("load", () => {
         MapSettings.MapID = id;
         MapSettings.Rounds = document.getElementById("rounds").value;
         MapSettings.Hp = isHp;
-        MapSettings.Hp = isCollision;
+        MapSettings.Col = isCollision;
         xhr.send(JSON.stringify(MapSettings));
 
         xhr.addEventListener("load", () => {
