@@ -9,184 +9,191 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var tile string
+func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 
-func AI(db *sqlx.DB, lobbyID string, x, y, angle, speed float64) (float64, float64, float64, float64) {
-	x1, y1 := x, y
+	corners := "/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/"
+	grass := "/1/2/3/4/"
+	roads := "/10/11/17/18/27/28/29/30/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/34/32/31/33/"
+
+	curTileIDI, curTileIDJ := getCurTile(int(bot.x), int(bot.y))
+	var VisMat [3][3]string
+
+	VisMat = createVision(bot.mapMatrix, curTileIDI, curTileIDJ)
+
+	VisMat = posVision(bot.angle, VisMat)
+
+	bot.visionMatrix = VisMat
+
+	bot.checks = checkProcessing(VisMat[1][1], bot.checks)
+
+	if VisMat[1][1] == "37" {
+		if bot.angle < math.Pi/2 {
+			bot.angle = math.Pi / 2
+		}
+		if bot.checks > 0 {
+			bot.checks = 0
+			bot.laps -= 1
+			log.Println("lap completed", bot.laps)
+		}
+	}
+	deviation := (math.Mod(math.Mod(bot.angle*180/math.Pi, 360)+360, 90))
+	if deviation >= 45 {
+		deviation = -(90 - deviation)
+	}
+	deviation = math.Floor(deviation*100) / 100
+
+	if strings.Contains(corners, "/"+VisMat[1][2]+"/") || strings.Contains(corners, "/"+VisMat[1][1]+"/") {
+		if bot.speed > 1.2 {
+			bot.speed -= 0.1
+		} else if bot.speed > 0.95 {
+			bot.speed -= 0.05
+		} else if bot.speed > 0.9 {
+			bot.speed -= 0.01
+		}
+	} else {
+		if bot.speed+0.08 < 5. {
+			bot.speed = bot.speed + 0.08
+		} else {
+			bot.speed = 5.
+		}
+	}
+	if strings.Contains(grass, "/"+VisMat[1][2]+"/") {
+		if strings.Contains(roads, "/"+VisMat[2][1]+"/") {
+			bot = turnRight(bot)
+		} else if strings.Contains(roads, "/"+VisMat[0][1]+"/") {
+			bot = turnLeft(bot)
+		}
+	} else if deviation < 0 {
+		bot = turnLeft(bot)
+	} else if deviation > 0 {
+		bot = turnRight(bot)
+	} else {
+		bot = moveStright(bot)
+	}
+	bot.visionMatrix = VisMat
+	return bot
+}
+
+func checkProcessing(tileID string, cheksCol int) int {
+	checkpoints := "/31/32/33/34/35/36/"
+	if strings.Contains(checkpoints, tileID) {
+		cheksCol += 1
+	}
+	return cheksCol
+}
+
+func collision(bot Bot, userX, userY int, userHp string) Bot {
+	if userHp != bot.userHP {
+		bot.hp -= 5
+		bot.speed -= 0.3
+		if bot.speed < 0.1 {
+			bot.speed = 0.1
+		}
+		bot.userHP = userHp
+
+		log.Println("damaged", bot.hp)
+	}
+	return bot
+}
+
+func posVision(angle float64, vision [3][3]string) [3][3]string {
+	var VisMat [3][3]string
+	if (math.Mod(angle*180/math.Pi, 360)+360 >= 315) && (math.Mod(angle*180/math.Pi, 360)+360 < 405) {
+
+		VisMat = rotate(vision)
+		vision = VisMat
+		VisMat = rotate(vision)
+		vision = VisMat
+		VisMat = rotate(vision)
+	} else if (math.Mod(angle*180/math.Pi, 360)+360 >= 225) && (math.Mod(angle*180/math.Pi, 360)+360 < 315) {
+
+		VisMat = rotate(vision)
+		vision = VisMat
+		VisMat = rotate(vision)
+	} else if ((math.Mod(angle*180/math.Pi, 360)+360 >= 495) && (math.Mod(angle*180/math.Pi, 360)+360 < 585)) ||
+		((math.Mod(angle*180/math.Pi, 360)+360 >= 135) && (math.Mod(angle*180/math.Pi, 360)+360 < 225)) {
+
+		VisMat = rotate(vision)
+		vision = VisMat
+	} else {
+		VisMat = vision
+	}
+	return VisMat
+}
+
+func rotate(mat [3][3]string) [3][3]string {
+
+	var rMat [3][3]string
+
+	rMat[0][0] = mat[2][0]
+	rMat[0][1] = mat[1][0]
+	rMat[0][2] = mat[0][0]
+	rMat[1][0] = mat[2][1]
+	rMat[1][1] = mat[1][1]
+	rMat[1][2] = mat[0][1]
+	rMat[2][0] = mat[2][2]
+	rMat[2][1] = mat[1][2]
+	rMat[2][2] = mat[0][2]
+
+	return rMat
+}
+
+func createVision(botsMap [15][15]string, curTileIDI, curTileIDJ int) [3][3]string {
+	var botVision [3][3]string
+	botVision[0][0] = botsMap[curTileIDI-1][curTileIDJ-1]
+	botVision[0][1] = botsMap[curTileIDI-1][curTileIDJ]
+	botVision[0][2] = botsMap[curTileIDI-1][curTileIDJ+1]
+	botVision[1][0] = botsMap[curTileIDI][curTileIDJ-1]
+	botVision[1][1] = botsMap[curTileIDI][curTileIDJ]
+	botVision[1][2] = botsMap[curTileIDI][curTileIDJ+1]
+	botVision[2][0] = botsMap[curTileIDI+1][curTileIDJ-1]
+	botVision[2][1] = botsMap[curTileIDI+1][curTileIDJ]
+	botVision[2][2] = botsMap[curTileIDI+1][curTileIDJ+1]
+	return botVision
+}
+
+func turnRight(bot Bot) Bot {
+	bot.angle = bot.angle - math.Pi/100
+	xSpeed := math.Sin(bot.angle) * bot.speed
+	ySpeed := math.Cos(bot.angle) * bot.speed
+	bot.x = bot.x + xSpeed
+	bot.y = bot.y + ySpeed
+	return bot
+}
+
+func moveStright(bot Bot) Bot {
+	xSpeed := math.Sin(bot.angle) * bot.speed
+	ySpeed := math.Cos(bot.angle) * bot.speed
+	bot.x = bot.x + xSpeed
+	bot.y = bot.y + ySpeed
+	//log.Println(speed, newSpeed)
+	return bot
+}
+
+func turnLeft(bot Bot) Bot {
+	bot.angle = bot.angle + math.Pi/100
+	xSpeed := math.Sin(bot.angle) * bot.speed
+	ySpeed := math.Cos(bot.angle) * bot.speed
+	bot.x = bot.x + xSpeed
+	bot.y = bot.y + ySpeed
+	return bot
+}
+
+func createMapMatrix(db *sqlx.DB, lobbyID string) [15][15]string {
 	mapData := setMapKey(db, lobbyID)
-	curTileID := (int(y)/96)*15 + (int(x) / 96)
-	curTileIDI := (curTileID) / 15
-	curTileIDJ := (curTileID) % 15
 	var botsMap [15][15]string
 	for i, tileID := range strings.Split(mapData.MapKey, " ") {
 		botsMap[(i)/15][(i)%15] = tileID
 	}
-
-	//log.Println(botsMap[curTileIDI])
-	//corners := "6 7 8 9 13 14 15 16 19 20 21 22 23 24 25 26"
-	grass := "/1/2/3/4/"
-	roads := "/10/11/17/18/27/28/29/30/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/34/"
-	nextTileI, nextTileJ := getNextTile(botsMap, speed, angle, x, y, curTileIDI, curTileIDJ)
-
-	if tile != botsMap[curTileIDI][curTileIDJ] {
-		//log.Println(x, y)
-		log.Println(botsMap[curTileIDI-1][curTileIDJ-1], botsMap[curTileIDI-1][curTileIDJ], botsMap[curTileIDI-1][curTileIDJ+1])
-		log.Println(botsMap[curTileIDI][curTileIDJ-1], botsMap[curTileIDI][curTileIDJ], botsMap[curTileIDI][curTileIDJ+1])
-		log.Println(botsMap[curTileIDI+1][curTileIDJ-1], botsMap[curTileIDI+1][curTileIDJ], botsMap[curTileIDI+1][curTileIDJ+1])
-		log.Println(botsMap[curTileIDI][curTileIDJ], botsMap[nextTileI][nextTileJ])
-		tile = botsMap[curTileIDI][curTileIDJ]
-	}
-	if strings.Contains(grass, "/"+botsMap[nextTileI][nextTileJ]+"/") {
-		if ((int((angle)*180/math.Pi) % 360) >= 45) && ((int((angle)*180/math.Pi) % 360) < 135) {
-			if (((getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads)) - (int((angle)*180/math.Pi) % 360)) < 0) || goDown(botsMap, curTileIDI, curTileIDJ, roads) {
-				x1, y1, speed, angle = turnRight(x, y, speed, angle)
-				log.Println("turn right1", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads), ((getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads)) - (int((angle)*180/math.Pi) % 360)), goDown(botsMap, curTileIDI, curTileIDJ, roads))
-			} else if ((getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads)) - (int((angle)*180/math.Pi) % 360)) > 0 {
-				x1, y1, speed, angle = turnLeft(x, y, speed, angle)
-				log.Println("turn left", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads))
-			}
-		} else if ((int((angle)*180/math.Pi)%360)-360 >= -45) && ((int((angle)*180/math.Pi) % 360) < 45) {
-			if (((getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads)) - (int((angle)*180/math.Pi) % 360)) > 0) || goLeft(botsMap, curTileIDI, curTileIDJ, roads) {
-				x1, y1, speed, angle = turnRight(x, y, speed, angle)
-				log.Println("turn right2", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads))
-			} else {
-				x1, y1, speed, angle = turnLeft(x, y, speed, angle)
-				log.Println("turn left", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads))
-			}
-		} else if ((int((angle)*180/math.Pi)%360)-360 >= 225) && ((int((angle)*180/math.Pi) % 360) < 315) {
-			if ((getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads) - int((angle)*180/math.Pi)%360) < 0) || goUp(botsMap, curTileIDI, curTileIDJ, roads) {
-				x1, y1, speed, angle = turnRight(x, y, speed, angle)
-				log.Println("turn right3", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads))
-			} else {
-				x1, y1, speed, angle = turnLeft(x, y, speed, angle)
-				log.Println("turn left", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads))
-			}
-		} else if ((int((angle)*180/math.Pi) % 360) >= 135) && ((int((angle)*180/math.Pi)%360)+360 < 225) {
-			if ((getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads) - int((angle)*180/math.Pi)%360) < 0) || goRight(botsMap, curTileIDI, curTileIDJ, roads) {
-				x1, y1, speed, angle = turnRight(x, y, speed, angle)
-				log.Println("turn right4", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads))
-			} else {
-				x1, y1, speed, angle = turnLeft(x, y, speed, angle)
-				log.Println("turn left", getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads))
-			}
-		}
-	} else {
-		x1, y1, speed, angle = moveStright(x, y, speed, angle)
-		//log.Println(int((angle)*180/math.Pi)%360, curTileIDI, curTileIDJ, x1, y1)
-
-	}
-	//log.Println((getRoadAngle(botsMap, curTileIDI, curTileIDJ, roads)) - (int((angle)*180/math.Pi) % 360))
-	return x1, y1, angle, speed
+	return botsMap
 }
 
-func goDown(botsMap [15][15]string, curTileIDI, curTileIDJ int, roads string) bool {
-	if (strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ-1]+"/") ||
-		strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ+1]+"/")) &&
-		strings.Contains(roads, "/"+botsMap[curTileIDI+1][curTileIDJ]+"/") {
-		return true
-	}
-	return false
-}
+func getCurTile(x, y int) (int, int) {
 
-func goLeft(botsMap [15][15]string, curTileIDI, curTileIDJ int, roads string) bool {
-	if (strings.Contains(roads, "/"+botsMap[curTileIDI-1][curTileIDJ]+"/") ||
-		strings.Contains(roads, "/"+botsMap[curTileIDI+1][curTileIDJ]+"/")) &&
-		strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ-1]+"/") {
-		return true
-	}
-	return false
-}
-
-func goUp(botsMap [15][15]string, curTileIDI, curTileIDJ int, roads string) bool {
-	if (strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ-1]+"/") ||
-		strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ+1]+"/")) &&
-		strings.Contains(roads, "/"+botsMap[curTileIDI-1][curTileIDJ]+"/") {
-		return true
-	}
-	return false
-}
-
-func goRight(botsMap [15][15]string, curTileIDI, curTileIDJ int, roads string) bool {
-	if (strings.Contains(roads, "/"+botsMap[curTileIDI-1][curTileIDJ]+"/") ||
-		strings.Contains(roads, "/"+botsMap[curTileIDI+1][curTileIDJ]+"/")) &&
-		strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ+1]+"/") {
-		return true
-	}
-	return false
-}
-
-func getRoadAngle(botsMap [15][15]string, curTileIDI, curTileIDJ int, roads string) int {
-	if strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ-1]+"/") || strings.Contains(roads, "/"+botsMap[curTileIDI][curTileIDJ+1]+"/") {
-		return 90
-	} else {
-		return 180
-	}
-}
-
-func getNextTile(botsMap [15][15]string, speed, angle, x, y float64, i, j int) (int, int) {
-
-	xSpeed := math.Sin(angle)
-	ySpeed := math.Cos(angle)
 	curTileID := (int(y)/96)*15 + (int(x) / 96)
-	i1 := 0
-	j1 := 0
-	for {
-		i1 = (curTileID) / 15
-		j1 = (curTileID) % 15
-		if (i != i1) || (j != j1) {
-			break
-		}
-		x += xSpeed
-		y += ySpeed
-		curTileID = (int(y)/96)*15 + (int(x) / 96)
-	}
-	return i1, j1
-}
-
-func turnRight(x, y, speed, angle float64) (float64, float64, float64, float64) {
-	var newSpeed float64
-	if speed-0.01 < 0.4 {
-		newSpeed = speed - 0.01
-	} else {
-		newSpeed = 0.3
-	}
-
-	newAngle := angle - 0.1
-	xSpeed := math.Sin(angle) * newSpeed
-	ySpeed := math.Cos(angle) * newSpeed
-	x1 := x + xSpeed
-	y1 := y + ySpeed
-	return x1, y1, newSpeed, newAngle
-}
-
-func moveStright(x, y, speed, angle float64) (float64, float64, float64, float64) {
-	var newSpeed float64
-	if speed+0.01 > 1.3 {
-		newSpeed = speed + 0.01
-	} else {
-		newSpeed = 1.3
-	}
-	xSpeed := math.Sin(angle) * newSpeed
-	ySpeed := math.Cos(angle) * newSpeed
-	x1 := x + xSpeed
-	y1 := y + ySpeed
-	//log.Println(speed, newSpeed)
-	return x1, y1, newSpeed, angle
-}
-
-func turnLeft(x, y, speed, angle float64) (float64, float64, float64, float64) {
-	var newSpeed float64
-	if speed-0.01 < 0.3 {
-		newSpeed = speed - 0.01
-	} else {
-		newSpeed = 0.3
-	}
-	newAngle := angle + 0.1
-	xSpeed := math.Sin(angle) * newSpeed
-	ySpeed := math.Cos(angle) * newSpeed
-	x1 := x + xSpeed
-	y1 := y + ySpeed
-	return x1, y1, newSpeed, newAngle
+	curTileIDI := (curTileID) / 15
+	curTileIDJ := (curTileID) % 15
+	return curTileIDI, curTileIDJ
 }
 
 func findStart(tiles string, id string) (float64, float64) {
@@ -213,45 +220,43 @@ func addAI(db *sqlx.DB, lobbyID string) {
 		SELECT
 		  player2_id,
 		  player3_id,
-		  player4_id
+		  player4_id,
+		  rounds
 		FROM
 		  sessions
 		WHERE    
 		  session_id = ?
 	`
 	var id1, id2, id3 string
+	laps := 1
 	row := db.QueryRow(query, lobbyID)
-	err := row.Scan(&id1, &id2, &id3)
+	err := row.Scan(&id1, &id2, &id3, &laps)
 	if err != nil {
 		log.Println(err)
 	}
-	if id1 == "0" {
-		var bot Bot
+	var bot Bot
+	bot.mapMatrix = createMapMatrix(db, lobbyID)
+	bot.angle = math.Pi / 2
+	bot.hp = 100
+	bot.userHP = "100"
+	bot.speed = 0
+	bot.laps = 1
+	if id1 == "10" {
+
 		bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "1")
-		bot.angle = math.Pi / 2
+
 		bot.inSessionId = "1"
-		bot.hp = 100
-		bot.speed = 0
-		bots[lobbyID] = append(bots[lobbyID], bot)
-	}
-	if id2 == "0" {
-		var bot Bot
+	} else if id2 == "10" {
 		bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "2")
-		bot.angle = math.Pi / 2
 		bot.inSessionId = "2"
-		bot.hp = 100
-		bot.speed = 0.01
-		bots[lobbyID] = append(bots[lobbyID], bot)
-	}
-	if id3 == "0" {
-		var bot Bot
+	} else if id3 == "10" {
 		bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "3")
-		bot.angle = math.Pi / 2
 		bot.inSessionId = "3"
-		bot.hp = 100
-		bot.speed = 0.02
-		bots[lobbyID] = append(bots[lobbyID], bot)
 	}
+	curTileI, curTileJ := getCurTile(int(bot.x), int(bot.y))
+	bot.visionMatrix = createVision(bot.mapMatrix, curTileI, curTileJ)
+
+	bots[lobbyID] = append(bots[lobbyID], bot)
 }
 
 func setMapKey(db *sqlx.DB, lobbyID string) MapData {

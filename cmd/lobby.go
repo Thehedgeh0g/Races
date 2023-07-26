@@ -359,6 +359,9 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					log.Println(err.Error())
 					return
 				}
+				if id == "10" {
+					addAI(db, strconv.Itoa(lobbyID))
+				}
 				nicknames = append(nicknames, nickname)
 				cars = append(cars, car)
 			}

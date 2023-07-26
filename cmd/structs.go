@@ -1,12 +1,17 @@
 package main
 
 type Bot struct {
-	x           float64
-	y           float64
-	speed       float64
-	angle       float64
-	inSessionId string
-	hp          int
+	x            float64
+	y            float64
+	speed        float64
+	angle        float64
+	inSessionId  string
+	hp           int
+	mapMatrix    [15][15]string
+	visionMatrix [3][3]string
+	userHP       string
+	laps         int
+	checks       int
 }
 
 type User struct {

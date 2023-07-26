@@ -1,5 +1,10 @@
 package main
 
+// перекинуть рутер в отдельный пакет
+// архитектура api/app/infostucture
+// бд отдельно вынеси
+// разделить структуры бд/реквесты
+// вынести функцию для парса
 import (
 	"database/sql"
 	"fmt"
@@ -66,5 +71,5 @@ func main() {
 
 func OpenDB() (*sql.DB, error) {
 	// Здесь прописываем соединение к базе данных
-	return sql.Open(dbDriverName, "root:student@tcp(localhost:3306)/brainless_races?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true")
+	return sql.Open(dbDriverName, "root:BaStInDa06081981!@tcp(localhost:3306)/brainless_races?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true")
 }
