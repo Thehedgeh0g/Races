@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -35,54 +33,30 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		query := `
-			SELECT
-			  host_id,
-			  player2_id,
-			  player3_id,
-			  player4_id
-			FROM
-			  brainless_races.sessions
-			WHERE
-			  session_id = ?   
-		`
-		var players []Player
+		var users []UserData
 		var IDs []string
 
-		var UserId1, UserId2, UserId3, UserId4 string
-		row := db.QueryRow(query, lobbyID)
-		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4)
+		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
-		var player Player
+		IDs = append(IDs, lobby.HostID, lobby.Player2ID, lobby.Player3ID, lobby.Player3ID)
+		var user UserData
 
 		var myId string
 		for i, element := range IDs {
-			query = `
-				SELECT
-				  avatar,
-				  nickname,
-				  exp 
-				FROM
-				  users
-				WHERE
-				  user_id = ?    
-			`
 
 			if element != "0" {
-				row := db.QueryRow(query, element)
-				err := row.Scan(&player.ImgPath, &player.Nickname, &player.Level)
+				user, err = getUser(db, element)
 				if err != nil {
 					http.Error(w, "Server Error", 500)
 					log.Println(err.Error())
 					return
 				}
-				lvl, err := strconv.Atoi(player.Level)
+				lvl, err := strconv.Atoi(user.Lvl)
 				if err != nil {
 					log.Println(err)
 					return
@@ -90,22 +64,22 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				if element == userIdstr {
 					myId = strconv.Itoa(i)
 				}
-				player.Level = strconv.Itoa(lvl / 100)
+				user.Lvl = strconv.Itoa(lvl / 100)
 
 			} else {
-				player.ImgPath = "../static/sprites/plug.png"
-				player.Nickname = "Empty"
-				player.Level = "0"
+				user.ImgPath = "../static/sprites/plug.png"
+				user.Nickname = "Empty"
+				user.Lvl = "0"
 			}
 
-			players = append(players, player)
+			users = append(users, user)
 		}
 
 		response := struct {
-			Players []Player `json:"User"`
+			Players []UserData `json:"User"`
 			Id      string
 		}{
-			Players: players,
+			Players: users,
 			Id:      myId,
 		}
 
@@ -121,40 +95,6 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonResponse)
 
 	}
-}
-
-func generateLobbyId() string {
-	CreationTime := time.Now()
-	id := strconv.FormatInt(int64(CreationTime.Hour()*10000+CreationTime.Second()+CreationTime.Minute()*100), 10)
-	return id
-}
-func getPreview(db *sqlx.DB, mapID int) ([]PreviewData, error) {
-
-	mapData, err := getMapData(db, mapID)
-	if err != nil {
-		log.Println(err)
-	}
-
-	var cells []PreviewData
-	var cell PreviewData
-
-	cellArr := strings.Split(mapData.MapKey, " ")
-
-	for _, element := range cellArr {
-		id, err := strconv.Atoi(element)
-		if err != nil {
-			log.Println(err)
-		}
-		sprite, err := getSprite(db, id)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		cell.CellPath = sprite.SpritePath
-		cells = append(cells, cell)
-	}
-	return cells, nil
 }
 func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -194,19 +134,8 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Printf("settings: %v\n", settings)
-		query := `
-			UPDATE
-			  brainless_races.sessions
-			SET
-			  map_id = ?,
-			  rounds = ?,
-			  hp = ?,
-			  collision = ?
-			WHERE
-			  session_id = ?    
-		`
 
-		_, err = db.Exec(query, settings.MapID, settings.Rounds, settings.HP, settings.Collision, lobbyId)
+		err = setLobbySettings(db, settings.MapID, settings.Rounds, strconv.Itoa(lobbyId), settings.HP, settings.Collision)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error(), "tut")
@@ -297,15 +226,14 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
-		mapID, rounds, err := getMapID(db, lobbyID)
+		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)
 			return
 		}
 
-		mapData, err := getMapData(db, mapID)
+		mapData, err := getMapData(db, lobby.MapID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)
@@ -314,51 +242,16 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		mapKey := mapData.MapKey
 
-		query := `
-			SELECT
-			  host_id,
-			  player2_id,
-			  player3_id,
-			  player4_id,
-			  hp,
-			  collision
-			FROM
-			  brainless_races.sessions
-			WHERE
-			  session_id = ?   
-		`
-
-		var UserId1, UserId2, UserId3, UserId4 string
-		var hp, collision bool
-		row := db.QueryRow(query, lobbyID)
-		err = row.Scan(&UserId1, &UserId2, &UserId3, &UserId4, &hp, &collision)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		var inSessionId, car, nickname string
+		var inSessionId string
 		var cars, nicknames []string
-		IDs := []string{UserId1, UserId2, UserId3, UserId4}
+		IDs := []string{lobby.HostID, lobby.Player2ID, lobby.Player4ID, lobby.Player4ID}
 
 		for i, id := range IDs {
 			if id != "0" {
 				if userIdstr == id {
 					inSessionId = strconv.Itoa(i)
 				}
-				query = `
-					SELECT
-					  nickname,
-					  cars
-					FROM
-					  users
-					WHERE
-					  user_id = ?    
-				`
-
-				row = db.QueryRow(query, id)
-				err = row.Scan(&nickname, &car)
+				user, err := getUser(db, id)
 				if err != nil {
 					http.Error(w, "Error", 500)
 					log.Println(err.Error())
@@ -367,8 +260,8 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				if id == "10" {
 					addAI(db, strconv.Itoa(lobbyID))
 				}
-				nicknames = append(nicknames, nickname)
-				cars = append(cars, car)
+				nicknames = append(nicknames, user.Nickname)
+				cars = append(cars, user.Cars)
 			}
 
 		}
@@ -382,13 +275,13 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			Hp          bool     `json:"hp"`
 			Collision   bool     `json:"collision"`
 		}{
-			Rounds:      rounds,
+			Rounds:      lobby.Laps,
 			MapKey:      mapKey,
 			Cars:        cars,
 			Nicknames:   nicknames,
 			InSessionId: inSessionId,
-			Hp:          hp,
-			Collision:   collision,
+			Hp:          lobby.InfiniteHP,
+			Collision:   lobby.CollisionOFF,
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -405,83 +298,6 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getLobbyID(db *sqlx.DB, userID int) (int, error) {
-	const query = `SELECT
-	  currLobby_id
-	FROM
-	  users
-	WHERE
-	  user_id = ?    
-	`
-
-	row := db.QueryRow(query, userID)
-	var ID int
-	err := row.Scan(&ID)
-	if err != nil {
-		return 0, err
-	}
-
-	return ID, nil
-}
-
-func getMapID(db *sqlx.DB, lobbyID int) (int, string, error) {
-	const query = `SELECT
-	  map_id,
-	  rounds
-	FROM
-	  sessions
-	WHERE
-	session_id = ?    
-	`
-	var IDstr, CountOfRounds string
-
-	row := db.QueryRow(query, lobbyID)
-	err := row.Scan(&IDstr, &CountOfRounds)
-	if err != nil {
-		return 0, "", err
-	}
-
-	ID, err := strconv.Atoi(IDstr)
-	if err != nil {
-		return 0, "", err
-	}
-
-	return ID, CountOfRounds, nil
-}
-
-func getSprite(db *sqlx.DB, spriteId int) (*SpriteData, error) {
-	const query = `SELECT
-	  sprite_path
-	FROM
-	  sprites
-	WHERE
-	  sprite_id = ?    
-	`
-
-	newSprite := new(SpriteData)
-
-	row := db.QueryRow(query, spriteId)
-	err := row.Scan(&newSprite.SpritePath)
-	if err != nil {
-		return nil, err
-	}
-
-	return newSprite, err
-}
-
-func getMapData(db *sqlx.DB, mapId int) (*MapData, error) {
-	query := "SELECT map_data FROM maps WHERE map_id = ?"
-
-	key := new(MapData)
-
-	row := db.QueryRow(query, mapId)
-	err := row.Scan(&key.MapKey)
-	if err != nil {
-		return nil, err
-	}
-	return key, nil
-}
-
 func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostId, err := getUserID(db, r)
@@ -494,7 +310,7 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		lobbyId := generateLobbyId()
 
-		_, err = insert(db, lobbyId, hostId, "0", "0", "0")
+		err = insert(db, lobbyId, hostId, "0", "0", "0")
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -508,7 +324,7 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = UPDATE(db, hostId, ID)
+		err = UPDATE(db, hostId, ID)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -539,15 +355,8 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		query := `
-			UPDATE
-			  brainless_races.users
-			SET
-			  currLobby_id = ?
-			WHERE
-			  user_id = ?    
-		`
-		userId, err := getUserID(db, r)
+
+		userID, err := getUserID(db, r)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -560,70 +369,45 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
-		var lobbyId string
+		var lobbyID string
 
-		err = json.Unmarshal(reqData, &lobbyId)
+		err = json.Unmarshal(reqData, &lobbyID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		_, err = db.Exec(query, lobbyId, userId)
+		err = setUsersLobby(db, lobbyID, userID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		query = `SELECT
-			  player2_id,
-			  player3_id,
-			  player4_id
-	  		FROM
-			  sessions
-	  		WHERE
-	  		  session_id = ?    
-	  	`
-
-		ID, err := strconv.Atoi(lobbyId)
+		lobby, err := getLobbyData(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		var UserId2, UserId3, UserId4 string
-
-		row := db.QueryRow(query, ID)
-		err = row.Scan(&UserId2, &UserId3, &UserId4)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		updated := false
-
-		if (UserId2 == "0") && !updated {
-			updated = true
-			_, err = db.Exec("UPDATE sessions SET player2_id = ? WHERE session_id = ?", userId, lobbyId)
+		if lobby.Player2ID == "0" {
+			err = addUserIntoLobby(db, "2", lobbyID, userID)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
 				return
 			}
-		} else if (UserId3 == "0") && !updated {
-			updated = true
-			_, err = db.Exec("UPDATE sessions SET player3_id = ? WHERE session_id = ?", userId, lobbyId)
+		} else if lobby.Player3ID == "0" {
+			err = addUserIntoLobby(db, "2", lobbyID, userID)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
 				return
 			}
-		} else if (UserId4 == "0") && !updated {
-			updated = true
-			_, err = db.Exec("UPDATE sessions SET player4_id = ? WHERE session_id = ?", userId, lobbyId)
+		} else if lobby.Player4ID == "0" {
+			err = addUserIntoLobby(db, "2", lobbyID, userID)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
@@ -649,77 +433,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			w.Write(jsonResponse)
 		}
-		log.Println(updated)
 	}
-}
-
-func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id string) (int, error) {
-	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id)
-    VALUES(?, ?, ?, ?, ?)`
-
-	result, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id)
-	if err != nil {
-		return 0, err
-	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	return int(id), nil
-}
-
-func UPDATE(db *sqlx.DB, userID string, lobbyID int) (int, error) {
-	stmt := `UPDATE users SET currLobby_id = ? WHERE user_id = ?`
-
-	result, err := db.Exec(stmt, lobbyID, userID)
-	if err != nil {
-		return 0, err
-	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	return int(id), nil
-}
-
-func mapPreview(db *sqlx.DB) ([]MapsData, error) {
-	query := `
-	SELECT
-	  map_id
-  	FROM
-	  maps   
-  	`
-	var IDs []string
-	err := db.Select(&IDs, query)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	var data []MapsData
-
-	for _, element := range IDs {
-		id, err := strconv.Atoi(element)
-		if err != nil {
-			log.Println(err)
-			return nil, err
-		}
-		preview, err := getPreview(db, id)
-		if err != nil {
-			log.Println(err)
-			return nil, err
-		}
-		mapData := MapsData{
-			MapID:      element,
-			MapPreview: preview,
-		}
-		data = append(data, mapData)
-	}
-	return data, nil
 }
 
 func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -744,25 +458,15 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		query := `
-			SELECT
-			  host_id
-			FROM
-			  brainless_races.sessions
-			WHERE
-			  session_id = ?   
-		`
-
-		var hostID string
-		row := db.QueryRow(query, lobbyID)
-		err = row.Scan(&hostID)
+		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
 		if err != nil {
-			http.Error(w, "Error", 500)
+			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
+
 		var isHost bool
-		if hostID == userIdstr {
+		if lobby.HostID == userIdstr {
 			isHost = true
 		} else {
 			isHost = false
@@ -786,24 +490,4 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonResponse)
 
 	}
-}
-
-func botsInLobby(db *sqlx.DB, lobbyID string) bool {
-
-	const query = `
-		SELECT
-		  bots
-		FROM
-		  sessions
-		WHERE
-		  session_id = ?  
-	`
-
-	row := db.QueryRow(query, lobbyID)
-	var bots bool
-	err := row.Scan(&bots)
-	if err != nil {
-		return false
-	}
-	return bots
 }

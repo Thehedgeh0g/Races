@@ -100,7 +100,7 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapID, _, err := getMapID(db, lobbyID)
+		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
@@ -114,7 +114,7 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapData, err := getMapData(db, mapID)
+		mapData, err := getMapData(db, lobby.MapID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)

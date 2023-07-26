@@ -30,11 +30,7 @@ type ResultsTable struct {
 type Garage struct {
 	Cars        []Car
 	CountOfCars int
-	ColorCost   int
-	ACarCost    int
-	BCarCost    int
-	UCarCost    int
-	UpgradeCost int
+	Prices      PriceData
 	Money       string
 }
 
@@ -90,15 +86,6 @@ type GameMap struct {
 
 type CellsData struct {
 	CellInfo string
-}
-
-type SpriteData struct {
-	SpriteId   string `db:"sprite_id"`
-	SpritePath string `db:"sprite_path"`
-}
-
-type MapData struct {
-	MapKey string `db:"map_data"`
 }
 
 type Player struct {

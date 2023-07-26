@@ -260,15 +260,11 @@ func addAI(db *sqlx.DB, lobbyID string) {
 }
 
 func setMapKey(db *sqlx.DB, lobbyID string) MapData {
-	sessionID, err := strconv.Atoi(lobbyID)
+	lobby, err := getLobbyData(db, lobbyID)
 	if err != nil {
 		log.Println(err)
 	}
-	mapID, _, err := getMapID(db, sessionID)
-	if err != nil {
-		log.Println(err)
-	}
-	mapData, err := getMapData(db, mapID)
+	mapData, err := getMapData(db, lobby.MapID)
 	if err != nil {
 		log.Println(err)
 	}
