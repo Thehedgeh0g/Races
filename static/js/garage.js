@@ -112,6 +112,7 @@ xhr.onload = function() {
   document.getElementById("PriceColor5").innerHTML = PriceColor;
 
   ShowPurchase();
+  showShop();
 
 };
 
@@ -153,12 +154,140 @@ tuningPurchase.addEventListener("click", AcceptPurchase);
 carArrowLeft.addEventListener("click", GarageCarDec);
 carArrowRight.addEventListener("click", GarageCarInc);
 
+
+tuningPurchase.addEventListener("mousedown", ()=> { 
+  tuningPurchase.classList.add("pressed"); 
+});
+tuningPurchase.addEventListener("mouseup", ()=> { 
+  tuningPurchase.classList.remove("pressed"); 
+});
+tuningPurchase.addEventListener("mouseleave", ()=> { 
+  tuningPurchase.classList.remove("pressed"); 
+});
+
+JCarField.addEventListener("mousedown", ()=> { 
+  JCarField.classList.add("pressed"); 
+});
+JCarField.addEventListener("mouseup", ()=> { 
+  JCarField.classList.remove("pressed"); 
+});
+JCarField.addEventListener("mouseleave", ()=> { 
+  JCarField.classList.remove("pressed"); 
+});
+
+ACarField.addEventListener("mousedown", ()=> { 
+  ACarField.classList.add("pressed"); 
+});
+ACarField.addEventListener("mouseup", ()=> { 
+  ACarField.classList.remove("pressed"); 
+});
+ACarField.addEventListener("mouseleave", ()=> { 
+  ACarField.classList.remove("pressed"); 
+});
+
+UCarField.addEventListener("mousedown", ()=> { 
+  UCarField.classList.add("pressed"); 
+});
+UCarField.addEventListener("mouseup", ()=> { 
+  UCarField.classList.remove("pressed"); 
+});
+UCarField.addEventListener("mouseleave", ()=> { 
+  UCarField.classList.remove("pressed"); 
+});
+
+BCarField.addEventListener("mousedown", ()=> { 
+  BCarField.classList.add("pressed"); 
+});
+BCarField.addEventListener("mouseup", ()=> { 
+  BCarField.classList.remove("pressed"); 
+});
+BCarField.addEventListener("mouseleave", ()=> { 
+  BCarField.classList.remove("pressed"); 
+});
+
+GreyCarField.addEventListener("mousedown", ()=> { 
+  GreyCarField.classList.add("pressed"); 
+});
+GreyCarField.addEventListener("mouseup", ()=> { 
+  GreyCarField.classList.remove("pressed"); 
+});
+GreyCarField.addEventListener("mouseleave", ()=> { 
+  GreyCarField.classList.remove("pressed"); 
+});
+
+GreenCarField.addEventListener("mousedown", ()=> { 
+  GreenCarField.classList.add("pressed"); 
+});
+GreenCarField.addEventListener("mouseup", ()=> { 
+  GreenCarField.classList.remove("pressed"); 
+});
+GreenCarField.addEventListener("mouseleave", ()=> { 
+  GreenCarField.classList.remove("pressed"); 
+});
+
+RedCarField.addEventListener("mousedown", ()=> { 
+  RedCarField.classList.add("pressed"); 
+});
+RedCarField.addEventListener("mouseup", ()=> { 
+  RedCarField.classList.remove("pressed"); 
+});
+RedCarField.addEventListener("mouseleave", ()=> { 
+  RedCarField.classList.remove("pressed"); 
+});
+
+YellowCarField.addEventListener("mousedown", ()=> { 
+  YellowCarField.classList.add("pressed"); 
+});
+YellowCarField.addEventListener("mouseup", ()=> { 
+  YellowCarField.classList.remove("pressed"); 
+});
+YellowCarField.addEventListener("mouseleave", ()=> { 
+  YellowCarField.classList.remove("pressed"); 
+});
+
+BlueCarField.addEventListener("mousedown", ()=> { 
+  BlueCarField.classList.add("pressed"); 
+});
+BlueCarField.addEventListener("mouseup", ()=> { 
+  BlueCarField.classList.remove("pressed"); 
+});
+BlueCarField.addEventListener("mouseleave", ()=> { 
+  BlueCarField.classList.remove("pressed"); 
+});
+
+ShopField.addEventListener("mousedown", ()=> { 
+  ShopField.classList.add("pressed"); 
+});
+ShopField.addEventListener("mouseup", ()=> { 
+  ShopField.classList.remove("pressed"); 
+});
+ShopField.addEventListener("mouseleave", ()=> { 
+  ShopField.classList.remove("pressed"); 
+});
+
+TuningField.addEventListener("mousedown", ()=> { 
+  TuningField.classList.add("pressed"); 
+});
+TuningField.addEventListener("mouseup", ()=> { 
+  TuningField.classList.remove("pressed"); 
+});
+TuningField.addEventListener("mouseleave", ()=> { 
+  TuningField.classList.remove("pressed"); 
+});
+
+StyleField.addEventListener("mousedown", ()=> { 
+  StyleField.classList.add("pressed"); 
+});
+StyleField.addEventListener("mouseup", ()=> { 
+  StyleField.classList.remove("pressed"); 
+});
+StyleField.addEventListener("mouseleave", ()=> { 
+  StyleField.classList.remove("pressed"); 
+});
+
 BackToMenu.addEventListener('click', ()=> {
   window.location.href = "/menu"
 });
-
-showShop();
-showShop();
 
 function showShop() {
   document.querySelector(".style-field").style.visibility = "hidden";

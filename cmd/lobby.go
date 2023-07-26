@@ -60,7 +60,8 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		IDs = append(IDs, UserId1, UserId2, UserId3, UserId4)
 		var player Player
 
-		for _, element := range IDs {
+		var myId string
+		for i, element := range IDs {
 			query = `
 				SELECT
 				  avatar,
@@ -85,6 +86,9 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					log.Println(err)
 					return
 				}
+				if element == userIdstr {
+					myId = strconv.Itoa(i)
+				}
 				player.Level = strconv.Itoa(lvl / 100)
 
 			} else {
@@ -98,8 +102,10 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		response := struct {
 			Players []Player `json:"User"`
+			Id      string
 		}{
 			Players: players,
+			Id:      myId,
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -768,4 +774,24 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonResponse)
 
 	}
+}
+
+func botsInLobby(db *sqlx.DB, lobbyID string) bool {
+
+	const query = `
+		SELECT
+		  bots
+		FROM
+		  sessions
+		WHERE
+		  session_id = ?  
+	`
+
+	row := db.QueryRow(query, lobbyID)
+	var bots bool
+	err := row.Scan(&bots)
+	if err != nil {
+		return false
+	}
+	return bots
 }
