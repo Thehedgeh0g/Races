@@ -49,8 +49,10 @@ type Car struct {
 }
 
 type LobbySettings struct {
-	MapID  string `json:"MapID"`
-	Rounds string `json:"Rounds"`
+	MapID     string `json:"MapID"`
+	Rounds    string `json:"Rounds"`
+	HP        bool   `json:"InfiniteHP"`
+	Collision bool   `json:"Collision"`
 }
 
 type UserRequest struct {
