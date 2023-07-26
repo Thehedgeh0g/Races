@@ -276,7 +276,7 @@ socket.onmessage = function (event) {
                 } else {
                     if (message.split(" ")[1] == "message") {
                         console.log(message.split("|")[1]);
-                        document.getElementById("chat-text").innerHTML = "<div class='stri'>" + message.split("|")[1] + "</div>" + document.getElementById("chat-text").innerHTML
+                        document.getElementById("chat-text").innerHTML = "<div class='stri-name'>" + message.split("|")[1].split(":")[0] + ":</div>" + "<div class='stri'>" + message.split("|")[1].split(":")[1] + "</div>" + document.getElementById("chat-text").innerHTML
                     } else {
                         id = message.split(" ")[1];
                         console.log(id);
