@@ -6,6 +6,8 @@ let flag = false;
 let MapSettings = {
   MapID: "",
   Rounds: "",
+  Hp: null,
+  Col: null,
 };
 
 function mapList() {
@@ -87,6 +89,8 @@ xhr1.addEventListener("load", () => {
         xhr.open("POST", "/api/chooseMap");
         MapSettings.MapID = id;
         MapSettings.Rounds = document.getElementById("rounds").value;
+        MapSettings.Hp = isHp;
+        MapSettings.Hp = isCollision;
         xhr.send(JSON.stringify(MapSettings));
 
         xhr.addEventListener("load", () => {
@@ -276,7 +280,7 @@ socket.onmessage = function (event) {
                 } else {
                     if (message.split(" ")[1] == "message") {
                         console.log(message.split("|")[1]);
-                        document.getElementById("chat-text").innerHTML = "<div class='stri'>" + message.split("|")[1] + "</div>" + document.getElementById("chat-text").innerHTML
+                        document.getElementById("chat-text").innerHTML = "<div class='stri-name'>" + message.split("|")[1].split(":")[0] + ":</div>" + "<div class='stri'>" + message.split("|")[1].split(":")[1] + "</div>" + document.getElementById("chat-text").innerHTML
                     } else {
                         id = message.split(" ")[1];
                         console.log(id);
