@@ -378,12 +378,16 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			Cars        []string `json:"Cars"`
 			Nicknames   []string `json:"Nicknames"`
 			InSessionId string   `json:"InSessionId"`
+			Hp          bool     `json:"hp"`
+			Collision   bool     `json:"collision"`
 		}{
 			Rounds:      rounds,
 			MapKey:      mapKey,
 			Cars:        cars,
 			Nicknames:   nicknames,
 			InSessionId: inSessionId,
+			Hp:          hp,
+			Collision:   collision,
 		}
 
 		jsonResponse, err := json.Marshal(response)
