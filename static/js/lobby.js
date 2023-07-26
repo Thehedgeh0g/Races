@@ -70,6 +70,9 @@ xhr1.addEventListener("load", () => {
   console.log(response);
   if (response.Host) {
     triangle.addEventListener("click", mapList);
+    document.getElementById("rounds").addEventListener("change", sendRounds);
+    document.getElementById("collision-input").addEventListener("click", switchCollision);
+    document.getElementById("hp-input").addEventListener("click", switchHp);
     button.addEventListener("click", function () {
       if (
         document.getElementById("ready-0").innerHTML == "host" &&
@@ -121,12 +124,11 @@ xhr1.addEventListener("load", () => {
         }
       }
     });
+    document.getElementById("non-host").style.display = "none";
   } else {
     isHost = false;
-    document.getElementById("settings").style.backgroundColor = "#6e6a5d";
-    document.getElementById("inner-settings").style.visibility = "hidden";
+    document.getElementById("inner-settings").style.display = "none";
     document.getElementById("future-map").innerHTML = document.getElementById(chosenMap).innerHTML;
-    document.getElementById("settings").style.justifyContent = "center";
     document.getElementById("settings").style.padding = "30px";
     document.getElementById("button-text").innerHTML = "NOT READY";
     button.style.backgroundColor = "#eb9054";
@@ -140,7 +142,7 @@ xhr1.addEventListener("load", () => {
         button.style.backgroundColor = "#d2ffc8";
         document.getElementById("button-text").innerHTML = "READY";
       }
-      var message =
+      let message =
         window.location.pathname.split("/")[2] +
         " " +
         String(myID) +
@@ -151,6 +153,18 @@ xhr1.addEventListener("load", () => {
     });
   }
 });
+
+function sendRounds() {
+    let message =
+    window.location.pathname.split("/")[2] +
+    " " +
+    "rounds" +
+    " " +
+    String(document.getElementById("rounds").value);
+
+  socket.send(JSON.stringify(message));
+}
+
 
 const avatar1 = document.getElementById("avatar1");
 const nickName1 = document.getElementById("nickName1");
@@ -174,9 +188,13 @@ socket.onmessage = function (event) {
   console.log(message);
   if (message.split(" ")[1] == "reboot") {
     if (isHost) {
+      
       var message = window.location.pathname.split("/")[2] + " " + "map" + " " + String(chosenMap);
       console.log(message);
       socket.send(JSON.stringify(message));
+      sendRounds();
+      sendCol();
+      sendHp();
     }
     var xhr = new XMLHttpRequest();
     // var lobbyId = response.lobbyId
@@ -236,34 +254,65 @@ socket.onmessage = function (event) {
           document.getElementById("future-map").innerHTML = document.getElementById(chosenMap).innerHTML;
         }
       } else {
-        id = message.split(" ")[1];
-        console.log(id);
-        let readyText = null;
-        if (id == "0") {
-          readyText = document.getElementById("ready-0");
-        }
-        if (id == "1") {
-          readyText = document.getElementById("ready-1");
-        }
-        if (id == "2") {
-          readyText = document.getElementById("ready-2");
-        }
-        if (id == "3") {
-          readyText = document.getElementById("ready-3");
-        }
-        if (message.split(" ")[2] == "true") {
-          readyText.innerHTML = "ready";
-          readyText.style.backgroundColor = "#d2ffc8";
+        if (message.split(" ")[1] == "rounds"){
+            console.log(message.split(" ")[2]);
+            document.getElementById("non-host__rounds").innerHTML = message.split(" ")[2];
         } else {
-          if (id != "0") {
-              readyText.innerHTML = "not ready";
-              readyText.style.backgroundColor = "#eb9054";
-          } else {
-              readyText.innerHTML = "host";
-              readyText.style.backgroundColor = "#eb9054";
-          }
-  
+            if (message.split(" ")[1] == "col") {
+                console.log(message.split(" ")[2]);
+                if (message.split(" ")[2] != "true"){
+                    document.getElementById("non-host__col").innerHTML = "ON";
+                } else {
+                    document.getElementById("non-host__col").innerHTML = "OFF";
+                }
+            } else {
+                if(message.split(" ")[1] == "hp"){
+                    console.log(message.split(" ")[2]);
+                    if (message.split(" ")[2] != "true"){
+                        document.getElementById("non-host__hp").innerHTML = "ON";
+                    } else {
+                        document.getElementById("non-host__hp").innerHTML = "OFF";
+                    }
+                } else {
+                    if (message.split(" ")[1] == "message") {
+                        console.log(message.split("|")[1]);
+                        document.getElementById("chat-text").innerHTML = "<div class='stri'>" + message.split("|")[1] + "</div>" + document.getElementById("chat-text").innerHTML
+                    } else {
+                        id = message.split(" ")[1];
+                        console.log(id);
+                        let readyText = null;
+                        if (id == "0") {
+                          readyText = document.getElementById("ready-0");
+                        }
+                        if (id == "1") {
+                          readyText = document.getElementById("ready-1");
+                        }
+                        if (id == "2") {
+                          readyText = document.getElementById("ready-2");
+                        }
+                        if (id == "3") {
+                          readyText = document.getElementById("ready-3");
+                        }
+                        if (message.split(" ")[2] == "true") {
+                          readyText.innerHTML = "ready";
+                          readyText.style.backgroundColor = "#d2ffc8";
+                        } else {
+                          if (id != "0") {
+                              readyText.innerHTML = "not ready";
+                              readyText.style.backgroundColor = "#eb9054";
+                          } else {
+                              readyText.innerHTML = "host";
+                              readyText.style.backgroundColor = "#eb9054";
+                          }
+                  
+                        }
+                    }
+                    
+                }
+            }
+            
         }
+        
       }
 
     }
@@ -272,9 +321,56 @@ socket.onmessage = function (event) {
 
 socket.addEventListener("open", (event) => {
   var message = window.location.pathname.split("/")[2] + " reboot";
-
+  document.getElementById("chat-send").addEventListener('click', sendChatMess);
+  document.getElementById("chat-upper").addEventListener('submit', (sendChatMess)); 
   socket.send(JSON.stringify(message));
 });
+
+function sendChatMess(event) {
+    event.preventDefault();
+    if (myID == 0) {
+        var message =
+        window.location.pathname.split("/")[2] +
+        " " +
+        "message" +
+        " |" +
+        String(document.getElementById("nickName1").innerHTML) +
+        ": " +
+        String(document.getElementById("chat-field").value);
+    }
+    if (myID == 1) {
+        var message =
+        window.location.pathname.split("/")[2] +
+        " " +
+        "message" +
+        " |" +
+        String(document.getElementById("nickName2").innerHTML) +
+        ": " +
+        String(document.getElementById("chat-field").value);
+    }
+    if (myID == 2) {
+        var message =
+        window.location.pathname.split("/")[2] +
+        " " +
+        "message" +
+        " |" +
+        String(document.getElementById("nickName3").innerHTML) +
+        ": " +
+        String(document.getElementById("chat-field").value);
+    }
+    if (myID == 3) {
+        var message =
+        window.location.pathname.split("/")[2] +
+        " " +
+        "message" +
+        " |" +
+        String(document.getElementById("nickName4").innerHTML) +
+        ": " +
+        String(document.getElementById("chat-field").value);
+    }
+    document.getElementById("chat-field").value = "";
+    socket.send(JSON.stringify(message));
+}
 
 const collision = document.getElementById("collision-input");
 const hp = document.getElementById("hp-input");
@@ -285,8 +381,6 @@ const hpDot = document.getElementById("hp-dot");
 let isCollision = false;
 let isHp = false;
 
-collision.addEventListener("click", switchCollision);
-hp.addEventListener("click", switchHp);
 
 function switchCollision() {
   if (isCollision) {
@@ -296,6 +390,17 @@ function switchCollision() {
     collisionDot.style.visibility = "visible";
     isCollision = true;
   }
+  sendCol();
+}
+
+function sendCol() {
+    let message =
+    window.location.pathname.split("/")[2] +
+    " " +
+    "col" +
+    " " +
+    String(isCollision);
+    socket.send(JSON.stringify(message));
 }
 
 function switchHp() {
@@ -306,7 +411,19 @@ function switchHp() {
     hpDot.style.visibility = "visible";
     isHp = true;
   }
+  sendHp();
 }
+
+function sendHp() {
+    let message =
+    window.location.pathname.split("/")[2] +
+    " " +
+    "hp" +
+    " " +
+    String(isHp);
+    socket.send(JSON.stringify(message));
+}
+
 const token = document.getElementById("token");
 const copy = document.getElementById("copy");
 copy.addEventListener("click", () => {

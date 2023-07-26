@@ -15,6 +15,18 @@
     </head>
     <body id="body" class="page centering">
         <div class="sector">
+            <div class="chat">
+                <span class="set-header">chat</span>
+                <div class="inner-chat">
+                    <form class="chat-upper" id="chat-upper">
+                        <input type="text" id="chat-field">
+                        <div id="chat-send">send</div>
+                    </form>
+                    <div id="chat-text">
+
+                    </div>
+                </div>
+            </div>
             <div>
                 <div class="window">
                     <span class="set-header">party</span>
@@ -104,8 +116,21 @@
                             </div>
                         </div>
                     </div>
-                    <div id="future-map">
-
+                    <div id="non-host" class="non-host">
+                        <span class="set-header">settings</span>
+                        <div id="future-map" class="map-choose-line"></div>
+                        <div class="map-choose-line">
+                            <span>Rounds</span>
+                            <span id="non-host__rounds"></span>
+                        </div>
+                        <div class="map-choose-line">
+                            <span>Collision</span>
+                            <span id="non-host__col"></span>
+                        </div>
+                        <div class="map-choose-line">
+                            <span>HP</span>
+                            <span id="non-host__hp"></span>
+                        </div>
                     </div>
                 </div>
                 <div id="button" class="button">

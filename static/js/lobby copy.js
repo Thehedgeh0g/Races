@@ -37,6 +37,10 @@ function choosen(event) {
       document.getElementById("m" + String(i)).style.background = "#ffe6bf";
     }
   }
+
+  var message = window.location.pathname.split("/")[2] + " " + "map" + " " + String(chosenMap);
+  console.log(message);
+  socket.send(JSON.stringify(message));
 }
 
 const button = document.getElementById("button");
@@ -55,6 +59,7 @@ const settings = document.getElementById("settings");
 
 let ready = false;
 
+let isHost = true
 var xhr1 = new XMLHttpRequest();
 // var lobbyId = response.lobbyId
 xhr1.open("GET", "/api/getHost");
@@ -65,35 +70,68 @@ xhr1.addEventListener("load", () => {
   console.log(response);
   if (response.Host) {
     triangle.addEventListener("click", mapList);
+    document.getElementById("rounds").addEventListener("change", sendRounds);
+    document.getElementById("collision-input").addEventListener("click", switchCollision);
+    document.getElementById("hp-input").addEventListener("click", switchHp);
     button.addEventListener("click", function () {
-      let id = chosenMap.slice(1);
-      console.log(id);
-      var xhr = new XMLHttpRequest();
-      // var lobbyId = response.lobbyId
-      xhr.open("POST", "/api/chooseMap");
-      MapSettings.MapID = id;
-      MapSettings.Rounds = document.getElementById("rounds").value;
-      xhr.send(JSON.stringify(MapSettings));
+      if (
+        document.getElementById("ready-0").innerHTML == "host" &&
+        document.getElementById("ready-1").innerHTML == "ready" &&
+        document.getElementById("ready-2").innerHTML == "ready" &&
+        document.getElementById("ready-3").innerHTML == "ready"
+      ) {
+        let id = chosenMap.slice(1);
+        console.log(id);
+        var xhr = new XMLHttpRequest();
+        // var lobbyId = response.lobbyId
+        xhr.open("POST", "/api/chooseMap");
+        MapSettings.MapID = id;
+        MapSettings.Rounds = document.getElementById("rounds").value;
+        xhr.send(JSON.stringify(MapSettings));
 
-      xhr.addEventListener("load", () => {
-        //console.log(xhr.responseText.substring(12, 18))
+        xhr.addEventListener("load", () => {
+          //console.log(xhr.responseText.substring(12, 18))
 
-        var message = window.location.pathname.split("/")[2] + " start";
-        console.log(message);
-        var data = {
-          Message: message,
-        };
+          var message = window.location.pathname.split("/")[2] + " start";
+          console.log(message);
 
-        socket.send(JSON.stringify(data.Message));
-      });
+          socket.send(JSON.stringify(message));
+        });
+      } else {
+        if (document.getElementById("ready-1").innerHTML != "ready") {
+          document.getElementById("ready-1").classList.add("rotor");
+          document
+            .getElementById("ready-1")
+            .addEventListener("animationend", () => {
+              document.getElementById("ready-1").classList.remove("rotor");
+            });
+        }
+        if (document.getElementById("ready-2").innerHTML != "ready") {
+          document.getElementById("ready-2").classList.add("rotor");
+          document
+            .getElementById("ready-2")
+            .addEventListener("animationend", () => {
+              document.getElementById("ready-2").classList.remove("rotor");
+            });
+        }
+        if (document.getElementById("ready-3").innerHTML != "ready") {
+          document.getElementById("ready-3").classList.add("rotor");
+          document
+            .getElementById("ready-3")
+            .addEventListener("animationend", () => {
+              document.getElementById("ready-3").classList.remove("rotor");
+            });
+        }
+      }
     });
+    document.getElementById("non-host").style.display = "none";
   } else {
-    document.getElementById("settings").style.backgroundColor = "#6e6a5d";
-    document.getElementById("settings").innerHTML =
-      "Only host can change settings";
-    document.getElementById("settings").style.justifyContent = "center";
+    isHost = false;
+    document.getElementById("inner-settings").style.display = "none";
+    document.getElementById("future-map").innerHTML = document.getElementById(chosenMap).innerHTML;
     document.getElementById("settings").style.padding = "30px";
     document.getElementById("button-text").innerHTML = "NOT READY";
+    document.getElementById("non-host__map").style.display = "block";
     button.style.backgroundColor = "#eb9054";
     button.addEventListener("click", () => {
       if (ready) {
@@ -105,7 +143,7 @@ xhr1.addEventListener("load", () => {
         button.style.backgroundColor = "#d2ffc8";
         document.getElementById("button-text").innerHTML = "READY";
       }
-      var message =
+      let message =
         window.location.pathname.split("/")[2] +
         " " +
         String(myID) +
@@ -116,6 +154,18 @@ xhr1.addEventListener("load", () => {
     });
   }
 });
+
+function sendRounds() {
+    let message =
+    window.location.pathname.split("/")[2] +
+    " " +
+    "rounds" +
+    " " +
+    String(document.getElementById("rounds").value);
+
+  socket.send(JSON.stringify(message));
+}
+
 
 const avatar1 = document.getElementById("avatar1");
 const nickName1 = document.getElementById("nickName1");
@@ -138,8 +188,18 @@ socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   console.log(message);
   if (message.split(" ")[1] == "reboot") {
+    if (isHost) {
+      
+      var message = window.location.pathname.split("/")[2] + " " + "map" + " " + String(chosenMap);
+      console.log(message);
+      socket.send(JSON.stringify(message));
+      sendRounds();
+      sendCol();
+      sendHp();
+    }
     var xhr = new XMLHttpRequest();
     // var lobbyId = response.lobbyId
+    
     xhr.open("GET", "/api/getPlayers");
     xhr.send();
 
@@ -162,47 +222,94 @@ socket.onmessage = function (event) {
       lvl4.innerHTML = players.User[3].Level + "lvl";
       if (nickName1.innerHTML != "Empty") {
         document.getElementById("player-1").style.display = "flex";
-        document.getElementById("ready-1").innerHTML = "not ready";
+        document.getElementById("ready-0").innerHTML = "host";
       }
       if (nickName2.innerHTML != "Empty") {
         document.getElementById("player-2").style.display = "flex";
-        document.getElementById("ready-2").innerHTML = "not ready";
+        document.getElementById("ready-1").innerHTML = "not ready";
       }
       if (nickName3.innerHTML != "Empty") {
         document.getElementById("player-3").style.display = "flex";
-        document.getElementById("ready-3").innerHTML = "not ready";
+        document.getElementById("ready-2").innerHTML = "not ready";
       }
       if (nickName4.innerHTML != "Empty") {
         document.getElementById("player-4").style.display = "flex";
-        document.getElementById("ready-4").innerHTML = "not ready";
+        document.getElementById("ready-3").innerHTML = "not ready";
       }
+      var message =
+      window.location.pathname.split("/")[2] +
+      " " +
+      String(myID) +
+      " " +
+      String(ready);
+      socket.send(JSON.stringify(message));
     });
   } else {
     if (message == window.location.pathname.split("/")[2] + " start") {
       window.location.href = "/race/" + window.location.pathname.split("/")[2];
     } else {
-      id = message.split(" ")[1];
-      console.log(id);
-      let readyText = null;
-      if (id == "0") {
-        readyText = document.getElementById("ready-0");
-      }
-      if (id == "1") {
-        readyText = document.getElementById("ready-1");
-      }
-      if (id == "2") {
-        readyText = document.getElementById("ready-2");
-      }
-      if (id == "3") {
-        readyText = document.getElementById("ready-3");
-      }
-      if (message.split(" ")[2] == "true") {
-        readyText.innerHTML = "ready";
-        readyText.style.backgroundColor = "#d2ffc8";
+      if (message.split(" ")[1] == "map") {
+        if (!isHost) {
+          console.log("CHOOSEN MAP: " + message.split(" ")[2]);
+          chosenMap = message.split(" ")[2];
+          document.getElementById("future-map").innerHTML = document.getElementById(chosenMap).innerHTML;
+        }
       } else {
-        readyText.innerHTML = "not ready";
-        readyText.style.backgroundColor = "#eb9054";
+        if (message.split(" ")[1] == "rounds"){
+            console.log(message.split(" ")[2]);
+            document.getElementById("non-host__rounds").innerHTML = message.split(" ")[2];
+        } else {
+            if (message.split(" ")[1] == "col") {
+                console.log(message.split(" ")[2]);
+                if (message.split(" ")[2] != "true"){
+                    document.getElementById("non-host__col").innerHTML = "ON";
+                } else {
+                    document.getElementById("non-host__col").innerHTML = "OFF";
+                }
+            } else {
+                if(message.split(" ")[1] == "hp"){
+                    console.log(message.split(" ")[2]);
+                    if (message.split(" ")[2] != "true"){
+                        document.getElementById("non-host__hp").innerHTML = "ON";
+                    } else {
+                        document.getElementById("non-host__hp").innerHTML = "OFF";
+                    }
+                } else {
+                    id = message.split(" ")[1];
+                    console.log(id);
+                    let readyText = null;
+                    if (id == "0") {
+                      readyText = document.getElementById("ready-0");
+                    }
+                    if (id == "1") {
+                      readyText = document.getElementById("ready-1");
+                    }
+                    if (id == "2") {
+                      readyText = document.getElementById("ready-2");
+                    }
+                    if (id == "3") {
+                      readyText = document.getElementById("ready-3");
+                    }
+                    if (message.split(" ")[2] == "true") {
+                      readyText.innerHTML = "ready";
+                      readyText.style.backgroundColor = "#d2ffc8";
+                    } else {
+                      if (id != "0") {
+                          readyText.innerHTML = "not ready";
+                          readyText.style.backgroundColor = "#eb9054";
+                      } else {
+                          readyText.innerHTML = "host";
+                          readyText.style.backgroundColor = "#eb9054";
+                      }
+              
+                    }
+                }
+            }
+            
+        }
+        
       }
+
     }
   }
 };
@@ -222,8 +329,6 @@ const hpDot = document.getElementById("hp-dot");
 let isCollision = false;
 let isHp = false;
 
-collision.addEventListener("click", switchCollision);
-hp.addEventListener("click", switchHp);
 
 function switchCollision() {
   if (isCollision) {
@@ -233,6 +338,17 @@ function switchCollision() {
     collisionDot.style.visibility = "visible";
     isCollision = true;
   }
+  sendCol();
+}
+
+function sendCol() {
+    let message =
+    window.location.pathname.split("/")[2] +
+    " " +
+    "col" +
+    " " +
+    String(isCollision);
+    socket.send(JSON.stringify(message));
 }
 
 function switchHp() {
@@ -243,7 +359,19 @@ function switchHp() {
     hpDot.style.visibility = "visible";
     isHp = true;
   }
+  sendHp();
 }
+
+function sendHp() {
+    let message =
+    window.location.pathname.split("/")[2] +
+    " " +
+    "hp" +
+    " " +
+    String(isHp);
+    socket.send(JSON.stringify(message));
+}
+
 const token = document.getElementById("token");
 const copy = document.getElementById("copy");
 copy.addEventListener("click", () => {
