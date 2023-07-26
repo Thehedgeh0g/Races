@@ -131,6 +131,7 @@ xhr1.addEventListener("load", () => {
     document.getElementById("future-map").innerHTML = document.getElementById(chosenMap).innerHTML;
     document.getElementById("settings").style.padding = "30px";
     document.getElementById("button-text").innerHTML = "NOT READY";
+    document.getElementById("non-host__map").style.display = "block";
     button.style.backgroundColor = "#eb9054";
     button.addEventListener("click", () => {
       if (ready) {
@@ -274,40 +275,34 @@ socket.onmessage = function (event) {
                         document.getElementById("non-host__hp").innerHTML = "OFF";
                     }
                 } else {
-                    if (message.split(" ")[1] == "message") {
-                        console.log(message.split("|")[1]);
-                        document.getElementById("chat-text").innerHTML = "<div class='stri'>" + message.split("|")[1] + "</div>" + document.getElementById("chat-text").innerHTML
-                    } else {
-                        id = message.split(" ")[1];
-                        console.log(id);
-                        let readyText = null;
-                        if (id == "0") {
-                          readyText = document.getElementById("ready-0");
-                        }
-                        if (id == "1") {
-                          readyText = document.getElementById("ready-1");
-                        }
-                        if (id == "2") {
-                          readyText = document.getElementById("ready-2");
-                        }
-                        if (id == "3") {
-                          readyText = document.getElementById("ready-3");
-                        }
-                        if (message.split(" ")[2] == "true") {
-                          readyText.innerHTML = "ready";
-                          readyText.style.backgroundColor = "#d2ffc8";
-                        } else {
-                          if (id != "0") {
-                              readyText.innerHTML = "not ready";
-                              readyText.style.backgroundColor = "#eb9054";
-                          } else {
-                              readyText.innerHTML = "host";
-                              readyText.style.backgroundColor = "#eb9054";
-                          }
-                  
-                        }
+                    id = message.split(" ")[1];
+                    console.log(id);
+                    let readyText = null;
+                    if (id == "0") {
+                      readyText = document.getElementById("ready-0");
                     }
-                    
+                    if (id == "1") {
+                      readyText = document.getElementById("ready-1");
+                    }
+                    if (id == "2") {
+                      readyText = document.getElementById("ready-2");
+                    }
+                    if (id == "3") {
+                      readyText = document.getElementById("ready-3");
+                    }
+                    if (message.split(" ")[2] == "true") {
+                      readyText.innerHTML = "ready";
+                      readyText.style.backgroundColor = "#d2ffc8";
+                    } else {
+                      if (id != "0") {
+                          readyText.innerHTML = "not ready";
+                          readyText.style.backgroundColor = "#eb9054";
+                      } else {
+                          readyText.innerHTML = "host";
+                          readyText.style.backgroundColor = "#eb9054";
+                      }
+              
+                    }
                 }
             }
             
@@ -321,56 +316,9 @@ socket.onmessage = function (event) {
 
 socket.addEventListener("open", (event) => {
   var message = window.location.pathname.split("/")[2] + " reboot";
-  document.getElementById("chat-send").addEventListener('click', sendChatMess);
-  document.getElementById("chat-upper").addEventListener('submit', (sendChatMess)); 
+
   socket.send(JSON.stringify(message));
 });
-
-function sendChatMess(event) {
-    event.preventDefault();
-    if (myID == 0) {
-        var message =
-        window.location.pathname.split("/")[2] +
-        " " +
-        "message" +
-        " |" +
-        String(document.getElementById("nickName1").innerHTML) +
-        ": " +
-        String(document.getElementById("chat-field").value);
-    }
-    if (myID == 1) {
-        var message =
-        window.location.pathname.split("/")[2] +
-        " " +
-        "message" +
-        " |" +
-        String(document.getElementById("nickName2").innerHTML) +
-        ": " +
-        String(document.getElementById("chat-field").value);
-    }
-    if (myID == 2) {
-        var message =
-        window.location.pathname.split("/")[2] +
-        " " +
-        "message" +
-        " |" +
-        String(document.getElementById("nickName3").innerHTML) +
-        ": " +
-        String(document.getElementById("chat-field").value);
-    }
-    if (myID == 3) {
-        var message =
-        window.location.pathname.split("/")[2] +
-        " " +
-        "message" +
-        " |" +
-        String(document.getElementById("nickName4").innerHTML) +
-        ": " +
-        String(document.getElementById("chat-field").value);
-    }
-    document.getElementById("chat-field").value = "";
-    socket.send(JSON.stringify(message));
-}
 
 const collision = document.getElementById("collision-input");
 const hp = document.getElementById("hp-input");
