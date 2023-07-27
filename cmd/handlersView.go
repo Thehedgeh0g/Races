@@ -189,10 +189,14 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
+		lvl, _ := strconv.Atoi(user.Lvl)
+		user.Lvl = strconv.Itoa(lvl / 100)
 		data := Account{
-			User:    user,
-			Friends: friendList,
+			ImgPath:  user.ImgPath,
+			Nickname: user.Nickname,
+			Lvl:      user.Lvl,
+			Bosses:   user.Bosses,
+			Friends:  friendList,
 		}
 
 		err = ts.Execute(w, data)
