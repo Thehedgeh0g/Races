@@ -97,6 +97,7 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Ready: 0,
     Speed: null,
     Border: null,
     cflag: false,
@@ -109,6 +110,7 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Ready: 0,
     Speed: null,
     Border: null,
     cflag: false,
@@ -121,6 +123,7 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Ready: 0,
     Speed: null,
     Border: null,
     cflag: false,
@@ -133,6 +136,7 @@ let cars = [
     X: null,
     Y: null,
     Angle: null,
+    Ready: 0,
     Speed: null,
     Border: null,
     cflag: false,
@@ -144,6 +148,8 @@ let y0 = 0;
 let x0 = 0;
 let y1 = 0;
 let x1 = 0;
+
+let ready = 0;
 
 const mapdot = [];
 
@@ -201,6 +207,7 @@ const money = document.getElementById("money");
 
 const button = document.getElementById("button");
 
+let dif1 = 0;
 let vzhoom = new Audio();
 
 let bar = [];
@@ -240,7 +247,7 @@ function drawFrame() {
       var message =
         window.location.pathname.split("/")[2] +
         " race " +
-        String(speed) +
+        String(wasd.r) +
         " " +
         String(drawAngle) +
         " " +
@@ -270,6 +277,17 @@ function drawFrame() {
       ":" +
       String(((endTime - startTime) / 1000) % 60);
     //console.log(dif);
+    let curTime = new Date();
+    dif1 = ((curTime - startTime) / 1000) % 60;
+    if (dif1 < 5 && ready != 0) {
+      document.getElementById("timer").innerHTML = "STARTING IN " + String(5 - dif1).slice(0, 4);
+    }
+    if (dif1 > 5 && dif1 < 8 &&ready != 0) {
+      document.getElementById("timer").innerHTML = "GO";
+    }
+    if (dif1 > 8 && ready != 0) {
+      document.getElementById("timer").style.visibility = "hidden";
+    }
 
     requestAnimationFrame(drawFrame);
   }, 16);
@@ -938,6 +956,8 @@ function audioFix() {
   }
 }
 function onCanvasKeyDown(event) {
+  let curTime = new Date();
+  
   if (event.code === "KeyR") {
     if (wasd.r == 0) {
       wasd.r = 1;
@@ -960,7 +980,12 @@ function onCanvasKeyDown(event) {
       audioStop.pause();
     }
   }
-  if (wasd.r == 1) {
+  dif1 = 
+    ((curTime - startTime) / 1000) % 60;
+
+  console.log(dif1);
+  if (wasd.r == 1 && dif1 > 5 && ready != 0) {
+    ready = 2;
     if (event.code === "KeyW") {
       wasd.w = 1;
       if (finished == 0){
@@ -1186,7 +1211,7 @@ function getTiles() {
       cars[i].X = startX + 50;
       cars[i].Y = startY + 5 + carW / 2 + 23 * i;
       cars[i].Angle = Math.PI / 2;
-      cars[i].Speed = 0;
+      cars[i].Ready = 0;
       cars[i].Border = getBorders(
         startX + 50,
         startY + 5 + carW / 2 + 23 * i,
@@ -1250,7 +1275,19 @@ socket.onmessage = function (event) {
   cars[go[5]].X = go[0];
   cars[go[5]].Y = go[1];
   cars[go[5]].Angle = go[2];
-  cars[go[5]].Speed = go[3];
+  cars[go[5]].Speed = go[3].split('/')[1];
+  cars[go[5]].Ready = go[3].split('/')[0];
+  if (ready == 0) {
+    ready = 1;
+    for (let i = 0; i < amountOfPlayers; i++) {
+      if (cars[i].Ready == "0") {
+        ready = 0;
+      } 
+    }
+    if (ready == 1) {
+      startTime = new Date();
+    }
+  }
   cars[go[5]].Border = getBorders(go[0], go[1], go[2], carH, carW);
   if (go[5] != myCar) {
     cars[go[5]].HP = go[4];
@@ -1361,7 +1398,7 @@ socket.addEventListener("open", (event) => {
   var message =
     window.location.pathname.split("/")[2] +
     " race " +
-    String(speed) +
+    String(wasd.r) + "/" + String(speed) +
     " " +
     String(drawAngle) +
     " " +
