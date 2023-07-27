@@ -27,7 +27,15 @@ func getUserForLog(db *sqlx.DB, req UserRequest) (UserData, error) {
 func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	const query = `
 	SELECT
-	  *
+	  user_id,
+	  avatar,
+	  boss_count,
+	  exp,
+	  money,
+	  nickname,
+	  friends,
+	  cars,
+	  currLobby_id
   	FROM
 	  users
   	WHERE
@@ -35,7 +43,7 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	`
 	row := db.QueryRow(query, userID)
 	var user UserData
-	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID)
+	err := row.Scan(&user.ID, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID)
 	if err != nil {
 		return user, err
 	}
