@@ -6,6 +6,8 @@ let flag = false;
 let MapSettings = {
   MapID: "",
   Rounds: "",
+  Hp: null,
+  Col: null,
 };
 
 function mapList() {
@@ -87,6 +89,8 @@ xhr1.addEventListener("load", () => {
         xhr.open("POST", "/api/chooseMap");
         MapSettings.MapID = id;
         MapSettings.Rounds = document.getElementById("rounds").value;
+        MapSettings.Hp = isHp;
+        MapSettings.Col = isCollision;
         xhr.send(JSON.stringify(MapSettings));
 
         xhr.addEventListener("load", () => {
@@ -209,16 +213,16 @@ socket.onmessage = function (event) {
       myID = players.Id;
       avatar1.src = players.User[0].ImgPath;
       nickName1.innerHTML = players.User[0].Nickname;
-      lvl1.innerHTML = players.User[0].Level + "lvl";
+      lvl1.innerHTML = players.User[0].Lvl + "lvl";
       avatar2.src = players.User[1].ImgPath;
       nickName2.innerHTML = players.User[1].Nickname;
-      lvl2.innerHTML = players.User[1].Level + "lvl";
+      lvl2.innerHTML = players.User[1].Lvl + "lvl";
       avatar3.src = players.User[2].ImgPath;
       nickName3.innerHTML = players.User[2].Nickname;
-      lvl3.innerHTML = players.User[2].Level + "lvl";
+      lvl3.innerHTML = players.User[2].Lvl + "lvl";
       avatar4.src = players.User[3].ImgPath;
       nickName4.innerHTML = players.User[3].Nickname;
-      lvl4.innerHTML = players.User[3].Level + "lvl";
+      lvl4.innerHTML = players.User[3].Lvl + "lvl";
       if (nickName1.innerHTML != "Empty") {
         document.getElementById("player-1").style.display = "flex";
         document.getElementById("ready-0").innerHTML = "host";
@@ -276,7 +280,7 @@ socket.onmessage = function (event) {
                 } else {
                     if (message.split(" ")[1] == "message") {
                         console.log(message.split("|")[1]);
-                        document.getElementById("chat-text").innerHTML = "<div class='stri'>" + message.split("|")[1] + "</div>" + document.getElementById("chat-text").innerHTML
+                        document.getElementById("chat-text").innerHTML = "<div class='stri-name'>" + message.split("|")[1].split(":")[0] + ":</div>" + "<div class='stri'>" + message.split("|")[1].split(":")[1] + "</div>" + document.getElementById("chat-text").innerHTML
                     } else {
                         id = message.split(" ")[1];
                         console.log(id);

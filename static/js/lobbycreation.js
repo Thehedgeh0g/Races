@@ -1,4 +1,6 @@
 const start = document.querySelector('button');
+const cont = document.getElementById('cont');
+
 function getLink(cb) {
     let XHR = new XMLHttpRequest();
     XHR.open('GET', '');
@@ -17,7 +19,10 @@ function getLink(cb) {
 
 
 start.addEventListener('click', e => {
-    getLink(response => {
-        console.log(response);
-    });
+
+    cont.style.visibility = "visible";
+});
+
+getLink(response => {
+    console.log(response);
 });

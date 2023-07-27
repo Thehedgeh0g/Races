@@ -1,5 +1,10 @@
 package main
 
+// перекинуть рутер в отдельный пакет
+// архитектура api/app/infostucture
+// бд отдельно вынеси
+// разделить структуры бд/реквесты
+// вынести функцию для парса
 import (
 	"database/sql"
 	"fmt"
@@ -28,6 +33,7 @@ func main() {
 	mux.HandleFunc("/login", login)
 	mux.HandleFunc("/menu", menu)
 	mux.HandleFunc("/lobby/{lobbyID}", lobbyHandler(dbx))
+	mux.HandleFunc("/bossLobby/{lobbyID}", bossLobbyHandler(dbx))
 	mux.HandleFunc("/race/{lobbyID}", gameAreaHandler(dbx))
 	mux.HandleFunc("/account", accountHandler(dbx))
 	mux.HandleFunc("/garage", garageHandler)
@@ -52,6 +58,7 @@ func main() {
 	mux.HandleFunc("/api/chooseMap", chooseMap(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getKey", sendKey(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/join", joinLobby(dbx)).Methods(http.MethodPost)
+	mux.HandleFunc("/api/createBossLobby", createBossLobby(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/create", createLobby(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/login", searchUser(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/logout", deleteUser(dbx)).Methods(http.MethodPost)

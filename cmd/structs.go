@@ -1,12 +1,17 @@
 package main
 
 type Bot struct {
-	x           float64
-	y           float64
-	speed       float64
-	angle       float64
-	inSessionId string
-	hp          int
+	x            float64
+	y            float64
+	speed        float64
+	angle        float64
+	inSessionId  string
+	hp           int
+	mapMatrix    [15][15]string
+	visionMatrix [3][3]string
+	userHP       string
+	laps         int
+	checks       int
 }
 
 type User struct {
@@ -25,11 +30,7 @@ type ResultsTable struct {
 type Garage struct {
 	Cars        []Car
 	CountOfCars int
-	ColorCost   int
-	ACarCost    int
-	BCarCost    int
-	UCarCost    int
-	UpgradeCost int
+	Prices      PriceData
 	Money       string
 }
 
@@ -44,8 +45,10 @@ type Car struct {
 }
 
 type LobbySettings struct {
-	MapID  string `json:"MapID"`
-	Rounds string `json:"Rounds"`
+	MapID     string `json:"MapID"`
+	Rounds    string `json:"Rounds"`
+	HP        bool   `json:"Hp"`
+	Collision bool   `json:"Col"`
 }
 
 type UserRequest struct {
@@ -69,7 +72,7 @@ type CreationPage struct {
 }
 
 type MapsData struct {
-	MapID      string `db:"sprite_id"`
+	MapID      string
 	MapPreview []PreviewData
 }
 
@@ -85,33 +88,11 @@ type CellsData struct {
 	CellInfo string
 }
 
-type SpriteData struct {
-	SpriteId   string `db:"sprite_id"`
-	SpritePath string `db:"sprite_path"`
-}
-
-type MapData struct {
-	MapKey string `db:"map_data"`
-}
-
-type Player struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Level    string `db:"exp"`
-}
-
-type AccountPlayer struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Lvl      string `db:"exp"`
-	Bosses   string `db:"boss_count"`
-}
-
-type AccountData struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Lvl      string `db:"exp"`
-	Bosses   string `db:"boss_count"`
+type Account struct {
+	ImgPath  string
+	Nickname string
+	Lvl      string
+	Bosses   string
 	Friends  []*FriendsData
 }
 

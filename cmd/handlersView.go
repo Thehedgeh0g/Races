@@ -89,6 +89,36 @@ func lobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func bossLobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		ts, err := template.ParseFiles("pages/bossLobby.html")
+		if err != nil {
+			http.Error(w, "Internal Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		mapsData, err := mapPreview(db)
+		if err != nil {
+			http.Error(w, "Internal Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		data := CreationPage{
+			Maps: mapsData,
+		}
+
+		err = ts.Execute(w, data)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+	}
+}
 func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		lobbyIDstr := mux.Vars(r)["lobbyID"]
@@ -100,7 +130,7 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapID, _, err := getMapID(db, lobbyID)
+		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
@@ -114,7 +144,7 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mapData, err := getMapData(db, mapID)
+		mapData, err := getMapData(db, lobby.MapID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err)
@@ -169,32 +199,33 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		playerID, err := getUserID(db, r)
+		userID, err := getUserID(db, r)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		player, err := getPlayerData(db, playerID)
+		user, err := getUser(db, userID)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		friendList, err := getFriends(db, playerID)
+		friendList, err := getFriends(db, userID)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
-
-		data := AccountData{
-			ImgPath:  player[0],
-			Nickname: player[1],
-			Lvl:      player[2],
-			Bosses:   player[3],
+		lvl, _ := strconv.Atoi(user.Lvl)
+		user.Lvl = strconv.Itoa(lvl / 100)
+		data := Account{
+			ImgPath:  user.ImgPath,
+			Nickname: user.Nickname,
+			Lvl:      user.Lvl,
+			Bosses:   user.Bosses,
 			Friends:  friendList,
 		}
 

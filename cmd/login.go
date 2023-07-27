@@ -22,7 +22,7 @@ func getUserID(db *sqlx.DB, r *http.Request) (string, error) {
 
 	userIDStr := cookie.Value
 
-	err = search(db, userIDStr)
+	_, err = getUser(db, userIDStr)
 	if err != nil {
 		return "", err
 	}
@@ -47,17 +47,17 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Println(req)
-		user, err := getUser(db, req)
+		user, err := getUserForLog(db, req)
 
 		if err != nil {
 			http.Error(w, "Incorect email or password", 500)
-			log.Println("Incorect email or password")
+			log.Println(err)
 			return
 		}
 
 		http.SetCookie(w, &http.Cookie{
 			Name:    "authCookieName",
-			Value:   fmt.Sprint(user.UserId),
+			Value:   fmt.Sprint(user.ID),
 			Path:    "/",
 			Expires: time.Now().AddDate(0, 0, 1),
 		})
@@ -82,56 +82,9 @@ func AuthByCookie(db *sqlx.DB, w http.ResponseWriter, r *http.Request) error {
 
 	userIDStr := cookie.Value
 
-	err = search(db, userIDStr)
-	log.Println(err)
+	_, err = getUser(db, userIDStr)
 	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func getUser(db *sqlx.DB, req UserRequest) (*Userdata, error) {
-	const query = `
-	SELECT
-	  user_id,
-	  email,
-	  password
-  	FROM
-	  users
-  	WHERE
-	  email = ? AND
-	  password = ?
-	`
-	row := db.QueryRow(query, req.Email, req.Password)
-	log.Println(row)
-	user := new(Userdata)
-	err := row.Scan(&user.UserId, &user.Email, &user.Password)
-	log.Println(user)
-	if err != nil {
-		return nil, err
-	}
-	log.Println(user.UserId)
-	return user, nil
-}
-
-func search(db *sqlx.DB, UserID string) error {
-	const query = `
-	SELECT
-	  user_id,
-	  email,
-	  password
-	FROM
-	  users
-	WHERE
-	  user_id = ?
-	`
-
-	user := new(Userdata)
-
-	row := db.QueryRow(query, UserID)
-	err := row.Scan(&user.UserId, &user.Email, &user.Password)
-	if err != nil {
+		log.Println(err)
 		return err
 	}
 
