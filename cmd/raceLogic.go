@@ -177,7 +177,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 
 	hp := strings.Split(posMessage, " ")[9]
 
-	speed := strings.Split(posMessage, " ")[2]
+	readiness := strings.Split(posMessage, " ")[2]
 
 	angle := strings.Split(posMessage, " ")[3]
 
@@ -200,7 +200,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 	for i, bot := range bots[sessionID] {
 		//log.Println(bot.speed, bot.inSessionId)
 		bot = collision(bot, x, y, hp)
-		if (bot.hp > 0) && !(strings.Contains(races[sessionID], bot.inSessionId+"/")) {
+		if (bot.hp > 0) && !(strings.Contains(races[sessionID], bot.inSessionId+"/")) && (strings.Contains(readiness, "2/")) {
 			bot = AI(db, sessionID, bot)
 			if bot.laps <= 0 {
 				races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + strings.Split(isFinished, "/")[1]
@@ -211,7 +211,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 		}
 
 		//log.Println(bot.speed, bot.inSessionId)
-		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
+		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + "1/" + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
 		//log.Println(botMessage)
 		//log.Println(posMessage)
 		bots[sessionID][i] = bot
@@ -220,7 +220,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 		connMutex.Unlock()
 	}
 
-	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
+	posMessage = y1 + " " + x1 + " " + angle + " " + readiness + " " + hp + " " + inSessionId + races[sessionID]
 
 	return posMessage
 

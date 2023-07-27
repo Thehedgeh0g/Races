@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -103,13 +105,16 @@ func getMapIDs(db *sqlx.DB) ([]string, error) {
 }
 
 func updateCarStatement(db *sqlx.DB, cars, money, userID string) error {
-	stmt := `UPDATE users SET cars = ? money = ? WHERE user_id = ?`
+	stmt := `UPDATE users SET cars = ?, money = ? WHERE user_id = ?`
 
-	_, err := db.Exec(stmt, cars, money, userID)
+	res, err := db.Exec(stmt, cars, money, userID)
 	if err != nil {
+		fmt.Printf("err: %v\n", err)
 		return err
+	} else {
+		result, _ := res.RowsAffected()
+		fmt.Printf("result: %v\n", result)
 	}
-
 	return nil
 }
 
