@@ -94,7 +94,7 @@ func bossLobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) 
 	return func(w http.ResponseWriter, r *http.Request) {
 		lobbyIDstr := mux.Vars(r)["lobbyID"]
 
-		ts, err := template.ParseFiles("pages/lobbycreation.html")
+		ts, err := template.ParseFiles("pages/bossLobby.html")
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			log.Println(err.Error())
