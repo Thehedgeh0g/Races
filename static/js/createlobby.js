@@ -33,7 +33,7 @@ boss.addEventListener("click", () => {
     xhr.addEventListener("load", () =>{
         console.log(xhr.responseText.split('"')[1])
         window.localStorage.setItem("lobbyID", xhr.responseText.substring(12, 18))
-        window.location.href = "/lobby/" + xhr.responseText.split('"')[3]
+        window.location.href = "/bosslobby/" + xhr.responseText.split('"')[3]
     });
 })
 
