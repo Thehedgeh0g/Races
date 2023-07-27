@@ -89,8 +89,11 @@ type CellsData struct {
 }
 
 type Account struct {
-	User    UserData
-	Friends []*FriendsData
+	ImgPath  string
+	Nickname string
+	Lvl      string
+	Bosses   string
+	Friends  []*FriendsData
 }
 
 type FriendsData struct {
