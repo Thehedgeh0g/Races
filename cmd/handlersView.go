@@ -92,7 +92,6 @@ func lobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func bossLobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		lobbyIDstr := mux.Vars(r)["lobbyID"]
 
 		ts, err := template.ParseFiles("pages/bossLobby.html")
 		if err != nil {
@@ -109,8 +108,7 @@ func bossLobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) 
 		}
 
 		data := CreationPage{
-			Token: lobbyIDstr,
-			Maps:  mapsData,
+			Maps: mapsData,
 		}
 
 		err = ts.Execute(w, data)
