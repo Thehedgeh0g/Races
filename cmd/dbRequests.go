@@ -79,7 +79,7 @@ func getLobbyData(db *sqlx.DB, lobbyID string) (LobbyData, error) {
 	`
 	row := db.QueryRow(query, lobbyID)
 	var lobby LobbyData
-	err := row.Scan(&lobby.LobbyID, &lobby.HostID, &lobby.Player2ID, &lobby.Player3ID, &lobby.Player4ID, &lobby.MapID, &lobby.Laps, &lobby.InfiniteHP, &lobby.CollisionOFF)
+	err := row.Scan(&lobby.LobbyID, &lobby.HostID, &lobby.Player2ID, &lobby.Player3ID, &lobby.Player4ID, &lobby.MapID, &lobby.Laps, &lobby.InfiniteHP, &lobby.CollisionOFF, &lobby.Boss)
 	if err != nil {
 		return lobby, err
 	}
@@ -113,11 +113,11 @@ func updateCarStatement(db *sqlx.DB, cars, money, userID string) error {
 	return nil
 }
 
-func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id string) error {
-	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id)
-    VALUES(?, ?, ?, ?, ?)`
+func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id string, boss bool) error {
+	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id, boss)
+    VALUES(?, ?, ?, ?, ?, ?)`
 
-	_, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id)
+	_, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id, boss)
 	if err != nil {
 		return err
 	}

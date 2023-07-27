@@ -57,6 +57,7 @@ func main() {
 	mux.HandleFunc("/api/chooseMap", chooseMap(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getKey", sendKey(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/join", joinLobby(dbx)).Methods(http.MethodPost)
+	mux.HandleFunc("/api/createBossLobby", createBossLobby(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/create", createLobby(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/login", searchUser(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/logout", deleteUser(dbx)).Methods(http.MethodPost)
