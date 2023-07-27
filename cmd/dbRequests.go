@@ -7,7 +7,7 @@ import (
 func getUserForLog(db *sqlx.DB, req UserRequest) (UserData, error) {
 	const query = `
 	SELECT
-	  *
+	  user_id
   	FROM
 	  users
   	WHERE
@@ -16,7 +16,7 @@ func getUserForLog(db *sqlx.DB, req UserRequest) (UserData, error) {
 	`
 	row := db.QueryRow(query, req.Email, req.Password)
 	var user UserData
-	err := row.Scan(&user)
+	err := row.Scan(&user.ID)
 	if err != nil {
 		return user, err
 	}
@@ -35,7 +35,7 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	`
 	row := db.QueryRow(query, userID)
 	var user UserData
-	err := row.Scan(&user)
+	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID)
 	if err != nil {
 		return user, err
 	}
@@ -69,7 +69,7 @@ func getLobbyData(db *sqlx.DB, lobbyID string) (LobbyData, error) {
 	`
 	row := db.QueryRow(query, lobbyID)
 	var lobby LobbyData
-	err := row.Scan(&lobby)
+	err := row.Scan(&lobby.LobbyID, &lobby.HostID, &lobby.Player2ID, &lobby.Player3ID, &lobby.Player4ID, &lobby.MapID, &lobby.Laps, &lobby.InfiniteHP, &lobby.CollisionOFF)
 	if err != nil {
 		return lobby, err
 	}

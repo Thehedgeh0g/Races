@@ -51,7 +51,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			http.Error(w, "Incorect email or password", 500)
-			log.Println("Incorect email or password")
+			log.Println(err)
 			return
 		}
 
