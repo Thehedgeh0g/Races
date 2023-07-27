@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -76,9 +77,9 @@ func updateCar(db *sqlx.DB, userID, req, method string, carID int) (bool, error)
 			}
 			tuneCost -= itWas * prices.ModPrice
 		}
-
+		price = tuneCost
 		if (user.Money-tuneCost >= 0) && doUserHaveCar(cars, carID) {
-			cars[carID] = string(cars[carID][:1]) + req[1:] + cars[carID][2:]
+			cars[carID] = string(cars[carID][:2]) + req[1:] + cars[carID][15:]
 			user.Cars = strings.Join(cars, " ")
 		} else {
 			return false, nil
@@ -94,7 +95,7 @@ func updateCar(db *sqlx.DB, userID, req, method string, carID int) (bool, error)
 			return false, err
 		}
 	}
-
+	fmt.Printf("price: %v\n", price)
 	updateCarStatement(db, user.Cars, strconv.Itoa(user.Money-price), userID)
 
 	return true, nil
@@ -123,7 +124,6 @@ func carStrToObjArr(carsStr string) []Car {
 	var car Car
 
 	for _, carStr := range strings.Split(carsStr, " ") {
-		log.Print(strings.Split(carStr, "/"))
 		car.Scr = strings.Split(carStr, "/")[0]
 		car.Transmission = strings.Split(carStr, "/")[1]
 		car.Engine = strings.Split(carStr, "/")[2]

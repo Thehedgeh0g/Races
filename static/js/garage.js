@@ -74,11 +74,11 @@ xhr.onload = function() {
       GarageCarsCount += 1;
     }
   }
-  PriceCarA = Data.Garage.ACarCost;
-  PriceCarU = Data.Garage.UCarCost;
-  PriceCarB = Data.Garage.BCarCost;
-  PriceColor = Data.Garage.ColorCost;
-  CostUpgrade = Data.Garage.UpgradeCost;
+  PriceCarA = Data.Garage.Prices.ACarPrice;
+  PriceCarU = Data.Garage.Prices.UCarPrice;
+  PriceCarB = Data.Garage.Prices.BCarPrice;
+  PriceColor = Data.Garage.Prices.ColorPrice;
+  CostUpgrade = Data.Garage.Prices.ModPrice;
   Money = Data.Garage.Money;
 
   TuningCar.transmission =  Number(GarageCars[carArrowCnt].Transmission);
@@ -706,6 +706,7 @@ function AcceptPurchase() {
     str += String(TuningCar.suspension);
   }
   str += '/';
+  console.log(str)
   let xhrTuning = new XMLHttpRequest();
   xhrTuning.open("POST", "/api/buyStats");
   xhrTuning.send(JSON.stringify(str));
