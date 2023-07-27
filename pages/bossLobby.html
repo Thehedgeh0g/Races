@@ -4,29 +4,16 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="../static/sprites/abm_blue.png" type="image/x-icon">
+        <link rel="icon" href="/static/sprites/abm_blue.png" type="image/x-icon">
         <title>BRAINLESS RACES</title>
-        <link rel="stylesheet" type="text/css" href="../static/css/createstyle.css" />
+        <link rel="stylesheet" type="text/css" href="../static/css/bossstyle.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-        <script defer src="../static/js/lobby.js"></script>
-        <script defer src="../static/js/lobbySocket.js"></script>
+        <script defer src="../static/js/bossLobby.js"></script>
     </head>
     <body id="body" class="page centering">
         <div class="sector">
-            <div class="chat">
-                <span class="set-header">chat</span>
-                <div class="inner-chat">
-                    <form class="chat-upper" id="chat-upper">
-                        <input type="text" id="chat-field">
-                        <div id="chat-send">send</div>
-                    </form>
-                    <div id="chat-text">
-
-                    </div>
-                </div>
-            </div>
             <div>
                 <div class="window">
                     <span class="set-header">party</span>
@@ -37,102 +24,22 @@
                                 <span id="nickName1">Empty</span>
                                 <span id="lvl1">lvl0</span>
                             </div>
-                            <div id="ready-0" class="ready-info">host</div>
+                            <div id="ready-0" class="ready-info">player</div>
                         </div>
                     </div>
-                    <div class="player" id="player-2">
-                        <img src="" class="avatar" id="avatar2">
-                        <div>
+                    <div class="player boss-text" id="player-2" >
+                        <img src="" class="boss-avatar" id="avatar2">
+                        <div class="inf">
                             <div>
                                 <span id="nickName2">Empty</span>
-                                <span id="lvl2">lvl0</span>
                             </div>
-                            <div id="ready-1" class="ready-info">ready</div>
-                        </div>
-                    </div>
-                    <div class="player" id="player-3">
-                        <img src="" class="avatar" id="avatar3">
-                        <div>
-                            <div>
-                                <span id="nickName3">Empty</span>
-                                <span id="lvl3">lvl0</span>
-                            </div>
-                            <div id="ready-2" class="ready-info">ready</div>
-                        </div>
-                    </div>
-                    <div class="player" id="player-4">
-                        <img src="" class="avatar" id="avatar4">
-                        <div>
-                            <div>
-                                <span id="nickName4">Empty</span>
-                                <span id="lvl4">lvl0</span>
-                            </div>
-                            <div id="ready-3" class="ready-info">ready</div>
+                            <div id="ready-1" class="ready-info bo">boss</div>
                         </div>
                     </div>
                 </div>
-                <div class="token-window">
-                    <span class="title" id="token">Lobby:{{ .Token }}</span>
-                    <div id="copy">Copy</div>
-                </div>
+
             </div>
-            <div>
-                <div class="settings" id="settings">
-                    <div id="inner-settings">
-                        <span class="set-header">settings</span>
-                        <div class="maps" id="maps">
-                            <div>
-                                <img src="/static/sprites/triangle.png" class="triangle" id="triangle">
-                                <span id="choose">map</span>
-                                
-                                <div class="list" id="list">
-                                    {{ range .Maps}}
-                                        <div id="m{{ .MapID }}" class="map-choose-line" onclick="choosen(event)">
-                                            <span class="id">{{ .MapID }}</span>
-                                            <div class="preview">
-                                                {{ range .MapPreview }}
-                                                    <img class="tile__pic" src="../static/map tiles sprites/{{ .CellPath }}.png">
-                                                {{ end }}
-                                            </div>
-                                        </div>
-                                    {{ end }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-block">
-                            <span id="rounds-span">Rounds</span>
-                            <input type="number" id="rounds" min="1" max="100" value="1" oninput="validity.valid||(value='1');">
-                        </div>
-                        <div class="col-block">
-                            <span id="Collision">No collision</span>
-                            <div id="collision-input" class="box">
-                                <div class="dot" id="col-dot"></div>
-                            </div>
-                        </div>
-                        <div class="col-block">
-                            <span id="Collision">Infinity HP</span>
-                            <div id="hp-input" class="box">
-                                <div class="dot" id="hp-dot"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="non-host" class="non-host">
-                        <span class="set-header">settings</span>
-                        <div id="future-map" class="map-choose-line"></div>
-                        <div class="map-choose-line">
-                            <span>Rounds</span>
-                            <span id="non-host__rounds"></span>
-                        </div>
-                        <div class="map-choose-line">
-                            <span>Collision</span>
-                            <span id="non-host__col"></span>
-                        </div>
-                        <div class="map-choose-line">
-                            <span>HP</span>
-                            <span id="non-host__hp"></span>
-                        </div>
-                    </div>
-                </div>
+            <div>          
                 <div id="button" class="button">
                     <span id="button-text">START</span>
                 </div>
