@@ -33,6 +33,7 @@ func main() {
 	mux.HandleFunc("/login", login)
 	mux.HandleFunc("/menu", menu)
 	mux.HandleFunc("/lobby/{lobbyID}", lobbyHandler(dbx))
+	mux.HandleFunc("/bossLobby/{lobbyID}", bossLobbyHandler(dbx))
 	mux.HandleFunc("/race/{lobbyID}", gameAreaHandler(dbx))
 	mux.HandleFunc("/account", accountHandler(dbx))
 	mux.HandleFunc("/garage", garageHandler)
