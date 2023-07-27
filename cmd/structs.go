@@ -72,7 +72,7 @@ type CreationPage struct {
 }
 
 type MapsData struct {
-	MapID      string `db:"sprite_id"`
+	MapID      string
 	MapPreview []PreviewData
 }
 
@@ -88,25 +88,9 @@ type CellsData struct {
 	CellInfo string
 }
 
-type Player struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Level    string `db:"exp"`
-}
-
-type AccountPlayer struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Lvl      string `db:"exp"`
-	Bosses   string `db:"boss_count"`
-}
-
-type AccountData struct {
-	ImgPath  string `db:"avatar"`
-	Nickname string `db:"nickname"`
-	Lvl      string `db:"exp"`
-	Bosses   string `db:"boss_count"`
-	Friends  []*FriendsData
+type Account struct {
+	User    UserData
+	Friends []*FriendsData
 }
 
 type FriendsData struct {

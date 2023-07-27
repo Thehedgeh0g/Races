@@ -169,33 +169,30 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		playerID, err := getUserID(db, r)
+		userID, err := getUserID(db, r)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		player, err := getPlayerData(db, playerID)
+		user, err := getUser(db, userID)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		friendList, err := getFriends(db, playerID)
+		friendList, err := getFriends(db, userID)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
 			return
 		}
 
-		data := AccountData{
-			ImgPath:  player[0],
-			Nickname: player[1],
-			Lvl:      player[2],
-			Bosses:   player[3],
-			Friends:  friendList,
+		data := Account{
+			User:    user,
+			Friends: friendList,
 		}
 
 		err = ts.Execute(w, data)

@@ -237,3 +237,23 @@ func setLobbySettings(db *sqlx.DB, mapID, laps, LobbyID string, hp, collision bo
 
 	return nil
 }
+
+func getUserByNick(db *sqlx.DB, req FriendRequest) (string, error) {
+	const query = `
+	SELECT
+	  user_id
+  	FROM
+	  users
+  	WHERE
+	  nickname = ?
+	`
+	var ID string
+
+	row := db.QueryRow(query, req.Nick)
+	err := row.Scan(&ID)
+	if err != nil {
+		return "", err
+	}
+
+	return ID, nil
+}
