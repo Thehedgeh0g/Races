@@ -51,7 +51,9 @@ func getPrices(db *sqlx.DB) (PriceData, error) {
 	  prices  
 	`
 	var prices PriceData
-	err := db.Select(prices, query)
+	row := db.QueryRow(query)
+	err := row.Scan(&prices.ACarPrice, &prices.BCarPrice, &prices.UCarPrice, &prices.ColorPrice, &prices.ModPrice)
+
 	if err != nil {
 		return prices, err
 	}
