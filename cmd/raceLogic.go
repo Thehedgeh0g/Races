@@ -177,7 +177,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 
 	hp := strings.Split(posMessage, " ")[9]
 
-	speed := strings.Split(posMessage, " ")[2]
+	readiness := strings.Split(posMessage, " ")[2]
 
 	angle := strings.Split(posMessage, " ")[3]
 
@@ -211,7 +211,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 		}
 
 		//log.Println(bot.speed, bot.inSessionId)
-		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
+		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + "1" + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
 		//log.Println(botMessage)
 		//log.Println(posMessage)
 		bots[sessionID][i] = bot
@@ -220,7 +220,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 		connMutex.Unlock()
 	}
 
-	posMessage = y1 + " " + x1 + " " + angle + " " + speed + " " + hp + " " + inSessionId + races[sessionID]
+	posMessage = y1 + " " + x1 + " " + angle + " " + readiness + " " + hp + " " + inSessionId + races[sessionID]
 
 	return posMessage
 
