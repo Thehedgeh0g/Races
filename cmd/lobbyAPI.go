@@ -311,7 +311,62 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		lobbyId := generateLobbyId()
 
-		err = insert(db, lobbyId, hostId, "0", "0", "0")
+		err = insert(db, lobbyId, hostId, "0", "0", "0", false)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		ID, err := strconv.Atoi(lobbyId)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		err = UPDATE(db, hostId, ID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		createGroup(lobbyId)
+
+		response := struct {
+			LobbyID string `json:"lobbyId"`
+		}{
+			LobbyID: lobbyId,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
+	}
+}
+
+func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		hostId, err := getUserID(db, r)
+		log.Println(hostId, "host")
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		lobbyId := generateLobbyId()
+
+		err = insert(db, lobbyId, hostId, "10", "0", "0", true)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())
@@ -393,7 +448,11 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if lobby.Player2ID == "0" {
+		var Error string
+
+		if lobby.Boss {
+			Error = "This lobby for single player"
+		} else if lobby.Player2ID == "0" {
 			err = addUserIntoLobby(db, "2", lobbyID, userID)
 			if err != nil {
 				http.Error(w, "Error", 500)
@@ -415,25 +474,25 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			Error := "This lobby is full"
+			Error = "This lobby is full"
 
-			response := struct {
-				Error string `json:"error"`
-			}{
-				Error: Error,
-			}
-
-			jsonResponse, err := json.Marshal(response)
-			if err != nil {
-				http.Error(w, "Server Error", 500)
-				log.Println(err.Error())
-				return
-			}
-
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			w.Write(jsonResponse)
 		}
+		response := struct {
+			Error string `json:"error"`
+		}{
+			Error: Error,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 	}
 }
 

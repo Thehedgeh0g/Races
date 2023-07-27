@@ -29,6 +29,7 @@ type LobbyData struct {
 	Laps         string `db:"rounds"`
 	InfiniteHP   bool   `db:"hp"`
 	CollisionOFF bool   `db:"collision"`
+	Boss         bool   `db:"boss"`
 }
 
 type SpriteData struct {
