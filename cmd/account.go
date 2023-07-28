@@ -47,7 +47,7 @@ func getFriends(db *sqlx.DB, playerID string) ([]*FriendsData, error) {
 			err = row.Scan(&nick.Nickname)
 
 			if err != nil {
-				log.Println(err.Error(), "tutr")
+				log.Println(err.Error())
 				return nil, err
 			}
 
