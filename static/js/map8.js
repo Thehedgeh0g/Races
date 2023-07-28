@@ -242,12 +242,35 @@ function drawFrame() {
     drawCar(Car, CarPosX, CarPosY);
 
     drawMapDots();
+
+    endTime = new Date();
+    dif = endTime - startTime;
+    dif =
+      String(divme((endTime - startTime) / 1000, 60)) +
+      ":" +
+      String(((endTime - startTime) / 1000) % 60);
+    //console.log(dif);
+    let curTime = new Date();
+    dif1 = ((curTime - startTime) / 1000) % 60;
+    if (dif1 < 5 && ready != 0) {
+      document.getElementById("timer").innerHTML = "STARTING IN " + String(5 - dif1).slice(0, 4);
+    }
+    let h = wasd.r;
+    if (dif1 > 5 && dif1 < 8 &&ready != 0) {
+      document.getElementById("timer").innerHTML = "GO";
+      h = 2;
+    }
+    if (dif1 > 6 && ready != 0) {
+      document.getElementById("timer").style.visibility = "hidden";
+      h = 2;
+    }
+
     dial.style.transform = "rotate(" + Math.abs(speed * 18) + "deg)";
     if (sflag == true) {
       var message =
         window.location.pathname.split("/")[2] +
         " race " +
-        String(wasd.r) +
+        String(h)  + "/" + String(speed) +
         " " +
         String(drawAngle) +
         " " +
@@ -267,27 +290,10 @@ function drawFrame() {
         "/" +
         dif;
       socket.send(JSON.stringify(message));
-      //console.log(message);
+      console.log(message);
     }
 
-    endTime = new Date();
-    dif = endTime - startTime;
-    dif =
-      String(divme((endTime - startTime) / 1000, 60)) +
-      ":" +
-      String(((endTime - startTime) / 1000) % 60);
-    //console.log(dif);
-    let curTime = new Date();
-    dif1 = ((curTime - startTime) / 1000) % 60;
-    if (dif1 < 5 && ready != 0) {
-      document.getElementById("timer").innerHTML = "STARTING IN " + String(5 - dif1).slice(0, 4);
-    }
-    if (dif1 > 5 && dif1 < 8 &&ready != 0) {
-      document.getElementById("timer").innerHTML = "GO";
-    }
-    if (dif1 > 8 && ready != 0) {
-      document.getElementById("timer").style.visibility = "hidden";
-    }
+
 
     requestAnimationFrame(drawFrame);
   }, 16);
