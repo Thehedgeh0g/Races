@@ -42,9 +42,10 @@ func main() {
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
 
+	mux.HandleFunc("/api/getAchivment", sendAchivment(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/registrate", getNewUser(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/recordKey", recordKey(dbx)).Methods(http.MethodPost)
-	mux.HandleFunc("/api/getSprites", getSprites(dbx)).Methods(http.MethodGet)
+	mux.HandleFunc("/api/getSprites", sendSprites(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/chooseCar", chooseCar(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/buyStats", tune(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/buyColor", buyColor(dbx)).Methods(http.MethodPost)

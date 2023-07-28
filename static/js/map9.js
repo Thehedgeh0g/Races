@@ -28,17 +28,17 @@ canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
 
 var audioStart = new Audio();
-audioStart.src = '../static/sounds/jiga2kStart.mp3';
+audioStart.src = "../static/sounds/jiga2kStart.mp3";
 var audioStay = new Audio();
-audioStay.src = '../static/sounds/jiga hol2Stay.wav';
+audioStay.src = "../static/sounds/jiga hol2Stay.wav";
 var audioGo = new Audio();
-audioGo.src = '../static/sounds/jiga 3kGo2.wav';
+audioGo.src = "../static/sounds/jiga 3kGo2.wav";
 var audioStop = new Audio();
-audioStop.src = '../static/sounds/jiga 3kStop.mp3';
+audioStop.src = "../static/sounds/jiga 3kStop.mp3";
 var audioTires = new Audio();
-audioTires.src = '../static/sounds/tires.wav';
+audioTires.src = "../static/sounds/tires.wav";
 var audioEngineOn = new Audio();
-audioEngineOn.src = '../static/sounds/jigaEngineOn.wav';
+audioEngineOn.src = "../static/sounds/jigaEngineOn.wav";
 
 myCar = 0;
 Car.src = "/static/sprites/AY.png";
@@ -253,10 +253,11 @@ function drawFrame() {
     let curTime = new Date();
     dif1 = ((curTime - startTime) / 1000) % 60;
     if (dif1 < 5 && ready != 0) {
-      document.getElementById("timer").innerHTML = "STARTING IN " + String(5 - dif1).slice(0, 4);
+      document.getElementById("timer").innerHTML =
+        "STARTING IN " + String(5 - dif1).slice(0, 4);
     }
     let h = wasd.r;
-    if (dif1 > 5 && dif1 < 8 &&ready != 0) {
+    if (dif1 > 5 && dif1 < 8 && ready != 0) {
       document.getElementById("timer").innerHTML = "GO";
       h = 2;
     }
@@ -270,7 +271,9 @@ function drawFrame() {
       var message =
         window.location.pathname.split("/")[2] +
         " race " +
-        String(h)  + "/" + String(speed) +
+        String(h) +
+        "/" +
+        String(speed) +
         " " +
         String(drawAngle) +
         " " +
@@ -290,10 +293,8 @@ function drawFrame() {
         "/" +
         dif;
       socket.send(JSON.stringify(message));
-      console.log(message);
+      //console.log(message);
     }
-
-
 
     requestAnimationFrame(drawFrame);
   }, 16);
@@ -383,9 +384,6 @@ function UpdatePosition() {
         )
       ) {
         if (!cars[i].cflag) {
-          //angle = Number(cars[i].Angle);
-          //speed = Number(cars[i].Speed);
-
           let angle1 = Number(cars[i].Angle);
           let speed1 = Number(cars[i].Speed);
 
@@ -401,7 +399,6 @@ function UpdatePosition() {
               speed = -speed1;
             }
           }
-
           if (cars[myCar].HP > 0) {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%";
@@ -412,12 +409,10 @@ function UpdatePosition() {
               mspeed = 0;
             }
           }
-
           xspeed = Math.sin(angle) * speed;
           yspeed = Math.cos(angle) * speed;
         }
         cars[i].cflag = true;
-        console.log(cars[i].cflag);
       } else {
         cars[i].cflag = false;
       }
@@ -484,9 +479,6 @@ function UpdatePosition() {
   y1 = xcanvas;
 
   //displayDots();
-
-
-
 }
 
 function initEventsListeners() {
@@ -498,13 +490,11 @@ function initEventsListeners() {
 }
 
 function drawCar(image, x, y) {
-
-  if (CarPosY == -carH){
-    canvasContext.translate(0, -carH)
+  if (CarPosY == -carH) {
+    canvasContext.translate(0, -carH);
   }
 
   canvasContext.rotate(drawAngle);
-
 
   canvasContext.translate(-xcanvas, -ycanvas);
 
@@ -528,11 +518,10 @@ function drawCar(image, x, y) {
 
   canvasContext.translate(xcanvas, ycanvas);
 
-
   canvasContext.rotate(-drawAngle);
 
-  if (CarPosY == -carH){
-    canvasContext.translate(0, carH)
+  if (CarPosY == -carH) {
+    canvasContext.translate(0, carH);
   }
 
   bar[myCar].style.top = ycanvas - 25 + 15 * Math.cos(angle) + "px";
@@ -877,7 +866,7 @@ function onCanvasKeyUp(event) {
   Car.src = cars[myCar].Img;
   if (event.code === "KeyW") {
     wasd.w = 0;
-    if ((finished == 0) && (wasd.r == 1)){
+    if (finished == 0 && wasd.r == 1) {
       audioGo.currentTime = 0;
       audioStart.currentTime = 0;
       audioStart.pause();
@@ -887,8 +876,7 @@ function onCanvasKeyUp(event) {
       }
       audioStay.loop = true;
       audioStay.play();
-    }
-    else {
+    } else {
       audioGo.currentTime = 0;
       audioGo.pause();
     }
@@ -901,7 +889,7 @@ function onCanvasKeyUp(event) {
   }
   if (event.code === "KeyS") {
     wasd.s = 0;
-    if ((finished == 0) && (wasd.r == 1)){
+    if (finished == 0 && wasd.r == 1) {
       audioGo.currentTime = 0;
       audioStart.currentTime = 0;
       audioStart.pause();
@@ -910,8 +898,7 @@ function onCanvasKeyUp(event) {
         audioStop.play();
       }
       audioStay.play();
-    }
-    else {
+    } else {
       audioGo.currentTime = 0;
       audioGo.pause();
     }
@@ -927,8 +914,8 @@ function onCanvasKeyUp(event) {
 }
 
 function audioFix() {
-  if ((wasd.w == 1) && (Math.abs(speed) > 4) && (finished == 0)){
-    if(audioGo.currentTime >= audioGo.duration - 0.05) {
+  if (wasd.w == 1 && Math.abs(speed) > 4 && finished == 0) {
+    if (audioGo.currentTime >= audioGo.duration - 0.05) {
       audioStay.currentTime = 0;
       audioStay.pause();
       audioGo.currentTime = 0;
@@ -936,8 +923,8 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
-  if ((wasd.w == 0) && (wasd.s == 0) && (wasd.r == 1)){
-    if(audioStay.currentTime >= audioStay.duration - 0.05) {
+  if (wasd.w == 0 && wasd.s == 0 && wasd.r == 1) {
+    if (audioStay.currentTime >= audioStay.duration - 0.05) {
       audioGo.currentTime = 0;
       audioGo.pause();
       audioStay.currentTime = 0;
@@ -945,25 +932,24 @@ function audioFix() {
     }
     requestAnimationFrame(audioFix);
   }
-  if ((wasd.a == 1) && (wasd.d == 1) && (Math.abs(speed) > 4)){
-    if(audioTires.currentTime >= audioTires.duration - 0.05) {
+  if (wasd.a == 1 && wasd.d == 1 && Math.abs(speed) > 4) {
+    if (audioTires.currentTime >= audioTires.duration - 0.05) {
       audioTires.currentTime = 0;
       audioTires.play();
     }
     requestAnimationFrame(audioFix);
-  }
-  else {
+  } else {
     audioTires.currentTime = 0;
     audioTires.pause();
   }
-  if (finished == 1){
+  if (finished == 1) {
     audioGo.currentTime = 0;
     audioGo.pause();
   }
 }
 function onCanvasKeyDown(event) {
   let curTime = new Date();
-  
+
   if (event.code === "KeyR") {
     if (wasd.r == 0) {
       wasd.r = 1;
@@ -971,8 +957,7 @@ function onCanvasKeyDown(event) {
       audioEngineOn.play();
       audioStay.loop = true;
       audioStay.play();
-    }
-    else {
+    } else {
       wasd.r = 0;
       wasd.w = 0;
       wasd.a = 0;
@@ -986,47 +971,42 @@ function onCanvasKeyDown(event) {
       audioStop.pause();
     }
   }
-  dif1 = 
-    ((curTime - startTime) / 1000) % 60;
+  dif1 = ((curTime - startTime) / 1000) % 60;
 
   console.log(dif1);
   if (wasd.r == 1 && dif1 > 5 && ready != 0) {
     ready = 2;
     if (event.code === "KeyW") {
       wasd.w = 1;
-      if (finished == 0){
+      if (finished == 0) {
         audioStart.play();
         audioGo.loop = true;
         audioGo.play();
-      }
-      else {
+      } else {
         audioGo.currentTime = 0;
         audioGo.pause();
       }
     }
-    
+
     if (event.code === "KeyS") {
       wasd.s = 1;
-      if (finished == 0){
+      if (finished == 0) {
         audioStart.play();
         audioGo.loop = true;
         audioGo.play();
-      }
-      else {
+      } else {
         audioGo.currentTime = 0;
         audioGo.pause();
       }
     }
-    
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
-    if ((finished == 0)  && (Math.abs(speed) > 4) && (!(grassArr.includes(curTile)))){
+    if (finished == 0 && Math.abs(speed) > 4 && !grassArr.includes(curTile)) {
       audioTires.loop = true;
       audioTires.play();
-    }
-    else {
+    } else {
       audioTires.currentTime = 0;
       audioTires.pause();
     }
@@ -1034,11 +1014,10 @@ function onCanvasKeyDown(event) {
   if (event.code === "KeyD") {
     wasd.d = 1;
     Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
-    if ((finished == 0)  && (Math.abs(speed) > 4) && (!(grassArr.includes(curTile)))){
+    if (finished == 0 && Math.abs(speed) > 4 && !grassArr.includes(curTile)) {
       audioTires.loop = true;
       audioTires.play();
-    }
-    else {
+    } else {
       audioTires.currentTime = 0;
       audioTires.pause();
     }
@@ -1270,6 +1249,28 @@ function findStartTile() {
 
 let startTime = new Date();
 console.log(startTime);
+
+const achive = document.getElementById("achive");
+const achiveImg = document.getElementById("achive__img");
+const achiveTitle = document.getElementById("achive__title");
+const achiveSubtitle = document.getElementById("achive__subtitle");
+const achiveSteps = document.getElementById("achive__steps");
+
+function showAchive(imgSrc, title, subtitle, steps) {
+  achiveImg.src = imgSrc;
+  achiveTitle.innerHTML = title;
+  achiveSubtitle.innerHTML = subtitle;
+  achiveSteps.innerHTML = steps;
+  achive.style.width = "9vw";
+  achive.style.borderWidth = "3px";
+  setTimeout(removeAchive, 5000);
+}
+
+function removeAchive() {
+  achive.style.width = "0vw";
+  achive.style.borderWidth = "0px";
+}
+
 getTiles();
 
 var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
@@ -1281,14 +1282,14 @@ socket.onmessage = function (event) {
   cars[go[5]].X = go[0];
   cars[go[5]].Y = go[1];
   cars[go[5]].Angle = go[2];
-  cars[go[5]].Speed = go[3].split('/')[1];
-  cars[go[5]].Ready = go[3].split('/')[0];
+  cars[go[5]].Speed = go[3].split("/")[1];
+  cars[go[5]].Ready = go[3].split("/")[0];
   if (ready == 0) {
     ready = 1;
     for (let i = 0; i < amountOfPlayers; i++) {
       if (cars[i].Ready == "0") {
         ready = 0;
-      } 
+      }
     }
     if (ready == 1) {
       startTime = new Date();
@@ -1404,7 +1405,9 @@ socket.addEventListener("open", (event) => {
   var message =
     window.location.pathname.split("/")[2] +
     " race " +
-    String(wasd.r) + "/" + String(speed) +
+    String(wasd.r) +
+    "/" +
+    String(speed) +
     " " +
     String(drawAngle) +
     " " +

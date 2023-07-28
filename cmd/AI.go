@@ -10,7 +10,7 @@ import (
 )
 
 func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
-
+	bot.angle = math.Floor(bot.angle*10000) / 10000
 	corners := "/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/"
 	grass := "/1/2/3/4/"
 	roads := "/10/11/17/18/27/28/29/30/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/34/32/31/33/"
@@ -43,30 +43,35 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 	deviation = math.Floor(deviation*100) / 100
 
 	if strings.Contains(corners, "/"+VisMat[1][2]+"/") || strings.Contains(corners, "/"+VisMat[1][1]+"/") {
-		if bot.speed > 1.2 {
-			bot.speed -= 0.1
-		} else if bot.speed > 0.95 {
-			bot.speed -= 0.05
-		} else if bot.speed > 0.9 {
-			bot.speed -= 0.01
-		}
-	} else {
-		if bot.speed+0.08 < 5. {
-			bot.speed = bot.speed + 0.08
+		if bot.speed > 3.5 {
+			bot.speed -= 0.07
+		} else if bot.speed > 3.3 {
+			bot.speed -= 0.04
+		} else if bot.speed > 3.1 {
+			bot.speed -= 0.005
 		} else {
-			bot.speed = 5.
+
+			bot.speed = bot.speed + 0.08
+		}
+
+	} else {
+		if bot.speed+0.1 < 7.5 {
+			bot.speed = bot.speed + 0.1
+		} else {
+			bot.speed = 7.5
 		}
 	}
+	rspeed := 0.03 * math.Sqrt(bot.speed*1.6)
 	if strings.Contains(grass, "/"+VisMat[1][2]+"/") {
 		if strings.Contains(roads, "/"+VisMat[2][1]+"/") {
-			bot = turnRight(bot)
+			bot = turnRight(bot, rspeed)
 		} else if strings.Contains(roads, "/"+VisMat[0][1]+"/") {
-			bot = turnLeft(bot)
+			bot = turnLeft(bot, rspeed)
 		}
 	} else if deviation < 0 {
-		bot = turnLeft(bot)
+		bot = turnLeft(bot, rspeed)
 	} else if deviation > 0 {
-		bot = turnRight(bot)
+		bot = turnRight(bot, rspeed)
 	} else {
 		bot = moveStright(bot)
 	}
@@ -152,8 +157,8 @@ func createVision(botsMap [15][15]string, curTileIDI, curTileIDJ int) [3][3]stri
 	return botVision
 }
 
-func turnRight(bot Bot) Bot {
-	bot.angle = bot.angle - math.Pi/100
+func turnRight(bot Bot, rspeed float64) Bot {
+	bot.angle = bot.angle - rspeed
 	xSpeed := math.Sin(bot.angle) * bot.speed
 	ySpeed := math.Cos(bot.angle) * bot.speed
 	bot.x = bot.x + xSpeed
@@ -170,8 +175,8 @@ func moveStright(bot Bot) Bot {
 	return bot
 }
 
-func turnLeft(bot Bot) Bot {
-	bot.angle = bot.angle + math.Pi/100
+func turnLeft(bot Bot, rspeed float64) Bot {
+	bot.angle = bot.angle + rspeed
 	xSpeed := math.Sin(bot.angle) * bot.speed
 	ySpeed := math.Cos(bot.angle) * bot.speed
 	bot.x = bot.x + xSpeed
@@ -216,42 +221,24 @@ func findStart(tiles string, id string) (float64, float64) {
 }
 
 func addAI(db *sqlx.DB, lobbyID string) {
-	const query = `
-		SELECT
-		  player2_id,
-		  player3_id,
-		  player4_id,
-		  rounds
-		FROM
-		  sessions
-		WHERE    
-		  session_id = ?
-	`
-	var id1, id2, id3 string
-	laps := 1
-	row := db.QueryRow(query, lobbyID)
-	err := row.Scan(&id1, &id2, &id3, &laps)
+
+	lobby, err := getLobbyData(db, lobbyID)
 	if err != nil {
 		log.Println(err)
 	}
+	laps, _ := strconv.Atoi(lobby.Laps)
 	var bot Bot
 	bot.mapMatrix = createMapMatrix(db, lobbyID)
 	bot.angle = math.Pi / 2
 	bot.hp = 100
 	bot.userHP = "100"
 	bot.speed = 0
-	bot.laps = 1
-	if id1 == "10" {
+	bot.laps = laps
+	if lobby.Player2ID == "10" {
 
 		bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "1")
 
 		bot.inSessionId = "1"
-	} else if id2 == "10" {
-		bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "2")
-		bot.inSessionId = "2"
-	} else if id3 == "10" {
-		bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "3")
-		bot.inSessionId = "3"
 	}
 	curTileI, curTileJ := getCurTile(int(bot.x), int(bot.y))
 	bot.visionMatrix = createVision(bot.mapMatrix, curTileI, curTileJ)

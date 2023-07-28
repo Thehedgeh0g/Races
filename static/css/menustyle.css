@@ -146,3 +146,41 @@
     padding: 5px;
     cursor: pointer;
 }
+
+
+
+#achive {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 10vh;
+    width: 0vw;
+    font-size: 2.5vh;
+    border-width:  0px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #ffe6bf;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    transition: all 0.3s ease-out;
+}
+
+#achive__img {
+    height: 10vh;
+    width: 10vh;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0.5vw;
+}
+
+#achive__subtitle {
+    font-size: 2vh;
+}
+
+#achive__steps {
+    font-size: 1.5vh;
+}

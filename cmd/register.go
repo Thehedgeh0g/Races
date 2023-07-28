@@ -34,7 +34,7 @@ func getNewUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		//log.Println(newUser.Avatar)
 		userImg, err := base64.StdEncoding.DecodeString(fileData)
 		if err != nil {
-			http.Error(w, "img", 600)
+			http.Error(w, "img", 500)
 			log.Println(err.Error())
 			return
 		}
