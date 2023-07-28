@@ -272,3 +272,31 @@ func getUserByNick(db *sqlx.DB, req FriendRequest) (string, error) {
 
 	return ID, nil
 }
+
+func getSprites(db *sqlx.DB) ([]string, error) {
+	const query = `
+		SELECT
+		  sprite_path
+		FROM
+		  sprites  
+	`
+	var sprites []string
+	err := db.Select(&sprites, query)
+	if err != nil {
+		return nil, err
+	}
+	return sprites, nil
+}
+
+func saveMap(db *sqlx.DB, key string) error {
+	const stmt = `INSERT INTO maps (map_data)
+		VALUES(?)`
+
+	_, err := db.Exec(stmt, key[:len(key)-1])
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
