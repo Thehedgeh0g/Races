@@ -38,15 +38,15 @@ func sendAchivment(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var achivment AchivmentData
-
-		if checkAchivments(user, achivmentID) {
+		
+		if !checkAchivments(user, achivmentID) {
 			achivment, err = getAchivment(db, achivmentID)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
 				return
 			}
-
+			log.Println(achivment)
 			err := updateAchivments(db, user, achivmentID)
 			if err != nil {
 				http.Error(w, "Error", 500)

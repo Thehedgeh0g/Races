@@ -12,7 +12,7 @@ type UserData struct {
 	Friends    string `db:"friends"`
 	Cars       string `db:"cars"`
 	CurLobbyID string `db:"curLobbyId"`
-	achivments string `db:"userAchivments"`
+	Achivments string `db:"userAchivments"`
 }
 
 type MapData struct {
@@ -51,4 +51,5 @@ type AchivmentData struct {
 	Achivment     string `db:"achivment"`
 	AchivmentDesc string `db:"achivmentDesc"`
 	AchivmentPath string `db:"achivmentPath"`
+	AchivmentCom string `db:"achivmentCom"`
 }

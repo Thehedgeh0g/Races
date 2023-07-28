@@ -21,13 +21,15 @@ function removeAchive() {
 
 function getAchive(achivmentID) {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', "/api/");
+    xhr.open('POST', "/api/getAchivment");
     xhr.addEventListener('load', () => {
-      if(xhr.responseText) {
-        showAchive();
+      if(true) {
+          console.log()
+          let resp = JSON.parse(xhr.response);
+          showAchive(resp.achivment.AchivmentPath, resp.achivment.Achivment, resp.achivment.AchivmentCom, resp.achivment.AchivmentDesc);
       }
     });
-    xhr.send(achivmentID);
+    xhr.send(JSON.stringify(achivmentID));
 }
 
 

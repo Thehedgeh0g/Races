@@ -37,7 +37,8 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	  nickname,
 	  friends,
 	  cars,
-	  currLobby_id
+	  currLobby_id,
+	  usersAchivments
   	FROM
 	  users
   	WHERE
@@ -45,7 +46,7 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	`
 	row := db.QueryRow(query, userID)
 	var user UserData
-	err := row.Scan(&user.ID, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID)
+	err := row.Scan(&user.ID, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID, &user.Achivments)
 	if err != nil {
 		return user, err
 	}
@@ -311,13 +312,13 @@ func getAchivment(db *sqlx.DB, achivmentID string) (AchivmentData, error) {
 		SELECT
 		  *
 		FROM
-		  achivmets
+		  achivments
 		WHERE
 		  achivmentID = ?  
 	`
 	var achivment AchivmentData
 	row := db.QueryRow(query, achivmentID)
-	err := row.Scan(&achivment)
+	err := row.Scan(&achivment.AchivmentID, &achivment.Achivment, &achivment.AchivmentDesc, &achivment.AchivmentPath, &achivment.AchivmentCom)
 	if err != nil {
 		return achivment, err
 	}
@@ -326,8 +327,8 @@ func getAchivment(db *sqlx.DB, achivmentID string) (AchivmentData, error) {
 }
 
 func updateAchivments(db *sqlx.DB, user UserData, achivmentID string) error {
-	stmt := `UPDATE users SET userAchivment = ? WHERE user_id = ?`
-	achivmentsStr := user.achivments[:len(user.achivments)-1] + "/" + achivmentID + "/"
+	stmt := `UPDATE users SET usersAchivments = ? WHERE user_id = ?`
+	achivmentsStr := user.Achivments + "/" + achivmentID + "/"
 	_, err := db.Exec(stmt, achivmentsStr, user.ID)
 	if err != nil {
 		return err
