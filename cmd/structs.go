@@ -77,7 +77,7 @@ type MapsData struct {
 }
 
 type PreviewData struct {
-	CellPath string `db:"sprite_path"`
+	CellPath string
 }
 
 type GameMap struct {

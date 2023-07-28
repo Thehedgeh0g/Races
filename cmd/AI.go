@@ -49,7 +49,11 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 			bot.speed -= 0.05
 		} else if bot.speed > 0.9 {
 			bot.speed -= 0.01
+		} else {
+
+			bot.speed = bot.speed + 0.08
 		}
+
 	} else {
 		if bot.speed+0.08 < 5. {
 			bot.speed = bot.speed + 0.08
@@ -153,7 +157,7 @@ func createVision(botsMap [15][15]string, curTileIDI, curTileIDJ int) [3][3]stri
 }
 
 func turnRight(bot Bot) Bot {
-	bot.angle = bot.angle - math.Pi/100
+	bot.angle = bot.angle - math.Pi/150
 	xSpeed := math.Sin(bot.angle) * bot.speed
 	ySpeed := math.Cos(bot.angle) * bot.speed
 	bot.x = bot.x + xSpeed
@@ -171,7 +175,7 @@ func moveStright(bot Bot) Bot {
 }
 
 func turnLeft(bot Bot) Bot {
-	bot.angle = bot.angle + math.Pi/100
+	bot.angle = bot.angle + math.Pi/150
 	xSpeed := math.Sin(bot.angle) * bot.speed
 	ySpeed := math.Cos(bot.angle) * bot.speed
 	bot.x = bot.x + xSpeed
