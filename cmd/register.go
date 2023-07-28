@@ -56,10 +56,10 @@ func getNewUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		const stmt = `INSERT INTO users (email, password, Avatar, nickname)
-		VALUES(?, ?, ?, ?)`
+		const stmt = `INSERT INTO users (email, password, Avatar, nickname, friends, achivments)
+		VALUES(?, ?, ?, ?, ?, ?)`
 
-		_, err = db.Exec(stmt, newUser.Email, newUser.Password, "../static/img/"+newUser.AvatarName, newUser.Nickname)
+		_, err = db.Exec(stmt, newUser.Email, newUser.Password, "../static/img/"+newUser.AvatarName, newUser.Nickname, "0", "/0/")
 
 		if err != nil {
 			http.Error(w, "Server Error", 500)

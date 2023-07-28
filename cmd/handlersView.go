@@ -219,14 +219,23 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+
+		achivments, err := getAchivments(db, userID)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
 		lvl, _ := strconv.Atoi(user.Lvl)
 		user.Lvl = strconv.Itoa(lvl / 100)
 		data := Account{
-			ImgPath:  user.ImgPath,
-			Nickname: user.Nickname,
-			Lvl:      user.Lvl,
-			Bosses:   user.Bosses,
-			Friends:  friendList,
+			ImgPath:    user.ImgPath,
+			Nickname:   user.Nickname,
+			Lvl:        user.Lvl,
+			Bosses:     user.Bosses,
+			Friends:    friendList,
+			Achivments: achivments,
 		}
 
 		err = ts.Execute(w, data)
