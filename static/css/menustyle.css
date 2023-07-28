@@ -147,13 +147,15 @@
     cursor: pointer;
 }
 
+
+
 #achive {
     position: fixed;
     top: 0;
     right: 0;
-    height: 2vh;
+    height: 10vh;
     width: 0vw;
-    font-size: 0.5vh;
+    font-size: 2.5vh;
     border-width:  0px;
     border-style: solid;
     border-color: #ffc30e;
@@ -165,20 +167,20 @@
 }
 
 #achive__img {
-    height: 2vh;
-    width: 2vh;
+    height: 10vh;
+    width: 10vh;
 }
 
 .column {
     display: flex;
     flex-direction: column;
-    padding-left: 0.1vw;
+    padding-left: 0.5vw;
 }
 
 #achive__subtitle {
-    font-size: 0.4vh;
+    font-size: 2vh;
 }
 
 #achive__steps {
-    font-size: 0.3vh;
+    font-size: 1.5vh;
 }
