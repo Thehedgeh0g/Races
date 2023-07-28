@@ -18,3 +18,16 @@ function removeAchive() {
   achive.style.width = "0vw";
   achive.style.borderWidth = "0px";
 }
+
+function getAchive(achivmentID) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', "/api/");
+    xhr.addEventListener('load', () => {
+      if(xhr.responseText) {
+        showAchive();
+      }
+    });
+    xhr.send(achivmentID);
+}
+
+

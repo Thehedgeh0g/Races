@@ -119,10 +119,15 @@ func updateCarStatement(db *sqlx.DB, cars, money, userID string) error {
 }
 
 func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id string, boss bool) error {
-	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id, boss)
-    VALUES(?, ?, ?, ?, ?, ?)`
-
-	_, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id, boss)
+	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id, rounds, boss)
+    VALUES(?, ?, ?, ?, ?, ?, ?)`
+	var rounds string
+	if boss {
+		rounds = "80"
+	} else {
+		rounds = "1"
+	}
+	_, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id, rounds, boss)
 	if err != nil {
 		return err
 	}
@@ -294,6 +299,36 @@ func saveMap(db *sqlx.DB, key string) error {
 
 	_, err := db.Exec(stmt, key[:len(key)-1])
 
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getAchivment(db *sqlx.DB, achivmentID string) (AchivmentData, error) {
+	const query = `
+		SELECT
+		  *
+		FROM
+		  achivmets
+		WHERE
+		  achivmentID = ?  
+	`
+	var achivment AchivmentData
+	row := db.QueryRow(query, achivmentID)
+	err := row.Scan(&achivment)
+	if err != nil {
+		return achivment, err
+	}
+
+	return achivment, nil
+}
+
+func updateAchivments(db *sqlx.DB, user UserData, achivmentID string) error {
+	stmt := `UPDATE users SET userAchivment = ? WHERE user_id = ?`
+	achivmentsStr := user.achivments[:len(user.achivments)-1] + "/" + achivmentID + "/"
+	_, err := db.Exec(stmt, achivmentsStr, user.ID)
 	if err != nil {
 		return err
 	}
