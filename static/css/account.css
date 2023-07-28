@@ -104,19 +104,19 @@
     transition: max-height 0.3s ease-out;
 }
 
-.friends-data::-webkit-scrollbar {
+.friends-data::-webkit-scrollbar, .achi-data::-webkit-scrollbar {
     width: 12px; /* устанавливаем ширину полосы прокрутки */
 }
 
-.friends-data::-webkit-scrollbar-track, .account-data::-webkit-scrollbar-track {
+.friends-data::-webkit-scrollbar-track, .account-data::-webkit-scrollbar-track, .achi-data::-webkit-scrollbar-track {
     background-color: #d6b078; /* устанавливаем цвет фона полосы прокрутки */
 }
 
-.friends-data::-webkit-scrollbar-thumb, .account-data::-webkit-scrollbar-thumb {
+.friends-data::-webkit-scrollbar-thumb, .account-data::-webkit-scrollbar-thumb, .achi-data::-webkit-scrollbar-thumb {
     background-color: rgb(201, 101, 20); /* устанавливаем цвет полосы прокрутки */
 }
 
-.account-data::-webkit-scrollbar {
+.account-data::-webkit-scrollbar, .achi-data::-webkit-scrollbar {
     height: 8px; /* устанавливаем ширину полосы прокрутки */
 }
 
@@ -125,7 +125,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8.2vh;
+    gap: 9vh;
 }
 
 .friends-list__logo
@@ -152,7 +152,6 @@
 .add-friends
 {
     width: 100%;
-    margin: 5vh 0 0 0; 
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -248,4 +247,77 @@
 #AddFriend
 {
     cursor: pointer;
+}
+
+.achievements-list{
+    background-color: #f8d7ab;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 38vw;
+}
+
+.achievements-list__logo{
+    display: flex;
+    gap: 1.8vw;
+}
+
+.achievements-list__toggler{
+    cursor: pointer;
+    transform: rotate(270deg);
+    transition: transform 0.3s ease-out;
+}
+
+
+.achievements-list__data{
+    color: #cc6d1f;
+}
+
+.achi-data{
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    max-height: 0px;
+    width: 100%;
+    font-size: 30px;
+    background-color: wheat;
+    transition: max-height 0.3s ease-out;
+    background-color: rgb(255, 224, 179);
+}
+
+
+#achive { 
+    height: 10vh; 
+    width: 94%; 
+    font-size: 2.5vh; 
+    border-width:  10px; 
+    border-style: solid; 
+    border-color: #ffc30e; 
+    background-color: #ffe6bf; 
+    display: flex; 
+    align-items: center; 
+    color: #ffc30e;
+    margin: 10px 0px 10px 0;
+    
+} 
+ 
+#achive__img { 
+    height: 10vh; 
+    width: 10vh; 
+} 
+ 
+.achive-column { 
+    display: flex; 
+    flex-direction: column; 
+    padding-left: 0.5vw; 
+} 
+ 
+#achive__subtitle { 
+    font-size: 2vh; 
+} 
+ 
+#achive__steps { 
+    font-size: 1.5vh; 
 }
