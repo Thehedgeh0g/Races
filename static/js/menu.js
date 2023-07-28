@@ -11,7 +11,7 @@ function showAchive(imgSrc, title, subtitle, steps) {
   achiveSteps.innerHTML = steps;
   achive.style.width = "45vw";
   achive.style.borderWidth = "15px";
-  setTimeout(removeAchive, 5000);s
+  setTimeout(removeAchive, 5000);
 }
 
 function removeAchive() {
@@ -23,9 +23,9 @@ function getAchive(achivmentID) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', "/api/getAchivment");
     xhr.addEventListener('load', () => {
-      if(true) {
-          console.log()
-          let resp = JSON.parse(xhr.response);
+      let resp = JSON.parse(xhr.response);
+      if(resp.achivment.AchivmentPath != "") {
+          
           showAchive(resp.achivment.AchivmentPath, resp.achivment.Achivment, resp.achivment.AchivmentCom, resp.achivment.AchivmentDesc);
       }
     });
