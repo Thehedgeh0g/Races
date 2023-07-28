@@ -11,7 +11,7 @@ function showAchive(imgSrc, title, subtitle, steps) {
   achiveSteps.innerHTML = steps;
   achive.style.width = "45vw";
   achive.style.borderWidth = "15px";
-  setTimeout(removeAchive, 5000);
+  setTimeout(removeAchive, 5000);s
 }
 
 function removeAchive() {

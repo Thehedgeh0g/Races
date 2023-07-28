@@ -30,6 +30,12 @@ const carArrowRight = document.getElementById("carArrowRight");
 
 const NotMoney = document.getElementById("NotMoney");
 
+const achive = document.getElementById("achive");
+const achiveImg = document.getElementById("achive__img");
+const achiveTitle = document.getElementById("achive__title");
+const achiveSubtitle = document.getElementById("achive__subtitle");
+const achiveSteps = document.getElementById("achive__steps");
+
 let Data = '';
 let GarageCars = [
   {},
@@ -288,6 +294,21 @@ StyleField.addEventListener("mouseleave", ()=> {
 BackToMenu.addEventListener('click', ()=> {
   window.location.href = "/menu"
 });
+
+function showAchive(imgSrc, title, subtitle, steps) {
+  achiveImg.src = imgSrc;
+  achiveTitle.innerHTML = title;
+  achiveSubtitle.innerHTML = subtitle;
+  achiveSteps.innerHTML = steps;
+  achive.style.width = "46vw";
+  achive.style.borderWidth = "13px";
+  setTimeout(removeAchive, 5000);
+}
+
+function removeAchive() {
+  achive.style.width = "0vw";
+  achive.style.borderWidth = "0px";
+}
 
 function showShop() {
   document.querySelector(".style-field").style.visibility = "hidden";
