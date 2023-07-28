@@ -7,6 +7,10 @@ const searchFriendButton = document.getElementById("SearchFriendButton");
 const addFriends = document.getElementById("AddFriend");
 const closeButton = document.getElementById("CloseButton");
 const addFriendInput = document.getElementById("AddFriendInput");
+const achiToggler = document.getElementById("AchiToggler");
+const achiTogglerClassList = document.querySelector(".achievements-list__toggler");
+const achiCounter = document.getElementById("AchiCounter");
+const achiData = document.querySelector(".achi-data");
 
 let user = {
   "Nick": null
@@ -25,14 +29,12 @@ friendsListToggler.addEventListener("click", function() {
 });
 
 
+
 // подсчет друзей
-let liElements = friendsData.querySelectorAll('li');
-let countLi = liElements.length;
-friendsCounter.innerHTML = countLi;
+friendsCounter.innerHTML = friendsData.querySelectorAll('li').length;
 
 
 // добавление друга
-
 
 addFriends.addEventListener("click", showAddFriendBox);
 
@@ -86,14 +88,14 @@ function addFriendInputSubmit(event) {
 }
 
 function checkIsValidFriend(userName) {
-  user.Nick = userName
+  user.Nick = userName;
   const xhr = new XMLHttpRequest();
   
   xhr.open('POST', "/api/addFriend");
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
     if (response.IsFound == true){
-      window.location.reload()
+      window.location.reload();
     }
     console.log(response)
   });
@@ -108,3 +110,18 @@ function checkIsValidFriend(userName) {
   xhr.send(JSON.stringify(user));
 }
 
+
+
+
+achiCounter.innerHTML = achiData.children.length;
+
+achiToggler.addEventListener("click", function() {
+  if (achiData.style.maxHeight === "0px" || achiData.style.maxHeight === "") {
+    achiTogglerClassList.style.transform = "rotate(360deg)";
+    achiData.style.maxHeight = "27vh";
+
+} else {
+    achiTogglerClassList.style.transform = "rotate(270deg)";
+    achiData.style.maxHeight = "0px";
+}
+});
