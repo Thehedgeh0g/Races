@@ -394,14 +394,3 @@ func getSequence(tableStrings []string) ([]int, error) {
 	}
 	return sequence, nil
 }
-
-func deleteSession(db *sqlx.DB, lobbyID string) error {
-	stmt := `DELETE FROM brainless_races.sessions WHERE session_id = ?`
-
-	_, err := db.Exec(stmt, lobbyID)
-	if err != nil {
-		log.Println(err.Error())
-		return err
-	}
-	return nil
-}

@@ -50,7 +50,9 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
-		var req FriendRequest
+		var req AddFriendRequest
+		var friendReq FriendRequest
+		friendReq.Status = "0"
 
 		userID, err := getUserID(db, r)
 		if err != nil {
@@ -59,6 +61,13 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		user, err := getUser(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		friendReq.SenderID = user.ID
 		err = json.Unmarshal(reqData, &req)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -67,44 +76,31 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		isFound := false
-
-		friendID, err := getUserByNick(db, req)
+		friendReq.RecieverID, err = getUserByNick(db, req.Nick)
 		if err != nil {
 			isFound = false
 		} else {
 			isFound = true
 
-			user, err := getUser(db, userID)
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err.Error())
-				isFound = false
-			}
-
 			inFriends := false
 
 			for _, id := range strings.Split(user.Friends, " ") {
-				if id == friendID {
+				if id == friendReq.RecieverID {
 					inFriends = true
 				}
 			}
 
-			if userID == friendID {
+			if userID == friendReq.RecieverID {
 				inFriends = true
 			}
 
 			if !inFriends {
-				user.Friends += " " + friendID
-
-				stmt := `UPDATE users SET friends = ? WHERE user_id = ?`
-
-				_, err = db.Exec(stmt, user.Friends, userID)
+				err = createFriendsReq(db, friendReq)
 				if err != nil {
 					http.Error(w, "Error", 500)
-					log.Println(err)
+					log.Println(err.Error())
 					isFound = false
 				}
-
 			} else {
 				isFound = false
 			}
@@ -154,4 +150,99 @@ func getAchivments(db *sqlx.DB, userID string) ([]*AchivmentData, error) {
 
 	return achivments, nil
 
+}
+
+func sendReqList(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		user, err := getUser(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		requests, err := getReqList(db, user.ID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		response := struct {
+			Requests []FriendRequest `json:"Requests"`
+		}{
+			Requests: requests,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+	}
+}
+
+func answerReq(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		var req FriendRequest
+
+		userID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		user, err := getUser(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		err = json.Unmarshal(reqData, &req)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error(), "tut")
+			return
+		}
+
+		if req.Status == "1" {
+			err = updateFriends(db, false, req)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error(), "tut")
+				return
+			}
+			err = updateFriends(db, true, req)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error(), "tut")
+				return
+			}
+		}
+
+		err = deleteReq(db, user.ID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error(), "tut")
+			return
+		}
+
+	}
 }

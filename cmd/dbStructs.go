@@ -51,5 +51,11 @@ type AchivmentData struct {
 	Achivment     string `db:"achivment"`
 	AchivmentDesc string `db:"achivmentDesc"`
 	AchivmentPath string `db:"achivmentPath"`
-	AchivmentCom string `db:"achivmentCom"`
+	AchivmentCom  string `db:"achivmentCom"`
+}
+
+type FriendRequest struct {
+	RecieverID string
+	SenderID   string
+	Status     string
 }
