@@ -384,8 +384,9 @@
 }
 
 #achive__img {
-    height: 10vh;
-    width: 10vh;
+    height: 9vh;
+    width: 9vh;
+    margin-left: 1vh;
 }
 
 .column {
