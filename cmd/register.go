@@ -31,7 +31,6 @@ func getNewUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fileData := newUser.Avatar[strings.IndexByte(newUser.Avatar, ',')+1:]
-		//log.Println(newUser.Avatar)
 		userImg, err := base64.StdEncoding.DecodeString(fileData)
 		if err != nil {
 			http.Error(w, "img", 500)
@@ -56,13 +55,9 @@ func getNewUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		const stmt = `INSERT INTO users (email, password, Avatar, nickname, friends, achivments)
-		VALUES(?, ?, ?, ?, ?, ?)`
-
-		_, err = db.Exec(stmt, newUser.Email, newUser.Password, "../static/img/"+newUser.AvatarName, newUser.Nickname, "0", "/0/")
-
+		err = addUser(db, newUser)
 		if err != nil {
-			http.Error(w, "Server Error", 500)
+			http.Error(w, "img", 500)
 			log.Println(err.Error())
 			return
 		}

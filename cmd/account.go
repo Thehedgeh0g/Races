@@ -11,46 +11,26 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func getFriends(db *sqlx.DB, playerID string) ([]*FriendsData, error) {
-	var query = `
-		SELECT
-		  friends
-		FROM
-		  users
-		WHERE
-		  user_id = ?    
-	`
-
-	row := db.QueryRow(query, playerID)
-	var IDstr string
-	err := row.Scan(&IDstr)
+func getFriends(db *sqlx.DB, userID string) ([]*FriendsData, error) {
+	user, err := getUser(db, userID)
 	if err != nil {
-		log.Println(err.Error(), "tut")
+		log.Println(err.Error())
 		return nil, err
 	}
 
-	IDs := strings.Split(IDstr, " ")
+	IDs := strings.Split(user.Friends, " ")
 
 	var nicks []*FriendsData
 	for _, id := range IDs {
 		if id != "0" {
 			var nick FriendsData
-			query = `
-			SELECT
-			  nickname
-			FROM
-			  users
-			WHERE
-			  user_id = ?    
-		`
-
-			row := db.QueryRow(query, id)
-			err = row.Scan(&nick.Nickname)
-
+			friend, err := getUser(db, id)
 			if err != nil {
 				log.Println(err.Error())
 				return nil, err
 			}
+
+			nick.Nickname = friend.Nickname
 
 			nicks = append(nicks, &nick)
 			log.Println(nicks)
@@ -94,18 +74,7 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		} else {
 			isFound = true
 
-			var query = `
-				SELECT
-				  friends
-				FROM
-				  users
-				WHERE
-				  user_id = ?    
-			`
-
-			row := db.QueryRow(query, userID)
-			var IDstr string
-			err := row.Scan(&IDstr)
+			user, err := getUser(db, userID)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
@@ -114,7 +83,7 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 			inFriends := false
 
-			for _, id := range strings.Split(IDstr, " ") {
+			for _, id := range strings.Split(user.Friends, " ") {
 				if id == friendID {
 					inFriends = true
 				}
@@ -125,11 +94,11 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if !inFriends {
-				IDstr += " " + friendID
+				user.Friends += " " + friendID
 
 				stmt := `UPDATE users SET friends = ? WHERE user_id = ?`
 
-				_, err = db.Exec(stmt, IDstr, userID)
+				_, err = db.Exec(stmt, user.Friends, userID)
 				if err != nil {
 					http.Error(w, "Error", 500)
 					log.Println(err)

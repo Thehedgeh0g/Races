@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -334,5 +335,35 @@ func updateAchivments(db *sqlx.DB, user UserData, achivmentID string) error {
 		return err
 	}
 
+	return nil
+}
+
+func addUser(db *sqlx.DB, newUser User) error {
+	const stmt = `INSERT INTO users (email, password, Avatar, nickname, friends, usersAchivments)
+		VALUES(?, ?, ?, ?, ?, ?)`
+
+	_, err := db.Exec(stmt, newUser.Email, newUser.Password, "../static/img/"+newUser.AvatarName, newUser.Nickname, "0", "/0/")
+
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	return nil
+}
+
+func createFriendsReq(db *sqlx.DB, userID, friendID string) error {
+
+	const stmt = `
+		INSERT INTO
+		  friendreq (recieverID, senderID, status)
+		VALUES
+		  (?, ?, ?)  
+	`
+	_, err := db.Exec(stmt, friendID, userID, "0")
+
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
 	return nil
 }
