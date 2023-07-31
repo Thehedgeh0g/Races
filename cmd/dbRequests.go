@@ -239,6 +239,23 @@ func getLobbyID(db *sqlx.DB, userID int) (int, error) {
 	return ID, nil
 }
 
+func deleteSession(db *sqlx.DB, lobbyID string) error {
+	const stmt = `
+		DELETE 
+		FROM 
+		  sessions 
+		WHERE 
+		  session_id = ?
+	`
+
+	_, err := db.Exec(stmt, lobbyID)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	return nil
+}
+
 func setLobbySettings(db *sqlx.DB, mapID, laps, LobbyID string, hp, collision bool) error {
 	query := `
 			UPDATE
@@ -260,7 +277,7 @@ func setLobbySettings(db *sqlx.DB, mapID, laps, LobbyID string, hp, collision bo
 	return nil
 }
 
-func getUserByNick(db *sqlx.DB, req FriendRequest) (string, error) {
+func getUserByNick(db *sqlx.DB, recieverNick string) (string, error) {
 	const query = `
 	SELECT
 	  user_id
@@ -271,7 +288,7 @@ func getUserByNick(db *sqlx.DB, req FriendRequest) (string, error) {
 	`
 	var ID string
 
-	row := db.QueryRow(query, req.Nick)
+	row := db.QueryRow(query, recieverNick)
 	err := row.Scan(&ID)
 	if err != nil {
 		return "", err
@@ -351,7 +368,7 @@ func addUser(db *sqlx.DB, newUser User) error {
 	return nil
 }
 
-func createFriendsReq(db *sqlx.DB, userID, friendID string) error {
+func createFriendsReq(db *sqlx.DB, request FriendRequest) error {
 
 	const stmt = `
 		INSERT INTO
@@ -359,8 +376,75 @@ func createFriendsReq(db *sqlx.DB, userID, friendID string) error {
 		VALUES
 		  (?, ?, ?)  
 	`
-	_, err := db.Exec(stmt, friendID, userID, "0")
+	_, err := db.Exec(stmt, request.RecieverID, request.SenderID, request.Status)
 
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	return nil
+}
+
+func getReqList(db *sqlx.DB, recieverID string) ([]FriendRequest, error) {
+	const query = `
+		SELECT
+		  *
+		FROM
+		  friendreq
+		WHERE 
+		  recieverID = ? AND
+          status = ?
+	`
+	var requests []FriendRequest
+	err := db.Select(&requests, query, recieverID, "0")
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+	return requests, nil
+}
+
+func deleteReq(db *sqlx.DB, recieverID string) error {
+	const stmt = `
+		DELETE 
+		FROM 
+		  friendreq 
+		WHERE 
+		recieverID = ?
+	`
+
+	_, err := db.Exec(stmt, recieverID)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	return nil
+}
+
+func updateFriends(db *sqlx.DB, isReciever bool, request FriendRequest) error {
+	var user UserData
+	var err error
+	if isReciever {
+		user, err = getUser(db, request.RecieverID)
+
+	} else {
+		user, err = getUser(db, request.SenderID)
+	}
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	friendList := user.Friends
+
+	if isReciever {
+		friendList += " " + request.SenderID
+	} else {
+		friendList += " " + request.RecieverID
+	}
+
+	const stmt = `UPDATE users SET friends = ? WHERE user_id = ?`
+	_, err = db.Exec(stmt, friendList, user.ID)
 	if err != nil {
 		log.Println(err.Error())
 		return err

@@ -56,7 +56,7 @@ type UserRequest struct {
 	Password string `json:"Password"`
 }
 
-type FriendRequest struct {
+type AddFriendRequest struct {
 	Nick string `json:"Nick"`
 }
 
