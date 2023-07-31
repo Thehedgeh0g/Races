@@ -386,7 +386,7 @@ function UpdatePosition() {
         if (!cars[i].cflag) {
           let angle1 = Number(cars[i].Angle);
           let speed1 = Number(cars[i].Speed);
-
+          getAchive(4);
           if (
             (angle1 % Math.PI) - Math.PI / 2 < angle % Math.PI &&
             (angle1 % Math.PI) + Math.PI / 2 > angle % Math.PI
@@ -403,6 +403,7 @@ function UpdatePosition() {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%";
             if (cars[myCar].HP == 0) {
+              getAchive(3);
               finished = 2;
               roundHTML.innerHTML = "EXPLODED";
               waiting.innerHTML = "waiting for the other players";
@@ -1269,6 +1270,19 @@ function showAchive(imgSrc, title, subtitle, steps) {
 function removeAchive() {
   achive.style.width = "0vw";
   achive.style.borderWidth = "0px";
+}
+
+function getAchive(achivmentID) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', "/api/getAchivment");
+  xhr.addEventListener('load', () => {
+    let resp = JSON.parse(xhr.response);
+    if(resp.achivment.AchivmentPath != "") {
+        
+        showAchive(resp.achivment.AchivmentPath, resp.achivment.Achivment, resp.achivment.AchivmentCom, resp.achivment.AchivmentDesc);
+    }
+  });
+  xhr.send(JSON.stringify(String(achivmentID)));
 }
 
 getTiles();
