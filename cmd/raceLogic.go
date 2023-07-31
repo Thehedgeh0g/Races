@@ -199,17 +199,17 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 	}
 	for i, bot := range bots[sessionID] {
 		//log.Println(bot.speed, bot.inSessionId)
-		log.Println(bot.hp, races[sessionID], readiness, bot.laps)
+		//log.Println(bot.hp, races[sessionID], readiness, bot.laps)
 		bot = collision(bot, x, y, hp)
 		if (bot.hp > 0) && !(strings.Contains(races[sessionID], bot.inSessionId+"/")) && (strings.Contains(readiness, "2/")) {
 			bot = AI(db, sessionID, bot)
-			log.Println("ya tut")
+			//log.Println("ya tut")
 			if bot.laps <= 0 {
 				races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + strings.Split(isFinished, "/")[1]
 				log.Println(races[sessionID])
 			}
 		} else if bot.hp < 0 {
-			log.Println("ne tut")
+			//log.Println("ne tut")
 			races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + "NF"
 		}
 

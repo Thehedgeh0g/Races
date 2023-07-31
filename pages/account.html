@@ -80,7 +80,7 @@
                 <div class="achi-data">
                     {{ range .Achivments }}
                     <div id="achive"> 
-                        <img class="{{ .AchivmentID }}" src="../static/img/{{ .AchivmentPath }}" id="achive__img"> 
+                        <img class="{{ .AchivmentID }}" src="{{ .AchivmentPath }}" id="achive__img"> 
                         <div class="achive-column"> 
                             <span id="achive__title">{{ .Achivment }}</span> 
                             <span id="achive__subtitle">{{ .AchivmentCom }}</span> 
