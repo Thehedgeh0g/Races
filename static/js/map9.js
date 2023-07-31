@@ -144,6 +144,10 @@ let cars = [
   },
 ];
 
+
+let isHp = true;
+let isCollision = true;
+
 let y0 = 0;
 let x0 = 0;
 let y1 = 0;
@@ -340,7 +344,7 @@ function UpdatePosition() {
   updateReduce();
 
   for (let i = 0; i < amountOfPlayers; i++) {
-    if (i != myCar) {
+    if (i != myCar && isCollision) {
       if (
         checkCrosses(
           cars[myCar].Border,
@@ -399,7 +403,7 @@ function UpdatePosition() {
               speed = -speed1;
             }
           }
-          if (cars[myCar].HP > 0) {
+          if (cars[myCar].HP > 0  && isHp) {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%";
             if (cars[myCar].HP == 0) {
@@ -1148,6 +1152,12 @@ function getTiles() {
     console.log(xhr.responseText);
     info = JSON.parse(xhr.responseText);
     console.log(info);
+    console.log(!info.hp);
+    console.log(!info.collision);
+    isHp = (!info.hp);
+    isCollision = (!info.collision);
+    console.log(isHp);
+    console.log(isCollision);
     maxRounds = info.Rounds;
     myCar = info.InSessionId;
 
