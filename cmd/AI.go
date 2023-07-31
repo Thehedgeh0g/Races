@@ -40,8 +40,11 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 	if deviation >= 45 {
 		deviation = -(90 - deviation)
 	}
-	deviation = math.Floor(deviation*100) / 100
-
+	//deviation = math.Floor(deviation*100) / 100
+	if math.Abs(deviation) < 3 {
+		deviation = 0
+		bot.angle = math.Round(bot.angle/(math.Pi/2)) * (math.Pi / 2)
+	}
 	if strings.Contains(corners, "/"+VisMat[1][2]+"/") || strings.Contains(corners, "/"+VisMat[1][1]+"/") {
 		if bot.speed > 3.5 {
 			bot.speed -= 0.07
@@ -55,10 +58,10 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 		}
 
 	} else {
-		if bot.speed+0.1 < 7.5 {
+		if bot.speed+0.1 < 7.6 {
 			bot.speed = bot.speed + 0.1
 		} else {
-			bot.speed = 7.5
+			bot.speed = 7.6
 		}
 	}
 	rspeed := 0.03 * math.Sqrt(bot.speed*1.6)
@@ -68,14 +71,53 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 		} else if strings.Contains(roads, "/"+VisMat[0][1]+"/") {
 			bot = turnLeft(bot, rspeed)
 		}
-	} else if deviation < 0 {
+	} else if deviation < -0.5 {
 		bot = turnLeft(bot, rspeed)
-	} else if deviation > 0 {
+	} else if deviation > 0.5 {
 		bot = turnRight(bot, rspeed)
 	} else {
 		bot = moveStright(bot)
 	}
 	bot.visionMatrix = VisMat
+	bot = correctPosDiv(bot)
+	return bot
+}
+
+func correctPosDiv(bot Bot) Bot {
+	if (math.Mod(bot.angle*180/math.Pi, 360)+360 >= 315) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 405) {
+		inTilePosX := (int(bot.x) % 96)
+		if inTilePosX > 60 {
+			bot.x -= 1
+		} else if inTilePosX < 36 {
+			bot.x += 1
+		}
+		log.Println("vrx")
+	} else if (math.Mod(bot.angle*180/math.Pi, 360)+360 >= 225) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 315) {
+		inTilePosY := (int(bot.y) % 96)
+		if inTilePosY > 60 {
+			bot.y -= 1
+		} else if inTilePosY < 36 {
+			bot.y += 1
+		}
+		log.Println("vry")
+	} else if ((math.Mod(bot.angle*180/math.Pi, 360)+360 >= 495) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 585)) ||
+		((math.Mod(bot.angle*180/math.Pi, 360)+360 >= 135) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 225)) {
+		inTilePosX := (int(bot.x) % 96)
+		if inTilePosX > 60 {
+			bot.x -= 1
+		} else if inTilePosX < 36 {
+			bot.x += 1
+		}
+		log.Println("vrxx")
+	} else {
+		inTilePosY := (int(bot.y) % 96)
+		if inTilePosY > 60 {
+			bot.y -= 1
+		} else if inTilePosY < 36 {
+			bot.y += 1
+		}
+		log.Println("vryy")
+	}
 	return bot
 }
 

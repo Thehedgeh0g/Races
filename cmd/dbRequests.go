@@ -125,7 +125,7 @@ func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id st
     VALUES(?, ?, ?, ?, ?, ?, ?)`
 	var rounds string
 	if boss {
-		rounds = "80"
+		rounds = "10"
 	} else {
 		rounds = "1"
 	}
