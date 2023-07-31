@@ -261,6 +261,11 @@ table tr:nth-child(4) td {
 }
 
 
+#achive__get{
+    color: #c0b8b8;
+    font-size: 0.2vh;
+    margin: 0.06vh;
+}
 
 #achive {
     position: fixed;
@@ -280,8 +285,9 @@ table tr:nth-child(4) td {
 }
 
 #achive__img {
-    height: 2vh;
-    width: 2vh;
+    height: 1.8vh;
+    width: 1.8vh;
+    margin-left: 0.2vh;
 }
 
 .column {
@@ -291,9 +297,13 @@ table tr:nth-child(4) td {
 }
 
 #achive__subtitle {
-    font-size: 0.4vh;
+    font-size: 0.3vh;
+    color: #838181;
+    margin: 0.06vh;
 }
 
 #achive__steps {
-    font-size: 0.3vh;
+    font-size: 0.2vh;
+    color: #838181;
+    margin: 0.06vh;
 }

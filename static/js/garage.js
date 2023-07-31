@@ -305,10 +305,33 @@ function showAchive(imgSrc, title, subtitle, steps) {
   setTimeout(removeAchive, 5000);
 }
 
+function showAchive(imgSrc, title, subtitle, steps) {
+  achiveImg.src = imgSrc;
+  achiveTitle.innerHTML = title;
+  achiveSubtitle.innerHTML = subtitle;
+  achiveSteps.innerHTML = steps;
+  achive.style.width = "45vw";
+  achive.style.borderWidth = "15px";
+  setTimeout(removeAchive, 7000);
+}
+
 function removeAchive() {
   achive.style.width = "0vw";
   achive.style.borderWidth = "0px";
 }
+
+function getAchive(achivmentID) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', "/api/getAchivment");
+    xhr.send(JSON.stringify(achivmentID));
+    xhr.addEventListener('load', () => {
+      let resp = JSON.parse(xhr.response);
+      if(resp.achivment.AchivmentPath != "") {
+          showAchive(resp.achivment.AchivmentPath, resp.achivment.Achivment, resp.achivment.AchivmentCom, resp.achivment.AchivmentDesc);
+      }
+    }); 
+}
+
 
 function showShop() {
   document.querySelector(".style-field").style.visibility = "hidden";
@@ -388,7 +411,7 @@ function replaceCar() {
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
           ACarField.textContent = 'Owned';
-          GarageCars[carArrowCnt].stock = '1';
+          GarageCars[carArrowCnt].Stock = '1';
           Money -= PriceCarA;
           document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
@@ -429,7 +452,6 @@ function replaceCar() {
       xhrBCar.onload = () => {
         let answer = JSON.parse(xhrBCar.response);
         if (answer.response) {
-          console.log(answer.response);
           carArrowCnt = 3;
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
@@ -456,7 +478,7 @@ function replaceCar() {
       let answer = JSON.parse(xhrGreyColor.response);
       if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('greyCar').src;
-        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src; 
+        GarageCars[carArrowCnt].Scr = src; 
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
       }
@@ -475,9 +497,12 @@ function replaceCar() {
       let answer = JSON.parse(xhrGreenColor.response);
       if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('greenCar').src;
-        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+        GarageCars[carArrowCnt].Scr = src;
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
+        if (GarageCars[carArrowCnt].Scr == 'JZ') {
+          getAchive('7');
+        }
       }
       else {
         NotMoney.style.display = "block";
@@ -495,7 +520,7 @@ function replaceCar() {
       if (answer.response) {
         console.log(answer);
         document.getElementById("currentCar").src = document.getElementById('redCar').src;
-        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+        GarageCars[carArrowCnt].Scr = src;
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
       }
@@ -514,7 +539,7 @@ function replaceCar() {
       let answer = JSON.parse(xhrYellowColor.response);
       if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('yellowCar').src;
-        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+        GarageCars[carArrowCnt].Scr = src;
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
       }
@@ -533,7 +558,7 @@ function replaceCar() {
       let answer = JSON.parse(xhrBlueColor.response);
       if (answer.response) {
         document.getElementById("currentCar").src = document.getElementById('blueCar').src;
-        GarageCars[carArrowCnt].scr = document.getElementById("currentCar").src;
+        GarageCars[carArrowCnt].Scr = src;
         Money -= PriceColor;
         document.getElementById("Money").innerHTML = 'Money: ' + Money;
       }
@@ -672,6 +697,7 @@ function ShowPurchaseFututre() {
   document.querySelector(".FutureManeuverabilityGraph").style.width =  String(TuningCar.suspension) + "vw";
   document.getElementById("CostUpgrade").innerHTML = 'Upgrade cost: ' + CostPurchase; 
 }
+
 function ShowPurchase() {
   document.getElementById("engineCnt").innerHTML = Number(GarageCars[carArrowCnt].Engine);
   document.getElementById("transmissionCnt").innerHTML = Number(GarageCars[carArrowCnt].Transmission);
@@ -727,7 +753,6 @@ function AcceptPurchase() {
     str += String(TuningCar.suspension);
   }
   str += '/';
-  console.log(str)
   let xhrTuning = new XMLHttpRequest();
   xhrTuning.open("POST", "/api/buyStats");
   xhrTuning.send(JSON.stringify(str));
