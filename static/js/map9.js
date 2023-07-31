@@ -1302,7 +1302,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   let go = message.split(" ");
-  //console.log(go);
+  console.log(go);
   cars[go[5]].X = go[0];
   cars[go[5]].Y = go[1];
   cars[go[5]].Angle = go[2];

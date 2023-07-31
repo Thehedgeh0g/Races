@@ -260,6 +260,10 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				}
 				if id == "10" {
 					addAI(db, strconv.Itoa(lobbyID))
+				} else if id == "12" {
+					addAI(db, strconv.Itoa(lobbyID))
+				} else if id == "13" {
+					addAI(db, strconv.Itoa(lobbyID))
 				}
 				nicknames = append(nicknames, user.Nickname)
 				cars = append(cars, user.Cars)
@@ -366,7 +370,30 @@ func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		lobbyId := generateLobbyId()
 
-		err = insert(db, lobbyId, hostId, "10", "0", "0", true)
+		user, err := getUser(db, hostId)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		var botID string
+		countOfBosses, err := strconv.Atoi(user.Bosses)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		fmt.Printf("countOfBosses: %v\n", countOfBosses)
+		if countOfBosses < 10 {
+			botID = "10"
+		} else if countOfBosses < 20 {
+			botID = "12"
+		} else {
+			botID = "13"
+		}
+		fmt.Printf("botID: %v\n", botID)
+		err = insert(db, lobbyId, hostId, botID, "0", "0", true)
 		if err != nil {
 			http.Error(w, "Server Error", 500)
 			log.Println(err.Error())

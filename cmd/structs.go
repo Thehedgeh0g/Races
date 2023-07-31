@@ -12,6 +12,7 @@ type Bot struct {
 	userHP       string
 	laps         int
 	checks       int
+	difficulty   int
 }
 
 type User struct {

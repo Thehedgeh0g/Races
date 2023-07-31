@@ -197,6 +197,7 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 	} else if (strings.Split(isFinished, "/")[0] == "2") && !(strings.Contains(races[sessionID], inSessionId+"/")) {
 		races[sessionID] = races[sessionID] + " " + inSessionId + "/" + "NF"
 	}
+	//fmt.Printf("bots[sessionID]: %v\n", bots[sessionID])
 	for i, bot := range bots[sessionID] {
 		//log.Println(bot.speed, bot.inSessionId)
 		//log.Println(bot.hp, races[sessionID], readiness, bot.laps)
