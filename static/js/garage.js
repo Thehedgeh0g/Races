@@ -415,6 +415,9 @@ function replaceCar() {
           Money -= PriceCarA;
           document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
+          if (GarageCarsCount == 4) {
+            getAchive('11');
+          }
         }
         else {
           NotMoney.style.display = "block";
@@ -439,6 +442,9 @@ function replaceCar() {
           Money -= PriceCarU;
           document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
+          if (GarageCarsCount == 4) {
+            getAchive('11');
+          }
         }
         else {
           NotMoney.style.display = "block";
@@ -462,6 +468,9 @@ function replaceCar() {
           Money -= PriceCarB;
           document.getElementById("Money").innerHTML = 'Money: ' + Money;
           ShowPurchase();
+          if (GarageCarsCount == 4) {
+            getAchive('11');
+          }
         }
         else {
           NotMoney.style.display = "block";
@@ -471,10 +480,7 @@ function replaceCar() {
     }
 
   }
-
-  if (GarageCarsCount == 4) {
-    getAchive('11');
-  }
+  
   if (this == GreyCarField){
     var src = document.getElementById('greyCar').src; 
     src = src.slice(src.length-6  , src.length-4); 
