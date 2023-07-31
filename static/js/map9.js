@@ -251,7 +251,7 @@ function drawFrame() {
       String(((endTime - startTime) / 1000) % 60);
     //console.log(dif);
     let curTime = new Date();
-    dif1 = ((curTime - startTime) / 1000) % 60;
+    dif1 = ((curTime - startTime) / 1000);
     if (dif1 < 5 && ready != 0) {
       document.getElementById("timer").innerHTML =
         "STARTING IN " + String(5 - dif1).slice(0, 4);
