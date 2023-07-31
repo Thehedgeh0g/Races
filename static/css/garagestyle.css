@@ -359,6 +359,11 @@
     justify-content: center;
 }
 
+#achive__get{
+    color: #c0b8b8;
+    font-size: 1vh;
+    margin: 0.3vh;
+}
 #achive {
     position: fixed;
     top: 0;
@@ -370,10 +375,12 @@
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffe6bf;
+    color: #ffc30e;
     display: flex;
     align-items: center;
     z-index: 1;
     transition: all 0.3s ease-out;
+    margin: 0.3vh;
 }
 
 #achive__img {
@@ -388,9 +395,13 @@
 }
 
 #achive__subtitle {
-    font-size: 2vh;
+    font-size: 1.5vh;
+    color: #838181;
+    margin: 0.3vh;
 }
 
 #achive__steps {
-    font-size: 1.5vh;
+    font-size: 1vh;
+    color: #838181;
+    margin: 0.3vh;
 }
