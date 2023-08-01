@@ -78,7 +78,9 @@ function checkIsValidFriend(userName) {
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
     if (response.IsFound == true){
-      window.location.reload();
+      document.body.removeChild(overlay);
+      document.querySelector(".add-friend-box").style.visibility = "hidden";
+      // socket.send(JSON.stringify(reqList.Requests[cid].SenderID + " reload"));
     }
     console.log(response)
   });
@@ -151,9 +153,11 @@ function getFriends() {
   
   xhr.open('GET', "/api/getFriends");
   xhr.addEventListener('load', () => {
-    response = JSON.parse(xhr.responseText)
-    console.log(response);
-    reqList = response;
+  response = JSON.parse(xhr.responseText)
+  console.log(response);
+  if (response.Friends.length == 1) {
+    return
+  }
     for (let i = 1; i < response.Friends.length; i++) {
       const xhr1 = new XMLHttpRequest();
   
@@ -169,15 +173,30 @@ function getFriends() {
               <span>name:` + response1.Sender.Nickname + `</span>
               <span>lvl:` + response1.Sender.Lvl + `</span>
           </div>
+          <div class="del" id=d` + response1.Sender.Nickname + `></div>
         </div>`
+        document.getElementById('d' + response1.Sender.Nickname).addEventListener("click", deleteFriend)
       });
-    
       
     }
     
   });
 
   xhr.send();
+}
+
+function deleteFriend(ev) {
+  cid = ev.target.id.slice(1);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', "/api/deleteFriend");
+  xhr.send(JSON.stringify(cid));
+  xhr.addEventListener('load', () => {
+    getReq();
+    getFriends();
+    socket.send(JSON.stringify(cid + " reload"));
+    console.log(JSON.stringify(cid + " reload"));
+  });
 }
 
 function accept(ev) {
@@ -192,7 +211,8 @@ function accept(ev) {
   xhr.addEventListener('load', () => {
     getReq();
     getFriends();
-    socket.send(JSON.stringify(reqList.Requests[cid].SenderID) + "reload");
+    socket.send(JSON.stringify(reqList.Requests[cid].SenderID + " reload"));
+    console.log(JSON.stringify(reqList.Requests[cid].SenderID + " reload"));
   });
 }
 
