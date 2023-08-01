@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -313,8 +314,12 @@ func getSprites(db *sqlx.DB) ([]string, error) {
 }
 
 func saveMap(db *sqlx.DB, key string) error {
-	const stmt = `INSERT INTO maps (map_data)
-		VALUES(?)`
+	const stmt = `
+		INSERT INTO 
+	  	  maps (map_data)
+		VALUES
+		  (?)
+	`
 
 	_, err := db.Exec(stmt, key[:len(key)-1])
 
@@ -356,8 +361,11 @@ func updateAchivments(db *sqlx.DB, user UserData, achivmentID string) error {
 }
 
 func addUser(db *sqlx.DB, newUser User) error {
-	const stmt = `INSERT INTO users (email, password, Avatar, nickname, friends, usersAchivments)
-		VALUES(?, ?, ?, ?, ?, ?)`
+	const stmt = `
+		INSERT INTO 
+	  	  users (email, password, Avatar, nickname, friends, usersAchivments)
+		VALUES
+		  (?, ?, ?, ?, ?, ?)`
 
 	_, err := db.Exec(stmt, newUser.Email, newUser.Password, "../static/img/"+newUser.AvatarName, newUser.Nickname, "0", "/0/")
 
@@ -410,7 +418,7 @@ func deleteReq(db *sqlx.DB, recieverID string) error {
 		FROM 
 		  friendreq 
 		WHERE 
-		recieverID = ?
+		  recieverID = ?
 	`
 
 	_, err := db.Exec(stmt, recieverID)
@@ -447,6 +455,27 @@ func updateFriends(db *sqlx.DB, isReciever bool, request FriendRequest) error {
 	_, err = db.Exec(stmt, friendList, user.ID)
 	if err != nil {
 		log.Println(err.Error())
+		return err
+	}
+	return nil
+}
+
+func saveResults(db *sqlx.DB, userID string, modificator int) error {
+	user, err := getUser(db, userID)
+	if err != nil {
+		return err
+	}
+
+	exp, err := strconv.Atoi(user.Lvl)
+	if err != nil {
+		return err
+	}
+
+	stmt := `UPDATE users SET money = ?, exp = ? WHERE user_id = ?`
+
+	_, err = db.Exec(stmt, strconv.Itoa(15*modificator+user.Money), strconv.Itoa(13*modificator+exp), userID)
+	if err != nil {
+		log.Println("tuta")
 		return err
 	}
 	return nil

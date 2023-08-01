@@ -302,7 +302,7 @@ func addAI(db *sqlx.DB, lobbyID string) {
 	curTileI, curTileJ := getCurTile(int(bot.x), int(bot.y))
 	bot.visionMatrix = createVision(bot.mapMatrix, curTileI, curTileJ)
 
-	bots[lobbyID] = append(bots[lobbyID], bot)
+	bots[lobbyID] = bot
 }
 
 func setMapKey(db *sqlx.DB, lobbyID string) MapData {
