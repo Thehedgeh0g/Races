@@ -77,13 +77,13 @@
                     <img src="../static/account-images/plus6.png" alt="" width="40px" height="40px">
                 </div> 
             </div>
-            <div class="ach">
+            <div class="ach" id="friend-list">
                 {{ range .Friends }}
                     <div class="friend">
-                        <img src="{{ .Avatar }}">
+                        <img class="middle-ava" src="{{ .Avatar }}">
                         <div class="col">
-                            <span>{{ .Nickname }}</span>
-                            <span>{{ .Lvl }}</span>
+                            <span>name:{{ .Nickname }}</span>
+                            <span>lvl:{{ .Lvl }}</span>
                         </div>
                     </div>
                 {{end}}

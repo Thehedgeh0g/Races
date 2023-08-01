@@ -386,11 +386,14 @@
 }
 
 .friend {
-    border-width:  2px;
+    border-width:  5px;
     border-style: solid;
     border-color: #ffc30e;
     background-color: #f8d7ab;
     padding: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 25px;
 }
 
 .list-request
@@ -460,4 +463,10 @@
 
 .choose {
     display: flex;
+}
+
+.middle-ava {
+    width: 7vw;
+    height: 7vw;
+    margin-right: 1vw;
 }
