@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -61,7 +62,7 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-
+			fmt.Printf("checkRequests(db, friendReq.RecieverID, userID): %v\n", checkRequests(db, friendReq.RecieverID, userID))
 			if (!inFriends) && !checkRequests(db, friendReq.RecieverID, userID) {
 				err = createFriendsReq(db, friendReq)
 				if err != nil {
