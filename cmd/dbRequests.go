@@ -21,7 +21,7 @@ func getUserForLog(db *sqlx.DB, req UserRequest) (UserData, error) {
 	`
 	row := db.QueryRow(query, req.Email, req.Password)
 	var user UserData
-	err := row.Scan(&user.ID)
+	err := row.Scan(&user.id)
 	if err != nil {
 		return user, err
 	}
@@ -49,7 +49,7 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	`
 	row := db.QueryRow(query, userID)
 	var user UserData
-	err := row.Scan(&user.ID, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID, &user.Achivments)
+	err := row.Scan(&user.id, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID, &user.Achivments)
 	if err != nil {
 		return user, err
 	}
@@ -353,7 +353,7 @@ func getAchivment(db *sqlx.DB, achivmentID string) (AchivmentData, error) {
 func updateAchivments(db *sqlx.DB, user UserData, achivmentID string) error {
 	stmt := `UPDATE users SET usersAchivments = ? WHERE user_id = ?`
 	achivmentsStr := user.Achivments + "/" + achivmentID + "/"
-	_, err := db.Exec(stmt, achivmentsStr, user.ID)
+	_, err := db.Exec(stmt, achivmentsStr, user.id)
 	if err != nil {
 		return err
 	}
@@ -453,7 +453,7 @@ func updateFriends(db *sqlx.DB, isReciever bool, request FriendRequest) error {
 	}
 
 	const stmt = `UPDATE users SET friends = ? WHERE user_id = ?`
-	_, err = db.Exec(stmt, friendList, user.ID)
+	_, err = db.Exec(stmt, friendList, user.id)
 	if err != nil {
 		log.Println(err.Error())
 		return err
