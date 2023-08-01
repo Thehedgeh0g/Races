@@ -54,7 +54,6 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 		return user, err
 	}
 
-	user.Friends = strings.Trim(user.Friends, " ")
 	return user, nil
 }
 
