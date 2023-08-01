@@ -99,7 +99,9 @@ type Account struct {
 }
 
 type FriendsData struct {
-	Nickname string `db:"nickname"`
+	Avatar   string
+	Nickname string
+	Lvl      string
 }
 
 type Message struct {
