@@ -4,8 +4,6 @@ const achiveTitle = document.getElementById("achive__title");
 const achiveSubtitle = document.getElementById("achive__subtitle");
 const achiveSteps = document.getElementById("achive__steps");
 
-// var audio = new Audio();
-// audioStart.src = '../static/sounds/jiga2kStart.mp3';
 let musicOff = true;
 document.body.addEventListener("mousemove", playMusic);
 document.body.addEventListener("canplaythrough", playMusic);
