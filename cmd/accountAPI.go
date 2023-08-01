@@ -62,7 +62,7 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			if (!inFriends) && checkRequests(db, friendReq.RecieverID, userID) {
+			if (!inFriends) && !checkRequests(db, friendReq.RecieverID, userID) {
 				err = createFriendsReq(db, friendReq)
 				if err != nil {
 					http.Error(w, "Error", 500)

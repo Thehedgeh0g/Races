@@ -492,18 +492,22 @@ func checkRequests(db *sqlx.DB, recieverID, senderID string) bool {
 		  recieverID = ? AND senderID = ?
 	`
 	var request FriendRequest
+	var exists bool
 	row := db.QueryRow(query, recieverID, senderID)
 	err := row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
 	if err != nil {
-		return true
+		exists = false
 	} else {
-		row = db.QueryRow(query, senderID, recieverID)
-		err = row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
-		if err != nil {
-			return true
-		}
+		exists = true
 	}
-	return false
+	row = db.QueryRow(query, senderID, recieverID)
+	err = row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
+	if err != nil {
+		exists = false
+	} else {
+		exists = true
+	}
+	return exists
 }
 
 func deleteFromFriendList(db *sqlx.DB, userID, friendID string) error {
