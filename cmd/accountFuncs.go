@@ -28,6 +28,8 @@ func getFriends(db *sqlx.DB, userID string) ([]*FriendsData, error) {
 			}
 
 			nick.Nickname = friend.Nickname
+			nick.Avatar = friend.ImgPath
+			nick.Lvl = friend.Lvl
 
 			nicks = append(nicks, &nick)
 			log.Println(nicks)
