@@ -13,48 +13,36 @@ import (
 
 func login(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("pages/login.html")
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 
 	err = ts.Execute(w, nil)
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 }
 
 func menu(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("pages/menu.html")
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 
 	err = ts.Execute(w, nil)
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 }
 
 func garageHandler(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("pages/garage.html")
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 
 	err = ts.Execute(w, nil)
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 }
@@ -63,16 +51,12 @@ func lobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		lobbyIDstr := mux.Vars(r)["lobbyID"]
 
 		ts, err := template.ParseFiles("pages/lobbycreation.html")
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		mapsData, err := mapPreview(db)
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -82,9 +66,7 @@ func lobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = ts.Execute(w, data)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 	}
@@ -94,16 +76,12 @@ func bossLobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) 
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		ts, err := template.ParseFiles("pages/bossLobby.html")
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		mapsData, err := mapPreview(db)
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -112,9 +90,7 @@ func bossLobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) 
 		}
 
 		err = ts.Execute(w, data)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 	}
@@ -124,30 +100,22 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		lobbyIDstr := mux.Vars(r)["lobbyID"]
 
 		lobbyID, err := strconv.Atoi(lobbyIDstr)
-		if err != nil {
-			http.Error(w, "Invalid order id", http.StatusForbidden)
-			log.Println(err)
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		ts, err := template.ParseFiles("pages/location_1_1.html")
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		mapData, err := getMapData(db, lobby.MapID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err)
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -157,16 +125,12 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		for i, element := range pathes {
 			id, err := strconv.Atoi(element)
-			if err != nil {
-				http.Error(w, "hehehe", 500)
-				log.Println(err)
+			if errorProcessor(err, w) {
 				return
 			}
-			sprite, err := getSprite(db, id)
 
-			if err != nil {
-				http.Error(w, "hehe", 500)
-				log.Println(err)
+			sprite, err := getSprite(db, id)
+			if errorProcessor(err, w) {
 				return
 			}
 
@@ -182,9 +146,7 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = ts.Execute(w, data)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 	}
@@ -193,23 +155,16 @@ func gameAreaHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ts, err := template.ParseFiles("pages/account.html")
-		if err != nil {
-			http.Error(w, "Internal Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -221,9 +176,7 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		achivments, err := getAchivments(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -239,9 +192,7 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = ts.Execute(w, data)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 	}
@@ -249,32 +200,24 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func handleReg(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("pages/registration.html")
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 
 	err = ts.Execute(w, nil)
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 }
 
 func handleconstruct(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("pages/constructor.html")
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 
 	err = ts.Execute(w, nil)
-	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Println(err.Error())
+	if errorProcessor(err, w) {
 		return
 	}
 }

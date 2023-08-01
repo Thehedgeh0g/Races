@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"strconv"
@@ -10,11 +11,13 @@ import (
 )
 
 func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
+	maxSpeed := 5 + (float64(bot.difficulty-1)*5)/(5/7.6)/4
+	fmt.Printf("bot.difficulty: %v\n", bot.difficulty)
 	bot.angle = math.Floor(bot.angle*10000) / 10000
 	corners := "/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/"
 	grass := "/1/2/3/4/"
 	roads := "/10/11/17/18/27/28/29/30/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/34/32/31/33/"
-
+	fmt.Printf("maxSpeed: %v\n", maxSpeed)
 	curTileIDI, curTileIDJ := getCurTile(int(bot.x), int(bot.y))
 	var VisMat [3][3]string
 
@@ -40,42 +43,94 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 	if deviation >= 45 {
 		deviation = -(90 - deviation)
 	}
-	deviation = math.Floor(deviation*100) / 100
-
+	if math.Abs(deviation) < 3 {
+		deviation = 0
+		bot.angle = math.Round(bot.angle/(math.Pi/2)) * (math.Pi / 2)
+	}
 	if strings.Contains(corners, "/"+VisMat[1][2]+"/") || strings.Contains(corners, "/"+VisMat[1][1]+"/") {
-		if bot.speed > 3.5 {
-			bot.speed -= 0.07
-		} else if bot.speed > 3.3 {
-			bot.speed -= 0.04
-		} else if bot.speed > 3.1 {
-			bot.speed -= 0.005
+		if bot.speed > maxSpeed/2.17 {
+			bot.speed -= maxSpeed / 2.17 / 50
+		} else if bot.speed > maxSpeed/2.3 {
+			bot.speed -= maxSpeed / 2.3 / 80
+		} else if bot.speed > maxSpeed/2.45 {
+			bot.speed -= maxSpeed / 2.45 / 490
 		} else {
 
 			bot.speed = bot.speed + 0.08
 		}
 
 	} else {
-		if bot.speed+0.1 < 7.5 {
+		if bot.speed+0.1 < maxSpeed {
 			bot.speed = bot.speed + 0.1
 		} else {
-			bot.speed = 7.5
+			bot.speed = maxSpeed
 		}
 	}
 	rspeed := 0.03 * math.Sqrt(bot.speed*1.6)
+	fmt.Printf("rspeed: %v\n", rspeed)
+	if rspeed < 0.06 {
+		rspeed = 0.06
+	}
 	if strings.Contains(grass, "/"+VisMat[1][2]+"/") {
 		if strings.Contains(roads, "/"+VisMat[2][1]+"/") {
 			bot = turnRight(bot, rspeed)
 		} else if strings.Contains(roads, "/"+VisMat[0][1]+"/") {
 			bot = turnLeft(bot, rspeed)
+			log.Println("tut")
 		}
-	} else if deviation < 0 {
+	} else if deviation < -0.5 {
 		bot = turnLeft(bot, rspeed)
-	} else if deviation > 0 {
+	} else if deviation > 0.5 {
 		bot = turnRight(bot, rspeed)
 	} else {
 		bot = moveStright(bot)
 	}
 	bot.visionMatrix = VisMat
+	bot = correctPosDiv(bot)
+	// log.Println(VisMat[0])
+	// log.Println(VisMat[1])
+	// log.Println(VisMat[2])
+
+	// log.Println()
+	// log.Println()
+	return bot
+}
+
+func correctPosDiv(bot Bot) Bot {
+	if (math.Mod(bot.angle*180/math.Pi, 360)+360 >= 315) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 405) {
+		inTilePosX := (int(bot.x) % 96)
+		if inTilePosX > 60 {
+			bot.x -= 0.05
+		} else if inTilePosX < 36 {
+			bot.x += 0.05
+		}
+		log.Println("vrx")
+	} else if (math.Mod(bot.angle*180/math.Pi, 360)+360 >= 225) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 315) {
+		inTilePosY := (int(bot.y) % 96)
+		if inTilePosY > 60 {
+			bot.y -= 0.05
+		} else if inTilePosY < 36 {
+			bot.y += 0.05
+		}
+		log.Println("vry")
+	} else if ((math.Mod(bot.angle*180/math.Pi, 360)+360 >= 495) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 585)) ||
+		((math.Mod(bot.angle*180/math.Pi, 360)+360 >= 135) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 225)) {
+		inTilePosX := (int(bot.x) % 96)
+		if inTilePosX > 60 {
+			bot.x -= 0.05
+		} else if inTilePosX < 36 {
+			bot.x += 0.05
+		}
+		log.Println("vrxx")
+	} else {
+		inTilePosY := (int(bot.y) % 96)
+		if inTilePosY > 60 {
+			bot.y -= 0.05
+		} else if inTilePosY < 36 {
+			bot.y += 0.05
+		}
+		log.Println("vryy")
+	}
 	return bot
 }
 
@@ -234,16 +289,20 @@ func addAI(db *sqlx.DB, lobbyID string) {
 	bot.userHP = "100"
 	bot.speed = 0
 	bot.laps = laps
+	bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "1")
+	log.Println("hui")
+	bot.inSessionId = "1"
 	if lobby.Player2ID == "10" {
-
-		bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "1")
-
-		bot.inSessionId = "1"
+		bot.difficulty = 1
+	} else if lobby.Player2ID == "12" {
+		bot.difficulty = 2
+	} else {
+		bot.difficulty = 3
 	}
 	curTileI, curTileJ := getCurTile(int(bot.x), int(bot.y))
 	bot.visionMatrix = createVision(bot.mapMatrix, curTileI, curTileJ)
 
-	bots[lobbyID] = append(bots[lobbyID], bot)
+	bots[lobbyID] = bot
 }
 
 func setMapKey(db *sqlx.DB, lobbyID string) MapData {

@@ -12,6 +12,7 @@ type Bot struct {
 	userHP       string
 	laps         int
 	checks       int
+	difficulty   int
 }
 
 type User struct {
@@ -99,4 +100,15 @@ type Account struct {
 
 type FriendsData struct {
 	Nickname string `db:"nickname"`
+}
+
+type Message struct {
+	SessionID      string
+	readinessSpeed string
+	angle          string
+	y              string
+	x              string
+	inSessionID    string
+	hp             string
+	isFinished     string
 }

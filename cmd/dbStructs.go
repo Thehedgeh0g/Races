@@ -55,7 +55,7 @@ type AchivmentData struct {
 }
 
 type FriendRequest struct {
-	RecieverID string
-	SenderID   string
-	Status     string
+	RecieverID string `db:"recieverID"`
+	SenderID   string `db:"senderID"`
+	Status     string `db:"status"`
 }

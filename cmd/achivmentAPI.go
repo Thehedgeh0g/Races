@@ -38,7 +38,7 @@ func sendAchivment(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var achivment AchivmentData
-		
+
 		if !checkAchivments(user, achivmentID) {
 			achivment, err = getAchivment(db, achivmentID)
 			if err != nil {
