@@ -174,9 +174,9 @@ function getFriends() {
               <span>name:` + response1.Sender.Nickname + `</span>
               <span>lvl:` + response1.Sender.Lvl + `</span>
           </div>
-          <div class="del" id=` + response1.Sender.Nickname + ':' + String(response1.Sender.Id)`></div>
+          <div class="del" id=` + response1.Sender.Nickname + ':' + response.Friends[i]`></div>
         </div>`
-        document.getElementById(response1.Sender.Nickname + ":" + String(response1.Sender.Id)).addEventListener("click", deleteFriend)
+        document.getElementById(response1.Sender.Nickname + ":" + response.Friends[i]).addEventListener("click", deleteFriend)
       });
       
     }
