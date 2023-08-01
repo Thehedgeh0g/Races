@@ -500,12 +500,14 @@ func checkRequests(db *sqlx.DB, recieverID, senderID string) bool {
 	} else {
 		exists = true
 	}
-	row = db.QueryRow(query, senderID, recieverID)
-	err = row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
-	if err != nil {
-		exists = false
-	} else {
-		exists = true
+	if !exists {
+		row = db.QueryRow(query, senderID, recieverID)
+		err = row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
+		if err != nil {
+			exists = false
+		} else {
+			exists = true
+		}
 	}
 	return exists
 }
