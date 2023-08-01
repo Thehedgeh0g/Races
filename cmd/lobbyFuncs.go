@@ -66,3 +66,31 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 	}
 	return data, nil
 }
+
+func getLobbyList(db *sqlx.DB, friends []string) ([]LobbyList, error) {
+	var list []LobbyList
+	for _, ID := range friends {
+		var listElement LobbyList
+		friend, err := getUser(db, ID)
+		if err != nil {
+			return nil, err
+		}
+		if checkLobby(db, friend.CurLobbyID) {
+			listElement.Friend.Avatar = friend.ImgPath
+			listElement.Friend.Nickname = friend.Nickname
+			listElement.Friend.Lvl = friend.Lvl
+			listElement.LobbyID = friend.CurLobbyID
+			list = append(list, listElement)
+		}
+	}
+	return list, nil
+}
+
+func checkLobby(db *sqlx.DB, lobbyID string) bool {
+	lobby, err := getLobbyData(db, lobbyID)
+	if err != nil {
+		return false
+	}
+
+	return lobby.InProgress
+}

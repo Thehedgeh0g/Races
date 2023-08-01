@@ -114,3 +114,8 @@ type Message struct {
 	hp             string
 	isFinished     string
 }
+
+type LobbyList struct {
+	Friend  FriendsData
+	LobbyID string
+}

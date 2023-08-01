@@ -84,7 +84,7 @@ func getLobbyData(db *sqlx.DB, lobbyID string) (LobbyData, error) {
 	`
 	row := db.QueryRow(query, lobbyID)
 	var lobby LobbyData
-	err := row.Scan(&lobby.LobbyID, &lobby.HostID, &lobby.Player2ID, &lobby.Player3ID, &lobby.Player4ID, &lobby.MapID, &lobby.Laps, &lobby.InfiniteHP, &lobby.CollisionOFF, &lobby.Boss)
+	err := row.Scan(&lobby.LobbyID, &lobby.HostID, &lobby.Player2ID, &lobby.Player3ID, &lobby.Player4ID, &lobby.MapID, &lobby.Laps, &lobby.InfiniteHP, &lobby.CollisionOFF, &lobby.Boss, &lobby.InProgress)
 	if err != nil {
 		return lobby, err
 	}
@@ -479,4 +479,28 @@ func saveResults(db *sqlx.DB, userID string, modificator int) error {
 		return err
 	}
 	return nil
+}
+
+func checkRequests(db *sqlx.DB, recieverID, senderID string) bool {
+	const query = `
+		SELECT
+		  *
+		FROM 
+		  friendreq 
+	  	WHERE 
+		  recieverID = ? AND senderID = ?
+	`
+	var request FriendRequest
+	row := db.QueryRow(query, recieverID, senderID)
+	err := row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
+	if err != nil {
+		return true
+	} else {
+		row = db.QueryRow(query, senderID, recieverID)
+		err = row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
+		if err != nil {
+			return true
+		}
+	}
+	return false
 }

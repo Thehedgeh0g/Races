@@ -49,20 +49,20 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			isFound = false
 		} else {
 			isFound = true
-
 			inFriends := false
-
-			for _, id := range strings.Split(user.Friends, " ") {
-				if id == friendReq.RecieverID {
-					inFriends = true
-				}
-			}
 
 			if userID == friendReq.RecieverID {
 				inFriends = true
+			} else {
+				for _, id := range strings.Split(user.Friends, " ") {
+					if id == friendReq.RecieverID {
+						inFriends = true
+						break
+					}
+				}
 			}
 
-			if !inFriends {
+			if (!inFriends) && checkRequests(db, friendReq.RecieverID, userID) {
 				err = createFriendsReq(db, friendReq)
 				if err != nil {
 					http.Error(w, "Error", 500)
