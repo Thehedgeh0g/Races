@@ -93,6 +93,9 @@ function checkIsValidFriend(userName) {
   xhr.send(JSON.stringify(user));
 }
 
+
+const requests = document.getElementById("req");
+
 function getReq() {
 
   const xhr = new XMLHttpRequest();
@@ -104,12 +107,26 @@ function getReq() {
       const xhr1 = new XMLHttpRequest();
   
       xhr1.open('POST', "/api/getOtherUser");
+      xhr1.send(JSON.stringify(response.Requests[i].SenderID));
       xhr1.addEventListener('load', () => {
         response1 = JSON.parse(xhr1.responseText)
         console.log(response1);
+        requests.innerHTML = requests.innerHTML + 
+       `<div class=req-field>
+          <div class="human">
+            <img class="small-ava" src="` + response1.Sender.ImgPath + `">
+            <span>` + response1.Sender.Nickname + `</span>
+          </div>
+          <div class="choose">
+            <div class="accept" id="a` + i + `">accept</div>
+            <div class="reject" id="r` + i + `">reject</div>
+          </div>
+        </div>`
+        document.getElementById("a"+i).addEventListener("click", accept);
+        document.getElementById("r"+i).addEventListener("click", reject);
       });
     
-      xhr1.send();
+      
     }
     console.log(response)
   });
@@ -117,6 +134,9 @@ function getReq() {
   xhr.send();
 }
 
+window.addEventListener('load', () => {
+  getReq();
+});
 
 
 
