@@ -106,7 +106,11 @@ function getReq() {
   xhr.open('POST', "/api/getReqList");
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
+    console.log(response);
     reqList = response;
+    if (response.Requests == null) {
+      return
+    }
     for (let i=0; i < response.Requests.length; i++) {
       const xhr1 = new XMLHttpRequest();
   
@@ -132,7 +136,7 @@ function getReq() {
     
       
     }
-    console.log(response)
+    
   });
 
   xhr.send();
@@ -145,15 +149,16 @@ function getFriends() {
 
   const xhr = new XMLHttpRequest();
   
-  xhr.open('POST', "/api/getFriendList");
+  xhr.open('GET', "/api/getFriends");
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
+    console.log(response);
     reqList = response;
-    for (let i=0; i < response.Requests.length; i++) {
+    for (let i = 1; i < response.Friends.length; i++) {
       const xhr1 = new XMLHttpRequest();
   
       xhr1.open('POST', "/api/getOtherUser");
-      xhr1.send(JSON.stringify(response.Requests[i].SenderID));
+      xhr1.send(JSON.stringify(response.Friends[i]));
       xhr1.addEventListener('load', () => {
         response1 = JSON.parse(xhr1.responseText)
         console.log(response1);
@@ -165,13 +170,11 @@ function getFriends() {
               <span>lvl:` + response1.Sender.Lvl + `</span>
           </div>
         </div>`
-        document.getElementById("a"+i).addEventListener("click", accept);
-        document.getElementById("r"+i).addEventListener("click", reject);
       });
     
       
     }
-    console.log(response)
+    
   });
 
   xhr.send();
@@ -188,6 +191,7 @@ function accept(ev) {
   xhr.send(JSON.stringify(user));
   xhr.addEventListener('load', () => {
     getReq();
+    getFriends();
     let temp = document.getElementById("friend-list").innerHTML;
     document.getElementById("friend-list").innerHTML = "";
     document.getElementById("friend-list").innerHTML = temp;
@@ -210,6 +214,7 @@ function reject(ev) {
 
 window.addEventListener('load', () => {
   getReq();
+  getFriends();
 });
 
 
