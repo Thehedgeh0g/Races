@@ -23,11 +23,6 @@ function playMusic(){
     audio.loop = true;
     audio.play();
   }
-  if(audio.currentTime >= audio.duration - 0.05) {
-    audio.currentTime = 0;
-    musicOff = true;
-    playMusic();
-  }
 }
 
 function showAchive(imgSrc, title, subtitle, steps) {
