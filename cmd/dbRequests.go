@@ -53,7 +53,7 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	if err != nil {
 		return user, err
 	}
-
+	user.id = userID
 	return user, nil
 }
 
