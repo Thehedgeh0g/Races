@@ -71,7 +71,7 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				user.ImgPath = "../static/sprites/plug.png"
 				user.Nickname = "Empty"
 				user.Lvl = "0"
-				user.id = "0"
+				user.ID = "0"
 			}
 
 			users = append(users, user)
