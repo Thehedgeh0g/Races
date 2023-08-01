@@ -8,39 +8,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func getFriends(db *sqlx.DB, userID string) ([]*FriendsData, error) {
-	user, err := getUser(db, userID)
-	if err != nil {
-		log.Println(err.Error())
-		return nil, err
-	}
-
-	IDs := strings.Split(user.Friends, " ")
-
-	var nicks []*FriendsData
-	for _, id := range IDs {
-		if id != "0" {
-			var nick FriendsData
-			friend, err := getUser(db, id)
-			if err != nil {
-				log.Println(err.Error())
-				return nil, err
-			}
-
-			nick.Nickname = friend.Nickname
-			nick.Avatar = friend.ImgPath
-			nick.Lvl = friend.Lvl
-
-			nicks = append(nicks, &nick)
-			log.Println(nicks)
-		}
-
-	}
-
-	return nicks, nil
-
-}
-
 func getAchivments(db *sqlx.DB, userID string) ([]*AchivmentData, error) {
 	user, err := getUser(db, userID)
 	if err != nil {

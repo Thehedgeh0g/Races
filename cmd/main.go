@@ -41,6 +41,7 @@ func main() {
 	mux.HandleFunc("/constructor", handleconstruct)
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
+	mux.HandleFunc("/aws", handleAccountSocket(dbx))
 
 	mux.HandleFunc("/api/getFriends", sendFriends(dbx)).Methods(http.MethodGet)
 	mux.HandleFunc("/api/deleteFriend", deleteFriend(dbx)).Methods(http.MethodPost)
