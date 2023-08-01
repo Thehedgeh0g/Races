@@ -17,13 +17,6 @@ let user = {
 }
 
 
-
-
-
-
-
-
-
 // добавление друга
 
 addFriends.addEventListener("click", showAddFriendBox);
@@ -100,6 +93,29 @@ function checkIsValidFriend(userName) {
   xhr.send(JSON.stringify(user));
 }
 
+function getReq() {
+
+  const xhr = new XMLHttpRequest();
+  
+  xhr.open('POST', "/api/getReqList");
+  xhr.addEventListener('load', () => {
+    response = JSON.parse(xhr.responseText)
+    for (let i=0; i < response.Requests.length; i++) {
+      const xhr1 = new XMLHttpRequest();
+  
+      xhr1.open('POST', "/api/getOtherUser");
+      xhr1.addEventListener('load', () => {
+        response1 = JSON.parse(xhr1.responseText)
+        console.log(response1);
+      });
+    
+      xhr1.send();
+    }
+    console.log(response)
+  });
+
+  xhr.send();
+}
 
 
 
