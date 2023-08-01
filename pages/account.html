@@ -12,8 +12,7 @@
     <title>BRAINLESS RACES</title>
 </head>
 <body class="page">
-    <span class="heading">Account</span>
-    <img src="../static/account-images/racer4.png" alt="" width="88px" height="100px">
+    <!-- <span class="heading">Account</span> -->
 
     <div class="modal-container">
         <div class="add-friend-box">
@@ -27,72 +26,73 @@
             <button class="add-friend-box__search-button" id="SearchFriendButton">Search!</button>
         </div>
     </div>
-    
-    <div class="data-box">
-        <div class="player-list">
-                <div class="account-data">
-                    <span class="player-list__naming">Nickname</span>
-                    <span class="player-list__data" id="NickName">{{ .Nickname }}</span>
+    <div class="whole">
+        <div class="data-box">
+            <div class="fl">
+                <img id="AvatarPhoto" src="{{ .ImgPath }}" alt="">
+                <div class="list">
+                        <div class="account-data">
+                            <span class="player-list__naming">Name</span>
+                            <span class="player-list__data" id="NickName">{{ .Nickname }}</span>
+                        </div>
+                        <div class="account-data">
+                            <span class="player-list__naming">Level</span>
+                            <span class="player-list__data" id="Level">{{ .Lvl }}</span>
+                        </div>
+                        <div class="account-data">
+                            <span class="player-list__naming">Bosses</span>
+                            <span class="player-list__data" id="KilledBosses">{{ .Bosses }}</span>
+                        </div>
                 </div>
-                <div class="account-data">
-                    <span class="player-list__naming">Avatar</span>
-                    <img id="AvatarPhoto" src="{{ .ImgPath }}" alt="" width="130px" height="115px">
-                </div>
-                <div class="account-data">
-                    <span class="player-list__naming">Level</span>
-                    <span class="player-list__data" id="Level">{{ .Lvl }}</span>
-                </div>
-                <div class="account-data">
-                    <span class="player-list__naming">Bosses</span>
-                    <span class="player-list__data" id="KilledBosses">{{ .Bosses }}</span>
-                </div>
-        </div>
-
-        <div class="friends-list" id="ListOfFriends">
-            <div class="friends-container">
-                <div class="friends-list__heading">
-                    <div class="friends-list__logo">
-                        <img class="friends-list__toggler" id="FriendsListToggler" src="../static/account-images/toggle2.png" alt="" width="38px" height="38px">
-                        <span class="friends-list__naming">Friends</span>
+            </div>
+            <div class="ach">
+                {{ range .Achivments }}
+                    <div class="achive">
+                        <img src="{{ .AchivmentPath }}" class="achive__img">
+                        <div class="column">
+                        <span class="achive__title">{{ .Achivment }}</span>
+                        <span class="achive__subtitle">{{ .AchivmentCom }}</span>
+                        <span class="achive__steps">{{ .AchivmentDesc }}</span>
+                        </div>
                     </div>
-                    <span class="friends-list__data" id="FriendsCounter">,.tr</span>
-                </div>
-                <div class="friends-data">
+                {{end}}
+            </div>
+        </div>
+        <div class="friends">
+            <div class="list-request" id="ListOfFriends">
+
+                <div class="req">
                     {{ range .Friends }}
-                    <ul>
-                        <li class="elstyle">{{ .Nickname }}</li>
-                    </ul>
-                    {{ end}}   
+                        <div class="friend">
+                            <img src="{{ .Avatar }}">
+                            <div class="col">
+                                <span>{{ .Nickname }}</span>
+                                <span>{{ .Lvl }}</span>
+                            </div>
+                        </div>
+                    {{end}}
                 </div>
-            </div>
-            <div class="add-friends" id="AddFriend">
-                <img src="../static/account-images/plus6.png" alt="" width="40px" height="40px">
-                <span>Add friends</span>
-            </div> 
-            <div class="achievements__container">
-                <div class="achievements-list">
-                    <div class="achievements-list__logo">
-                        <img class="achievements-list__toggler" id="AchiToggler" src="../static/account-images/toggle2.png" alt="" width="38px" height="38px">
-                        <span class="achievements-list__naming">Achievements</span>
-                    </div>
-                    <span class="achievements-list__data" id="AchiCounter">,.tr</span>
-                </div> 
-                <div class="achi-data">
-                    {{ range .Achivments }}
-                    <div id="achive"> 
-                        <img class="{{ .AchivmentID }}" src="../static/img/{{ .AchivmentPath }}" id="achive__img"> 
-                        <div class="achive-column"> 
-                            <span id="achive__title">{{ .Achivment }}</span> 
-                            <span id="achive__subtitle">{{ .AchivmentCom }}</span> 
-                            <span id="achive__steps">{{ .AchivmentDesc }}</span> 
-                        </div> 
-                    </div>
-                   {{end}}
-                </div>  
-            </div>
-        </div>
 
+                <div class="add-friends" id="AddFriend">
+                    <img src="../static/account-images/plus6.png" alt="" width="40px" height="40px">
+                </div> 
+            </div>
+            <div class="ach">
+                {{ range .Friends }}
+                    <div class="friend">
+                        <img src="{{ .Avatar }}">
+                        <div class="col">
+                            <span>{{ .Nickname }}</span>
+                            <span>{{ .Lvl }}</span>
+                        </div>
+                    </div>
+                {{end}}
+            </div>
+
+        </div>
     </div>
+
+
     <script src="../static/js/account.js"></script>
 
 </body>

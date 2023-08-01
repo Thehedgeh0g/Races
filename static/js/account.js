@@ -17,21 +17,11 @@ let user = {
 }
 
 
-friendsListToggler.addEventListener("click", function() {
-    if (friendsData.style.maxHeight === "0px" || friendsData.style.maxHeight === "") {
-      friendsListTogglerClassList.style.transform = "rotate(360deg)";
-      friendsData.style.maxHeight = "23vh";
-
-  } else {
-      friendsListTogglerClassList.style.transform = "rotate(270deg)";
-      friendsData.style.maxHeight = "0px";
-  }
-});
 
 
 
-// подсчет друзей
-friendsCounter.innerHTML = friendsData.querySelectorAll('li').length;
+
+
 
 
 // добавление друга
@@ -113,15 +103,4 @@ function checkIsValidFriend(userName) {
 
 
 
-achiCounter.innerHTML = achiData.children.length;
 
-achiToggler.addEventListener("click", function() {
-  if (achiData.style.maxHeight === "0px" || achiData.style.maxHeight === "") {
-    achiTogglerClassList.style.transform = "rotate(360deg)";
-    achiData.style.maxHeight = "27vh";
-
-} else {
-    achiTogglerClassList.style.transform = "rotate(270deg)";
-    achiData.style.maxHeight = "0px";
-}
-});
