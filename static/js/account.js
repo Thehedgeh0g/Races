@@ -159,7 +159,7 @@ function getFriends() {
   if (response.Friends.length == 1) {
     return
   }
-    for (let i = 1; i < response.Friends.length; i++) {
+    for (let i = 0; i < response.Friends.length; i++) {
       const xhr1 = new XMLHttpRequest();
   
       xhr1.open('POST', "/api/getOtherUser");
