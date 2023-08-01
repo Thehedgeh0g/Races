@@ -156,7 +156,7 @@ function getFriends() {
     console.log(xhr.responseText)
   response = JSON.parse(xhr.responseText)
   console.log(response);
-  if (response.Friends.length == 1) {
+  if (response.Friends.length == 0) {
     return
   }
     for (let i = 0; i < response.Friends.length; i++) {
@@ -174,9 +174,9 @@ function getFriends() {
               <span>name:` + response1.Sender.Nickname + `</span>
               <span>lvl:` + response1.Sender.Lvl + `</span>
           </div>
-          <div class="del" id=` + response1.Sender.Nickname + ':' + response.Friends[i]`></div>
+          <div class="del" id=` + response1.Sender.Nickname + ':' + response1.Sender.Id + `></div>
         </div>`
-        document.getElementById(response1.Sender.Nickname + ":" + response.Friends[i]).addEventListener("click", deleteFriend)
+        document.getElementById(response1.Sender.Nickname + ":" + response1.Sender.Id).addEventListener("click", deleteFriend)
       });
       
     }
