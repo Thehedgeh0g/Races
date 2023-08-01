@@ -519,6 +519,7 @@ func deleteFromFriendList(db *sqlx.DB, userID, friendID string) error {
 	}
 	friendsStr := strings.Join(friendList, " ")
 	friendsStr = strings.Trim(friendsStr, " ")
+	fmt.Printf("friendsStr: %v\n", friendsStr)
 	const stmt = `UPDATE users SET friends = ? WHERE user_id = ?`
 	_, err = db.Exec(stmt, friendsStr, userID)
 	if err != nil {
