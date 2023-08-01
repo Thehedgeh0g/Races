@@ -230,3 +230,56 @@ func sendOtherUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+func deleteFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqData, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		var friendsNick string
+
+		userID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		user, err := getUser(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+		}
+
+		err = json.Unmarshal(reqData, &friendsNick)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error(), "tut")
+			return
+		}
+
+		friendsID, err := getUserByNick(db, friendsNick)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error(), "tut")
+			return
+		}
+
+		err = deleteFromFriendList(db, user.ID, friendsID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error(), "tut")
+			return
+		}
+
+		err = deleteFromFriendList(db, friendsID, user.ID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error(), "tut")
+			return
+		}
+
+	}
+}

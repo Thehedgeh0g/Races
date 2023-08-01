@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -503,4 +504,24 @@ func checkRequests(db *sqlx.DB, recieverID, senderID string) bool {
 		}
 	}
 	return false
+}
+
+func deleteFromFriendList(db *sqlx.DB, userID, friendID string) error {
+	user, err := getUser(db, userID)
+	if err != nil {
+		return err
+	}
+	friendList := strings.Split(user.Friends, " ")
+	for i, ID := range friendList {
+		if ID == friendID {
+			friendList[i] = ""
+		}
+	}
+	friendsStr := strings.Join(friendList, " ")
+	const stmt = `UPDATE users SET friends = ? WHERE user_id = ?`
+	_, err = db.Exec(stmt, friendsStr, userID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
