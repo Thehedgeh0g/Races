@@ -4,6 +4,32 @@ const achiveTitle = document.getElementById("achive__title");
 const achiveSubtitle = document.getElementById("achive__subtitle");
 const achiveSteps = document.getElementById("achive__steps");
 
+// var audio = new Audio();
+// audioStart.src = '../static/sounds/jiga2kStart.mp3';
+let musicOff = true;
+document.body.addEventListener("mousemove", playMusic);
+document.body.addEventListener("canplaythrough", playMusic);
+
+function playMusic(){
+  if (musicOff){
+    musicOff = false;
+    let audio = new Audio();
+    var musicFolder = '../static/music/';
+    var music = new Array('InitialD-LoveMoney.mp3','InitialD-SpeedySpeedBoy.mp3','InitialD-DejaVu.mp3');
+    var rand_file_index = Math.round(Math.random()*(music.length-1));
+    var rand_file_name = music[rand_file_index];
+    console.log(rand_file_name);
+    audio.src = musicFolder + rand_file_name;
+    audio.loop = true;
+    audio.play();
+  }
+  if(audio.currentTime >= audio.duration - 0.05) {
+    audio.currentTime = 0;
+    musicOff = true;
+    playMusic();
+  }
+}
+
 function showAchive(imgSrc, title, subtitle, steps) {
   achiveImg.src = imgSrc;
   achiveTitle.innerHTML = title;

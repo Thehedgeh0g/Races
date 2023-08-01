@@ -160,6 +160,24 @@ tuningPurchase.addEventListener("click", AcceptPurchase);
 carArrowLeft.addEventListener("click", GarageCarDec);
 carArrowRight.addEventListener("click", GarageCarInc);
 
+let musicOff = true;
+document.body.addEventListener("mousemove", playMusic);
+document.body.addEventListener("canplaythrough", playMusic);
+
+function playMusic(){
+  if (musicOff){
+    musicOff = false;
+    let audio = new Audio();
+    var musicFolder = '../static/music/';
+    var music = new Array('InitialD-LoveMoney.mp3','InitialD-SpeedySpeedBoy.mp3');
+    var rand_file_index = Math.round(Math.random()*(music.length-1));
+    var rand_file_name = music[rand_file_index];
+    console.log(rand_file_name);
+    audio.src = musicFolder + rand_file_name;
+    audio.play();
+  }
+}
+
 
 tuningPurchase.addEventListener("mousedown", ()=> { 
   tuningPurchase.classList.add("pressed"); 
@@ -480,7 +498,7 @@ function replaceCar() {
     }
 
   }
-  
+
   if (this == GreyCarField){
     var src = document.getElementById('greyCar').src; 
     src = src.slice(src.length-6  , src.length-4); 
