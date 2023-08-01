@@ -93,16 +93,20 @@ function checkIsValidFriend(userName) {
   xhr.send(JSON.stringify(user));
 }
 
+let reqList = null;
 
 const requests = document.getElementById("req");
 
 function getReq() {
+
+  requests.innerHTML=""
 
   const xhr = new XMLHttpRequest();
   
   xhr.open('POST', "/api/getReqList");
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
+    reqList = response;
     for (let i=0; i < response.Requests.length; i++) {
       const xhr1 = new XMLHttpRequest();
   
@@ -132,6 +136,34 @@ function getReq() {
   });
 
   xhr.send();
+}
+
+function accept(ev) {
+  cid = ev.target.id.slice(1);
+
+  user = reqList.Requests[cid];
+  user.Status = "1"
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', "/api/answerReq");
+  xhr.send(JSON.stringify(user));
+  xhr.addEventListener('load', () => {
+    getReq();
+  });
+}
+
+function reject(ev) {
+  cid = ev.target.id.slice(1);
+
+  user = reqList.Requests[cid];
+  user.Status = "2"
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', "/api/answerReq");
+  xhr.send(JSON.stringify(user));
+  xhr.addEventListener('load', () => {
+    getReq();
+  });
 }
 
 window.addEventListener('load', () => {
