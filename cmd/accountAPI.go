@@ -75,9 +75,11 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		}
 		response := struct {
-			IsFound bool `json:"IsFound"`
+			IsFound   bool   `json:"IsFound"`
+			FriendsID string `json:"FriendsID"`
 		}{
-			IsFound: isFound,
+			IsFound:   isFound,
+			FriendsID: friendReq.RecieverID,
 		}
 
 		jsonResponse, err := json.Marshal(response)
