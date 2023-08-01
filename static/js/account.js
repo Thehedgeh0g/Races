@@ -192,9 +192,7 @@ function accept(ev) {
   xhr.addEventListener('load', () => {
     getReq();
     getFriends();
-    let temp = document.getElementById("friend-list").innerHTML;
-    document.getElementById("friend-list").innerHTML = "";
-    document.getElementById("friend-list").innerHTML = temp;
+    socket.send(JSON.stringify(reqList.Requests[cid].SenderID) + "reload");
   });
 }
 
@@ -218,4 +216,39 @@ window.addEventListener('load', () => {
 });
 
 
+
+var socket = new WebSocket("wss:" + window.location.hostname + "/aws");
+
+socket.onmessage = function (event) {
+  var message = JSON.parse(event.data);
+  console.log(message);
+  getReq();
+  getFriends();
+};
+
+socket.addEventListener("open", () => {
+  socket.send(JSON.stringify("0"));
+});
+
+
+
+
+
+let musicOff = true;
+document.body.addEventListener("mousemove", playMusic);
+document.body.addEventListener("canplaythrough", playMusic);
+
+function playMusic(){
+  if (musicOff){
+    musicOff = false;
+    let audio = new Audio();
+    var musicFolder = '../static/music/';
+    var music = new Array('InitialD-LoveMoney.mp3','InitialD-SpeedySpeedBoy.mp3');
+    var rand_file_index = Math.round(Math.random()*(music.length-1));
+    var rand_file_name = music[rand_file_index];
+    console.log(rand_file_name);
+    audio.src = musicFolder + rand_file_name;
+    audio.play();
+  }
+}
 
