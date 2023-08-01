@@ -57,7 +57,7 @@ func searchUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		http.SetCookie(w, &http.Cookie{
 			Name:    "authCookieName",
-			Value:   fmt.Sprint(user.id),
+			Value:   fmt.Sprint(user.ID),
 			Path:    "/",
 			Expires: time.Now().AddDate(0, 0, 1),
 		})
