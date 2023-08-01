@@ -1,7 +1,7 @@
 package main
 
 type UserData struct {
-	ID         string
+	Id         string
 	Email      string `db:"email"`
 	Password   string `db:"password"`
 	ImgPath    string `db:"avatar"`
