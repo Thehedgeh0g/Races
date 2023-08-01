@@ -2,7 +2,6 @@ package main
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -168,13 +167,6 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		friendList, err := getFriends(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
 		achivments, err := getAchivments(db, userID)
 		if errorProcessor(err, w) {
 			return
@@ -187,7 +179,6 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			Nickname:   user.Nickname,
 			Lvl:        user.Lvl,
 			Bosses:     user.Bosses,
-			Friends:    friendList,
 			Achivments: achivments,
 		}
 

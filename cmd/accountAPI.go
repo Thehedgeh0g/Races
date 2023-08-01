@@ -283,3 +283,41 @@ func deleteFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+
+func sendFriends(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := getUserID(db, r)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		user, err := getUser(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		freinds := strings.Split(user.Friends, " ")
+
+		response := struct {
+			Friends []string `json:"Friends"`
+		}{
+			Friends: freinds,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, "Server Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+	}
+
+}
