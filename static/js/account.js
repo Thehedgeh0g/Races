@@ -174,9 +174,9 @@ function getFriends() {
               <span>name:` + response1.Sender.Nickname + `</span>
               <span>lvl:` + response1.Sender.Lvl + `</span>
           </div>
-          <div class="del" id=d` + response1.Sender.Nickname + `></div>
+          <div class="del" id=` + response1.Sender.Nickname + ':' + String(response1.Sender.Id)`></div>
         </div>`
-        document.getElementById('d' + response1.Sender.Nickname).addEventListener("click", deleteFriend)
+        document.getElementById(response1.Sender.Nickname + ":" + String(response1.Sender.Id)).addEventListener("click", deleteFriend)
       });
       
     }
@@ -187,7 +187,7 @@ function getFriends() {
 }
 
 function deleteFriend(ev) {
-  cid = ev.target.id.slice(1);
+  cid = ev.target.id.split(':')[0];
 
   const xhr = new XMLHttpRequest();
   xhr.open('POST', "/api/deleteFriend");
@@ -195,8 +195,8 @@ function deleteFriend(ev) {
   xhr.addEventListener('load', () => {
     getReq();
     getFriends();
-    socket.send(JSON.stringify(cid + " reload"));
-    console.log(JSON.stringify(cid + " reload"));
+    socket.send(JSON.stringify(ev.target.id.split(':')[1] + " reload"));
+    console.log(JSON.stringify(ev.target.id.split(':')[1] + " reload"));
   });
 }
 
