@@ -138,6 +138,45 @@ function getReq() {
   xhr.send();
 }
 
+const friendList = document.getElementById("friend-list");
+
+function getFriends() {
+  friendList.innerHTML=""
+
+  const xhr = new XMLHttpRequest();
+  
+  xhr.open('POST', "/api/getFriendList");
+  xhr.addEventListener('load', () => {
+    response = JSON.parse(xhr.responseText)
+    reqList = response;
+    for (let i=0; i < response.Requests.length; i++) {
+      const xhr1 = new XMLHttpRequest();
+  
+      xhr1.open('POST', "/api/getOtherUser");
+      xhr1.send(JSON.stringify(response.Requests[i].SenderID));
+      xhr1.addEventListener('load', () => {
+        response1 = JSON.parse(xhr1.responseText)
+        console.log(response1);
+        friendList.innerHTML = friendList.innerHTML + 
+       `<div class="friend">
+          <img class="middle-ava" src="` + response1.Sender.ImgPath + `">
+          <div class="col">
+              <span>name:` + response1.Sender.Nickname + `</span>
+              <span>lvl:` + response1.Sender.Lvl + `</span>
+          </div>
+        </div>`
+        document.getElementById("a"+i).addEventListener("click", accept);
+        document.getElementById("r"+i).addEventListener("click", reject);
+      });
+    
+      
+    }
+    console.log(response)
+  });
+
+  xhr.send();
+}
+
 function accept(ev) {
   cid = ev.target.id.slice(1);
 
@@ -149,6 +188,9 @@ function accept(ev) {
   xhr.send(JSON.stringify(user));
   xhr.addEventListener('load', () => {
     getReq();
+    let temp = document.getElementById("friend-list").innerHTML;
+    document.getElementById("friend-list").innerHTML = "";
+    document.getElementById("friend-list").innerHTML = temp;
   });
 }
 
