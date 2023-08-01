@@ -300,7 +300,7 @@ func sendFriends(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		freinds := strings.Split(user.Friends, " ")
+		freinds := strings.Split(user.Friends[2:], " ")
 
 		response := struct {
 			Friends []string `json:"Friends"`
