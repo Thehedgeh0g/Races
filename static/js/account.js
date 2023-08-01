@@ -80,7 +80,7 @@ function checkIsValidFriend(userName) {
     if (response.IsFound == true){
       document.body.removeChild(overlay);
       document.querySelector(".add-friend-box").style.visibility = "hidden";
-      // socket.send(JSON.stringify(reqList.Requests[cid].SenderID + " reload"));
+      socket.send(JSON.stringify(response.FriendsID + " reload"));
     }
     console.log(response)
   });
@@ -153,6 +153,7 @@ function getFriends() {
   
   xhr.open('GET', "/api/getFriends");
   xhr.addEventListener('load', () => {
+    console.log(xhr.responseText)
   response = JSON.parse(xhr.responseText)
   console.log(response);
   if (response.Friends.length == 1) {
