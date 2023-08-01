@@ -386,11 +386,14 @@
 }
 
 .friend {
-    border-width:  2px;
+    border-width:  5px;
     border-style: solid;
     border-color: #ffc30e;
     background-color: #f8d7ab;
     padding: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 25px;
 }
 
 .list-request
@@ -420,4 +423,50 @@
     border-color: #ffc30e;
     background-color: #f8d7ab;
     padding: 2vh;
+}
+
+.human {
+    border-width:  5px;
+    border-style: solid;
+    border-color: #ffc30e;
+    background-color: #f8d7ab;
+    display: flex;
+    align-items: center;
+}
+
+.small-ava {
+    width: 5vw;
+    height: 5vw;
+    margin-right: 1vw;
+}
+
+.accept {
+    width: 50%;
+    height: 4vh;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #65c462;
+    cursor: pointer;
+}
+.reject {
+    width: 50%;
+    height: 4vh;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #c46962;
+    cursor: pointer;
+}
+
+.choose {
+    display: flex;
+}
+
+.middle-ava {
+    width: 7vw;
+    height: 7vw;
+    margin-right: 1vw;
 }

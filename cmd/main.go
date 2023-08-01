@@ -41,8 +41,12 @@ func main() {
 	mux.HandleFunc("/constructor", handleconstruct)
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))
+	mux.HandleFunc("/aws", handleAccountSocket(dbx))
 
-	mux.HandleFunc("api/getOtherUser", sendOtherUser(dbx)).Methods(http.MethodPost)
+	mux.HandleFunc("/api/getFriends", sendFriends(dbx)).Methods(http.MethodGet)
+	mux.HandleFunc("/api/deleteFriend", deleteFriend(dbx)).Methods(http.MethodPost)
+	mux.HandleFunc("/api/getLobbyList", getFriendsLobbys(dbx)).Methods(http.MethodGet)
+	mux.HandleFunc("/api/getOtherUser", sendOtherUser(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/answerReq", answerReq(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getReqList", sendReqList(dbx)).Methods(http.MethodPost)
 	mux.HandleFunc("/api/getAchivment", sendAchivment(dbx)).Methods(http.MethodPost)

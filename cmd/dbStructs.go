@@ -31,6 +31,7 @@ type LobbyData struct {
 	InfiniteHP   bool   `db:"hp"`
 	CollisionOFF bool   `db:"collision"`
 	Boss         bool   `db:"boss"`
+	InProgress   bool   `db:"inProgress"`
 }
 
 type SpriteData struct {
