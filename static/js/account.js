@@ -78,7 +78,9 @@ function checkIsValidFriend(userName) {
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
     if (response.IsFound == true){
-      window.location.reload();
+      document.body.removeChild(overlay);
+      document.querySelector(".add-friend-box").style.visibility = "hidden";
+      socket.send(JSON.stringify(response.FriendsID + " reload"));
     }
     console.log(response)
   });
@@ -151,10 +153,13 @@ function getFriends() {
   
   xhr.open('GET', "/api/getFriends");
   xhr.addEventListener('load', () => {
-    response = JSON.parse(xhr.responseText)
-    console.log(response);
-    reqList = response;
-    for (let i = 1; i < response.Friends.length; i++) {
+    console.log(xhr.responseText)
+  response = JSON.parse(xhr.responseText)
+  console.log(response);
+  if (response.Friends.length == 0) {
+    return
+  }
+    for (let i = 0; i < response.Friends.length; i++) {
       const xhr1 = new XMLHttpRequest();
   
       xhr1.open('POST', "/api/getOtherUser");
@@ -169,15 +174,30 @@ function getFriends() {
               <span>name:` + response1.Sender.Nickname + `</span>
               <span>lvl:` + response1.Sender.Lvl + `</span>
           </div>
+          <div class="del" id=` + response1.Sender.Nickname + ':' + response1.Sender.Id + `></div>
         </div>`
+        document.getElementById(response1.Sender.Nickname + ":" + response1.Sender.Id).addEventListener("click", deleteFriend)
       });
-    
       
     }
     
   });
 
   xhr.send();
+}
+
+function deleteFriend(ev) {
+  cid = ev.target.id.split(':')[0];
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', "/api/deleteFriend");
+  xhr.send(JSON.stringify(cid));
+  xhr.addEventListener('load', () => {
+    getReq();
+    getFriends();
+    socket.send(JSON.stringify(ev.target.id.split(':')[1] + " reload"));
+    console.log(JSON.stringify(ev.target.id.split(':')[1] + " reload"));
+  });
 }
 
 function accept(ev) {
@@ -192,7 +212,8 @@ function accept(ev) {
   xhr.addEventListener('load', () => {
     getReq();
     getFriends();
-    socket.send(JSON.stringify(reqList.Requests[cid].SenderID) + "reload");
+    socket.send(JSON.stringify(reqList.Requests[cid].SenderID + " reload"));
+    console.log(JSON.stringify(reqList.Requests[cid].SenderID + " reload"));
   });
 }
 

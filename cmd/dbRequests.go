@@ -21,7 +21,7 @@ func getUserForLog(db *sqlx.DB, req UserRequest) (UserData, error) {
 	`
 	row := db.QueryRow(query, req.Email, req.Password)
 	var user UserData
-	err := row.Scan(&user.ID)
+	err := row.Scan(&user.Id)
 	if err != nil {
 		return user, err
 	}
@@ -49,7 +49,7 @@ func getUser(db *sqlx.DB, userID string) (UserData, error) {
 	`
 	row := db.QueryRow(query, userID)
 	var user UserData
-	err := row.Scan(&user.ID, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID, &user.Achivments)
+	err := row.Scan(&user.Id, &user.ImgPath, &user.Bosses, &user.Lvl, &user.Money, &user.Nickname, &user.Friends, &user.Cars, &user.CurLobbyID, &user.Achivments)
 	if err != nil {
 		return user, err
 	}
@@ -353,7 +353,7 @@ func getAchivment(db *sqlx.DB, achivmentID string) (AchivmentData, error) {
 func updateAchivments(db *sqlx.DB, user UserData, achivmentID string) error {
 	stmt := `UPDATE users SET usersAchivments = ? WHERE user_id = ?`
 	achivmentsStr := user.Achivments + "/" + achivmentID + "/"
-	_, err := db.Exec(stmt, achivmentsStr, user.ID)
+	_, err := db.Exec(stmt, achivmentsStr, user.Id)
 	if err != nil {
 		return err
 	}
@@ -413,16 +413,16 @@ func getReqList(db *sqlx.DB, recieverID string) ([]FriendRequest, error) {
 	return requests, nil
 }
 
-func deleteReq(db *sqlx.DB, recieverID string) error {
+func deleteReq(db *sqlx.DB, req FriendRequest) error {
 	const stmt = `
 		DELETE 
 		FROM 
 		  friendreq 
 		WHERE 
-		  recieverID = ?
+		  recieverID = ? AND senderID = ?
 	`
 
-	_, err := db.Exec(stmt, recieverID)
+	_, err := db.Exec(stmt, req.RecieverID, req.SenderID)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -453,7 +453,7 @@ func updateFriends(db *sqlx.DB, isReciever bool, request FriendRequest) error {
 	}
 
 	const stmt = `UPDATE users SET friends = ? WHERE user_id = ?`
-	_, err = db.Exec(stmt, friendList, user.ID)
+	_, err = db.Exec(stmt, friendList, user.Id)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -492,18 +492,24 @@ func checkRequests(db *sqlx.DB, recieverID, senderID string) bool {
 		  recieverID = ? AND senderID = ?
 	`
 	var request FriendRequest
+	var exists bool
 	row := db.QueryRow(query, recieverID, senderID)
 	err := row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
 	if err != nil {
-		return true
+		exists = false
 	} else {
+		exists = true
+	}
+	if !exists {
 		row = db.QueryRow(query, senderID, recieverID)
 		err = row.Scan(&request.RecieverID, &request.SenderID, &request.Status)
 		if err != nil {
-			return true
+			exists = false
+		} else {
+			exists = true
 		}
 	}
-	return false
+	return exists
 }
 
 func deleteFromFriendList(db *sqlx.DB, userID, friendID string) error {
@@ -518,6 +524,8 @@ func deleteFromFriendList(db *sqlx.DB, userID, friendID string) error {
 		}
 	}
 	friendsStr := strings.Join(friendList, " ")
+	friendsStr = strings.Trim(friendsStr, " ")
+	fmt.Printf("friendsStr: %v\n", friendsStr)
 	const stmt = `UPDATE users SET friends = ? WHERE user_id = ?`
 	_, err = db.Exec(stmt, friendsStr, userID)
 	if err != nil {

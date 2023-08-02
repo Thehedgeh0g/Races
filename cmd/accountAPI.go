@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -35,7 +36,7 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
-		friendReq.SenderID = user.ID
+		friendReq.SenderID = user.Id
 		err = json.Unmarshal(reqData, &req)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -61,8 +62,8 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-
-			if (!inFriends) && checkRequests(db, friendReq.RecieverID, userID) {
+			fmt.Printf("checkRequests(db, friendReq.RecieverID, userID): %v\n", checkRequests(db, friendReq.RecieverID, userID))
+			if (!inFriends) && !checkRequests(db, friendReq.RecieverID, userID) {
 				err = createFriendsReq(db, friendReq)
 				if err != nil {
 					http.Error(w, "Error", 500)
@@ -75,9 +76,11 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		}
 		response := struct {
-			IsFound bool `json:"IsFound"`
+			IsFound   bool   `json:"IsFound"`
+			FriendsID string `json:"FriendsID"`
 		}{
-			IsFound: isFound,
+			IsFound:   isFound,
+			FriendsID: friendReq.RecieverID,
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -107,7 +110,7 @@ func sendReqList(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
-		requests, err := getReqList(db, user.ID)
+		requests, err := getReqList(db, user.Id)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
@@ -142,19 +145,6 @@ func answerReq(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		var req FriendRequest
 
-		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-		}
-
 		err = json.Unmarshal(reqData, &req)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -177,7 +167,7 @@ func answerReq(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		err = deleteReq(db, user.ID)
+		err = deleteReq(db, req)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error(), "tut")
@@ -267,14 +257,14 @@ func deleteFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = deleteFromFriendList(db, user.ID, friendsID)
+		err = deleteFromFriendList(db, user.Id, friendsID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error(), "tut")
 			return
 		}
 
-		err = deleteFromFriendList(db, friendsID, user.ID)
+		err = deleteFromFriendList(db, friendsID, user.Id)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error(), "tut")
@@ -300,12 +290,12 @@ func sendFriends(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		freinds := strings.Split(user.Friends[2:], " ")
+		freinds := strings.Split(user.Friends, " ")
 
 		response := struct {
 			Friends []string `json:"Friends"`
 		}{
-			Friends: freinds,
+			Friends: freinds[1:],
 		}
 
 		jsonResponse, err := json.Marshal(response)

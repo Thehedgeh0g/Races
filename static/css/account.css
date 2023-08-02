@@ -394,6 +394,7 @@
     display: flex;
     align-items: center;
     font-size: 25px;
+    position: relative;
 }
 
 .list-request
@@ -469,4 +470,13 @@
     width: 7vw;
     height: 7vw;
     margin-right: 1vw;
+}
+
+.del {
+    position: absolute;
+    right: 5px;
+    width: 30px;
+    height: 80%;
+    background-color: #c46962;
+    cursor: pointer;
 }
