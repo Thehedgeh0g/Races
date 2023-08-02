@@ -127,8 +127,10 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 	x, _ := strconv.Atoi(mes.x)
 
 	if (strings.Split(mes.isFinished, "/")[0] == "1") && !(strings.Contains(races[mes.SessionID], mes.inSessionID+"/")) {
+		log.Println("tyt")
 		races[mes.SessionID] = races[mes.SessionID] + " " + mes.inSessionID + "/" + strings.Split(mes.isFinished, "/")[1]
 	} else if (strings.Split(mes.isFinished, "/")[0] == "2") && !(strings.Contains(races[mes.SessionID], mes.inSessionID+"/")) {
+		log.Println("tut")
 		races[mes.SessionID] = races[mes.SessionID] + " " + mes.inSessionID + "/" + "NF"
 	}
 
@@ -141,25 +143,29 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 }
 
 func botProcessing(db *sqlx.DB, sessionID, readiness, hp, group, isFinished string, x, y int) {
+
 	bot := bots[sessionID]
-	bot = collision(bot, x, y, hp)
-	if (bot.hp > 0) && !(strings.Contains(races[sessionID], bot.inSessionId+"/")) && (strings.Contains(readiness, "2/")) {
-		bot = AI(db, sessionID, bot)
-		if bot.laps <= 0 {
-			races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + strings.Split(isFinished, "/")[1]
-			log.Println(races[sessionID])
+	if (bot.x != 0) && (bot.y != 0) {
+		bot = collision(bot, x, y, hp)
+		if (bot.hp > 0) && !(strings.Contains(races[sessionID], bot.inSessionId+"/")) && (strings.Contains(readiness, "2/")) {
+			bot = AI(db, sessionID, bot)
+			if bot.laps <= 0 {
+				races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + strings.Split(isFinished, "/")[1]
+				log.Println(races[sessionID])
+			}
+		} else if bot.hp < 0 {
+			races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + "NF"
 		}
-	} else if bot.hp < 0 {
-		races[sessionID] = races[sessionID] + " " + bot.inSessionId + "/" + "NF"
+
+		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + "1/" + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
+
+		bots[sessionID] = bot
+
+		connMutex.Lock()
+		sendMessageToGroup(db, botMessage, group)
+		connMutex.Unlock()
 	}
 
-	botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + "1/" + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
-
-	bots[sessionID] = bot
-
-	connMutex.Lock()
-	sendMessageToGroup(db, botMessage, group)
-	connMutex.Unlock()
 }
 
 func processResults(db *sqlx.DB, results ResultsTable, sequence []int, tableStrings, IDs []string, userID string, isBoss bool) (ResultsTable, error) {
