@@ -45,6 +45,7 @@
                         </div>
                 </div>
             </div>
+            <span class="window-title">Achivments</span>
             <div class="ach">
                 {{ range .Achivments }}
                     <div class="achive">
@@ -57,26 +58,20 @@
                     </div>
                 {{end}}
             </div>
+            <div class="menu" id="menu">menu</div>
         </div>
         <div class="friends">
+            <span class="window-title">Friend requests</span>
             <div class="list-request" id="ListOfFriends">
 
                 <div class="req" id="req">
-                    {{ range .Friends }}
-                        <div class="friend">
-                            <img src="{{ .Avatar }}">
-                            <div class="col">
-                                <span>{{ .Nickname }}</span>
-                                <span>{{ .Lvl }}</span>
-                            </div>
-                        </div>
-                    {{end}}
                 </div>
-
+                
                 <div class="add-friends" id="AddFriend">
                     <img src="../static/account-images/plus6.png" alt="" width="40px" height="40px">
                 </div> 
             </div>
+            <span class="window-title">Friends</span>
             <div class="ach" id="friend-list">
 
             </div>
