@@ -26,6 +26,9 @@ canvas.height = GAME.height;
 let canvasContext = canvas.getContext("2d");
 canvasContext.imageSmoothingEnabled = false;
 let Car = new Image();
+let CarF = new Image();
+let CarL = new Image();
+let CarR = new Image();
 
 var audioStart = new Audio();
 audioStart.src = "../static/sounds/jiga2kStart.mp3";
@@ -886,7 +889,7 @@ function onCanvasKey() {
 }
 
 function onCanvasKeyUp(event) {
-  Car.src = cars[myCar].Img;
+  Car = CarF;
   if (event.code === "KeyW") {
     wasd.w = 0;
     if (finished == 0 && wasd.r == 1) {
@@ -1025,7 +1028,7 @@ function onCanvasKeyDown(event) {
   }
   if (event.code === "KeyA") {
     wasd.a = 1;
-    Car.src = cars[myCar].Img.slice(0, -4) + "L.png";
+    Car = CarL;
     if (finished == 0 && Math.abs(speed) > 4 && !grassArr.includes(curTile)) {
       audioTires.loop = true;
       audioTires.play();
@@ -1036,7 +1039,7 @@ function onCanvasKeyDown(event) {
   }
   if (event.code === "KeyD") {
     wasd.d = 1;
-    Car.src = cars[myCar].Img.slice(0, -4) + "R.png";
+    Car = CarR;
     if (finished == 0 && Math.abs(speed) > 4 && !grassArr.includes(curTile)) {
       audioTires.loop = true;
       audioTires.play();
@@ -1236,6 +1239,9 @@ function getTiles() {
     }
     console.log(cars);
     Car.src = cars[myCar].Img;
+    CarF.src = cars[myCar].Img;
+    CarL.src = cars[myCar].Img.slice(0, -4) + "L.png";
+    CarR.src = cars[myCar].Img.slice(0, -4) + "R.png";
     console.log(startingTile);
     console.log(startX, startY);
     xcanvas = startX + 50;

@@ -89,13 +89,18 @@ func removeConnectionFromGroups(db *sqlx.DB, conn *websocket.Conn) {
 }
 
 func deleteGroup(db *sqlx.DB, groupID string) {
-	fmt.Printf("groups[groupID]: %v\n", groups[groupID])
-	if groups[groupID] == nil {
+	if len(groups[groupID]) == 0 {
+		fmt.Printf("deleted groups[groupID]: %v\n", groups[groupID])
 		delete(groups, groupID)
-		deleteSession(db, groupID)
 	}
 }
 
+func deleteSession(db *sqlx.DB, groupID string) {
+	if len(groups[groupID]) == 0 {
+		fmt.Printf("deleted session[groupID]: %v\n", groups[groupID])
+		deleteSessionRow(db, groupID)
+	}
+}
 func createGroup(groupName string) {
 	groups[groupName] = []*websocket.Conn{}
 	races[groupName] = ""
