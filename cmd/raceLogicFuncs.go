@@ -172,8 +172,9 @@ func processResults(db *sqlx.DB, results ResultsTable, sequence []int, tableStri
 	modifier := 0
 	if !isBoss {
 		for place, inSessionId := range sequence {
+			fmt.Printf("tableStrings[place]: %v\n", tableStrings[place])
 			if inSessionId < 4 {
-				if tableStrings[place] != "NF" {
+				if strings.Split(tableStrings[place], "/")[1] != "NF" {
 					if IDs[inSessionId] == userID {
 						modifier = 4 - place
 					}
