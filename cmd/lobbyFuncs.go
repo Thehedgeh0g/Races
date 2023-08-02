@@ -69,20 +69,27 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 
 func getLobbyList(db *sqlx.DB, friends []string) ([]LobbyList, error) {
 	var list []LobbyList
+    log.Println(`'`, friends, `'`)
 	for _, ID := range friends {
 		if ID != "0" {
+			log.Println(ID)
 			var listElement LobbyList
 			friend, err := getUser(db, ID)
 			if err != nil {
 				return nil, err
 			}
-			if checkLobby(db, friend.CurLobbyID) {
+			log.Println(`'`, friend.CurLobbyID, `'`)
+			if !checkLobby(db, friend.CurLobbyID) {
 				listElement.Friend.Avatar = friend.ImgPath
 				listElement.Friend.Nickname = friend.Nickname
 				listElement.Friend.Lvl = friend.Lvl
 				listElement.LobbyID = friend.CurLobbyID
 				list = append(list, listElement)
+				
+				log.Println(`'`, list, `'`)
 			}
+		} else {
+			continue
 		}
 
 	}
@@ -92,8 +99,10 @@ func getLobbyList(db *sqlx.DB, friends []string) ([]LobbyList, error) {
 func checkLobby(db *sqlx.DB, lobbyID string) bool {
 	lobby, err := getLobbyData(db, lobbyID)
 	if err != nil {
-		return false
+		return true
 	}
-
+	if lobby.LobbyID == "0"{
+		return true
+	}
 	return lobby.InProgress
 }

@@ -40,6 +40,20 @@ function handleJoinButtonClick() {
   xhr.addEventListener('load', () => {
     response = JSON.parse(xhr.responseText)
     console.log(response)
+    const list = document.getElementById("lobby-list")
+    for (let i = 0; i < response.LobbyList.length; i++) {
+      list.innerHTML = list.innerHTML +
+      `
+      <div>
+        <img src="` + response.LobbyList[i].Friend.Avatar + `" class="small-ava">
+        <div>
+          <span>` + response.LobbyList[i].Friend.Nickname + `</span>
+          <span>` + response.LobbyList[i].Friend.Lvl + `</span>
+        </div>
+        <span>` + response.LobbyList[i].LobbyID + `</span>
+      </div>
+      `
+    }
   })
 }
 
