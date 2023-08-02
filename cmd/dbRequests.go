@@ -242,7 +242,7 @@ func getLobbyID(db *sqlx.DB, userID int) (int, error) {
 }
 
 func deleteSession(db *sqlx.DB, lobbyID string) error {
-
+	log.Println("lobby deleted")
 	const query = `SELECT
 	  user_id
 	FROM

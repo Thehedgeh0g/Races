@@ -197,3 +197,8 @@
     color: #838181;
     margin: 0.3vh;
 }
+
+.small-ava {
+    width: 5vh;
+    height: 5vh;
+}
