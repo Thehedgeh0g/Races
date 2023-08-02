@@ -111,6 +111,7 @@ function getReq() {
     console.log(response);
     reqList = response;
     if (response.Requests == null) {
+      requests.innerHTML = "You have no friend requests (T-T)"
       return
     }
     for (let i=0; i < response.Requests.length; i++) {
@@ -157,6 +158,7 @@ function getFriends() {
   response = JSON.parse(xhr.responseText)
   console.log(response);
   if (response.Friends.length == 0) {
+    friendList.innerHTML = "You have no friends (T-T)"
     return
   }
     for (let i = 0; i < response.Friends.length; i++) {
@@ -178,9 +180,7 @@ function getFriends() {
         </div>`
         // document.getElementById(response1.Sender.Nickname + ":" + response1.Sender.Id).addEventListener("click", deleteFriend)
       });
-      
     }
-    
   });
 
   xhr.send();
@@ -234,6 +234,11 @@ function reject(ev) {
 window.addEventListener('load', () => {
   getReq();
   getFriends();
+  console.log(document.getElementById("ach").innerHTML.split('  ').join('').split(' ').join('').split('\r').join('').split('\n').join(''))
+  if (document.getElementById("ach").innerHTML.split('  ').join('').split(' ').join('').split('\r').join('').split('\n').join('') == "") {
+    console.log("fffff")
+    document.getElementById("ach").innerHTML = 'You have no achivments xD'
+  }
 });
 
 
