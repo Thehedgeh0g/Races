@@ -139,36 +139,17 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		lobby, err := getLobbyData(db, req)
+		if errorProcessor(err, w) {
+			return
+		}
 		var results ResultsTable
 
-		for place, inSessionId := range sequence {
-			if inSessionId < 4 {
-				if tableStrings[place] != "NF" {
-					if IDs[inSessionId] == userID {
-						err := saveResults(db, userID, 4-place)
-						if err != nil {
-							http.Error(w, "Server Error", 500)
-							log.Println(err.Error())
-							return
-						}
-
-						results.Money = strconv.Itoa(15 * (4 - place))
-						results.Exp = strconv.Itoa(13 * (4 - place))
-					}
-				} else {
-					if IDs[inSessionId] == userID {
-						err := saveResults(db, userID, 0)
-						if err != nil {
-							http.Error(w, "Server Error", 500)
-							log.Println(err.Error())
-							return
-						}
-
-						results.Money = strconv.Itoa(15 * (0))
-						results.Exp = strconv.Itoa(13 * (0))
-					}
-				}
-			}
+		results, err = processResults(db, results, sequence, tableStrings, IDs, userID, lobby.Boss)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
 		}
 
 		response := struct {
