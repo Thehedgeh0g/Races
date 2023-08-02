@@ -533,3 +533,35 @@ func deleteFromFriendList(db *sqlx.DB, userID, friendID string) error {
 	}
 	return nil
 }
+
+func updateBossCount(db *sqlx.DB, userID string) error {
+
+	user, err := getUser(db, userID)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return err
+	}
+	bossCount, err := strconv.Atoi(user.Bosses)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return err
+	}
+
+	bossCount += 1
+
+	const stmt = `
+		UPDATE 
+		  users 
+		SET 
+		  boss_count = ? 
+		WHERE 
+		  user_id = ?
+	`
+
+	_, err = db.Exec(stmt, bossCount, userID)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return err
+	}
+	return nil
+}

@@ -161,3 +161,43 @@ func botProcessing(db *sqlx.DB, sessionID, readiness, hp, group, isFinished stri
 	sendMessageToGroup(db, botMessage, group)
 	connMutex.Unlock()
 }
+
+func processResults(db *sqlx.DB, results ResultsTable, sequence []int, tableStrings, IDs []string, userID string, isBoss bool) (ResultsTable, error) {
+	modifier := 0
+	if !isBoss {
+		for place, inSessionId := range sequence {
+			if inSessionId < 4 {
+				if tableStrings[place] != "NF" {
+					if IDs[inSessionId] == userID {
+						modifier = 4 - place
+					}
+				} else {
+					if IDs[inSessionId] == userID {
+						modifier = 0
+					}
+				}
+			}
+		}
+	} else {
+		if IDs[sequence[1]] == userID {
+			modifier = 0
+		} else {
+			modifier = 6
+			err := updateBossCount(db, userID)
+			if err != nil {
+				log.Println(err.Error())
+				return results, err
+			}
+		}
+	}
+
+	err := saveResults(db, userID, modifier)
+	if err != nil {
+		log.Println(err.Error())
+		return results, err
+	}
+
+	results.Money = strconv.Itoa(15 * modifier)
+	results.Exp = strconv.Itoa(13 * modifier)
+	return results, nil
+}
