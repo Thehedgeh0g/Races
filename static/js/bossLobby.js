@@ -22,6 +22,24 @@ function mapList() {
   }
 }
 
+let musicOff = true;
+document.body.addEventListener("mousemove", playMusic);
+document.body.addEventListener("canplaythrough", playMusic);
+
+function playMusic(){
+  if (musicOff){
+    musicOff = false;
+    let audio = new Audio();
+    var musicFolder = '../static/music/lobby/';
+    var music = new Array('InitialD-DontYouWannaBeFree_(muzmo.su).mp3', 'InitialD-LoveMoney.mp3', 'InitialD-RageYourDream_(muzmo.su).mp3');
+    var rand_file_index = Math.round(Math.random()*(music.length-1));
+    var rand_file_name = music[rand_file_index];
+    console.log(rand_file_name);
+    audio.src = musicFolder + rand_file_name;
+    audio.play();
+  }
+}
+
 let chosenMap = "m1";
 
 const map = [];
