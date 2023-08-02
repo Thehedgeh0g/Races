@@ -44,11 +44,11 @@ function handleJoinButtonClick() {
     for (let i = 0; i < response.LobbyList.length; i++) {
       list.innerHTML = list.innerHTML +
       `
-      <div>
+      <div class="friend">
         <img src="` + response.LobbyList[i].Friend.Avatar + `" class="small-ava">
-        <div>
+        <div class="col">
           <span>` + response.LobbyList[i].Friend.Nickname + `</span>
-          <span>` + response.LobbyList[i].Friend.Lvl + `</span>
+          <span>lvl:` + (response.LobbyList[i].Friend.Lvl - response.LobbyList[i].Friend.Lvl % 100) / 100 + `</span>
         </div>
         <span>` + response.LobbyList[i].LobbyID + `</span>
       </div>
