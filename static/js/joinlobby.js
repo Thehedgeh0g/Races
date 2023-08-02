@@ -41,6 +41,7 @@ function handleJoinButtonClick() {
     response = JSON.parse(xhr.responseText)
     console.log(response)
     const list = document.getElementById("lobby-list")
+    list.innerHTML = "";
     for (let i = 0; i < response.LobbyList.length; i++) {
       list.innerHTML = list.innerHTML +
       `
