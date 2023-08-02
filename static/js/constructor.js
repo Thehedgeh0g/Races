@@ -30,6 +30,23 @@ function loadPuzzles() {
 
 }
 
+let musicOff = true;
+document.body.addEventListener("mousemove", playMusic);
+document.body.addEventListener("canplaythrough", playMusic);
+
+function playMusic(){
+  if (musicOff){
+    musicOff = false;
+    let audio = new Audio();
+    var musicFolder = '../static/music/account/editor/';
+    var music = new Array('fur21.mp3', 'fur22.mp3', 'fur23.mp3');
+    var rand_file_index = Math.round(Math.random()*(music.length-1));
+    var rand_file_name = music[rand_file_index];
+    console.log(rand_file_name);
+    audio.src = musicFolder + rand_file_name;
+    audio.play();
+  }
+}
 
 loadPuzzles();
 
