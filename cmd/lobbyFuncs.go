@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -69,6 +70,7 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 
 func getLobbyList(db *sqlx.DB, friends []string) ([]LobbyList, error) {
 	var list []LobbyList
+	fmt.Printf("friends: %v\n", friends)
 	for _, ID := range friends {
 		if ID != "0" {
 			var listElement LobbyList
