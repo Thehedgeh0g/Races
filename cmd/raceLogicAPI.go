@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -144,7 +145,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var results ResultsTable
-
+		fmt.Printf("races[req]: %v\n", races[req])
 		results, err = processResults(db, results, sequence, tableStrings, IDs, userID, lobby.Boss)
 		if err != nil {
 			http.Error(w, "Error", 500)

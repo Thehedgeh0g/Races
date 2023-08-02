@@ -70,18 +70,21 @@ func mapPreview(db *sqlx.DB) ([]MapsData, error) {
 func getLobbyList(db *sqlx.DB, friends []string) ([]LobbyList, error) {
 	var list []LobbyList
 	for _, ID := range friends {
-		var listElement LobbyList
-		friend, err := getUser(db, ID)
-		if err != nil {
-			return nil, err
+		if ID != "0" {
+			var listElement LobbyList
+			friend, err := getUser(db, ID)
+			if err != nil {
+				return nil, err
+			}
+			if checkLobby(db, friend.CurLobbyID) {
+				listElement.Friend.Avatar = friend.ImgPath
+				listElement.Friend.Nickname = friend.Nickname
+				listElement.Friend.Lvl = friend.Lvl
+				listElement.LobbyID = friend.CurLobbyID
+				list = append(list, listElement)
+			}
 		}
-		if checkLobby(db, friend.CurLobbyID) {
-			listElement.Friend.Avatar = friend.ImgPath
-			listElement.Friend.Nickname = friend.Nickname
-			listElement.Friend.Lvl = friend.Lvl
-			listElement.LobbyID = friend.CurLobbyID
-			list = append(list, listElement)
-		}
+
 	}
 	return list, nil
 }

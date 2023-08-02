@@ -596,6 +596,8 @@ func getFriendsLobbys(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
+		fmt.Printf("user.Friends: %v\n", user.Friends)
+
 		lobbyList, err := getLobbyList(db, strings.Split(user.Friends, " "))
 		if err != nil {
 			http.Error(w, "Server Error", 500)

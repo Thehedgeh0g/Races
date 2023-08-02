@@ -33,6 +33,14 @@ function showButtonAndDarkScreen() {
 function handleJoinButtonClick() {
   document.querySelector(".input-join-lobby").style.visibility = "visible";
   console.log('1');
+
+  let xhr = new XMLHttpRequest();
+  xhr.open('GET', "/api/getLobbyList");
+  xhr.send();
+  xhr.addEventListener('load', () => {
+    response = JSON.parse(xhr.responseText)
+    console.log(response)
+  })
 }
 
 
