@@ -40,6 +40,24 @@ audioTires.src = "../static/sounds/tires.wav";
 var audioEngineOn = new Audio();
 audioEngineOn.src = "../static/sounds/jigaEngineOn.wav";
 
+let musicOff = true;
+document.body.addEventListener("mousemove", playMusic);
+document.body.addEventListener("canplaythrough", playMusic);
+
+function playMusic(){
+  if (musicOff){
+    musicOff = false;
+    let audio = new Audio();
+    var musicFolder = '../static/music/race/';
+    var music = new Array('INITIAL-D_(muzmo.su).mp3', 'InitialD-GASGAS_(muzmo.su).mp3', 'InitialD-RunninginThe90s_(muzmo.su).mp3', 'InitialD-SpeedySpeedBoy.mp3', 'InitialD-Spitfire_(muzmo.su).mp3', 'need_for_speed_most_wanted_01 - Styles of Beyond - Nine Thou (Superstars Remix).mp3');
+    var rand_file_index = Math.round(Math.random()*(music.length-1));
+    var rand_file_name = music[rand_file_index];
+    console.log(rand_file_name);
+    audio.src = musicFolder + rand_file_name;
+    audio.play();
+  }
+}
+
 myCar = 0;
 Car.src = "/static/sprites/AY.png";
 

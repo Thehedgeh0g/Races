@@ -16,7 +16,6 @@ let user = {
   "Nick": null
 }
 
-
 // добавление друга
 
 addFriends.addEventListener("click", showAddFriendBox);
@@ -268,8 +267,8 @@ function playMusic(){
   if (musicOff){
     musicOff = false;
     let audio = new Audio();
-    var musicFolder = '../static/music/';
-    var music = new Array('InitialD-LoveMoney.mp3','InitialD-SpeedySpeedBoy.mp3');
+    var musicFolder = '../static/music/account/';
+    var music = new Array('InitialD-APerfectHero_(muzmo.su).mp3', 'INITIALD-INeedYourLove_(muzmo.su).mp3', 'InitialD-KillingMyLove_(muzmo.su).mp3');
     var rand_file_index = Math.round(Math.random()*(music.length-1));
     var rand_file_name = music[rand_file_index];
     console.log(rand_file_name);
