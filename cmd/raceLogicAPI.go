@@ -170,7 +170,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
 
-		clearCurLobbyId(db, req)
+		clearCurLobbyId(db, userID)
 		deleteSession(db, req)
 	}
 }

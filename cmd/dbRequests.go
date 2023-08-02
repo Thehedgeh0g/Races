@@ -255,21 +255,7 @@ func deleteSessionRow(db *sqlx.DB, lobbyID string) error {
 	return nil
 }
 
-func clearCurLobbyId(db *sqlx.DB, lobbyID string) error {
-	const query = `SELECT
-	  user_id
-	FROM
-	  users
-	WHERE
-	  currLobby_id = ?    
-	`
-	row := db.QueryRow(query, lobbyID)
-	var ID int
-	err := row.Scan(&ID)
-	if err != nil {
-		return err
-	}
-
+func clearCurLobbyId(db *sqlx.DB, userID string) error {
 	const stmt = `
 		UPDATE
 		  users
@@ -279,7 +265,7 @@ func clearCurLobbyId(db *sqlx.DB, lobbyID string) error {
 		  user_id = ?    
 	`
 
-	res, err := db.Exec(stmt, "0", ID)
+	res, err := db.Exec(stmt, "0", userID)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		return err

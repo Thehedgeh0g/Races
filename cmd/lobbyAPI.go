@@ -246,9 +246,11 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		var inSessionId string
 		var cars, nicknames []string
-		IDs := []string{lobby.HostID, lobby.Player2ID, lobby.Player4ID, lobby.Player4ID}
-
+		IDs := []string{lobby.HostID, lobby.Player2ID, lobby.Player3ID, lobby.Player4ID}
+		fmt.Printf("lobby: %v\n", lobby)
 		for i, id := range IDs {
+
+			fmt.Printf("id: %v\n", id)
 			if id != "0" {
 				if userIdstr == id {
 					inSessionId = strconv.Itoa(i)

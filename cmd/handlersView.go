@@ -10,26 +10,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func login(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		userID, err := getUserID(db, r)
-		if errorProcessor(err, w) {
-			return
-		}
-		user, err := getUser(db, userID)
-		if errorProcessor(err, w) {
-			return
-		}
-		clearCurLobbyId(db, user.Id)
-		ts, err := template.ParseFiles("pages/login.html")
-		if errorProcessor(err, w) {
-			return
-		}
+func login(w http.ResponseWriter, r *http.Request) {
+	ts, err := template.ParseFiles("pages/login.html")
+	if errorProcessor(err, w) {
+		return
+	}
 
-		err = ts.Execute(w, nil)
-		if errorProcessor(err, w) {
-			return
-		}
+	err = ts.Execute(w, nil)
+	if errorProcessor(err, w) {
+		return
 	}
 }
 
