@@ -132,10 +132,8 @@ func verificatePos(db *sqlx.DB, posMessage, group string) string {
 	x, _ := strconv.Atoi(mes.x)
 
 	if (strings.Split(mes.isFinished, "/")[0] == "1") && !(strings.Contains(races[mes.SessionID], mes.inSessionID+"/")) {
-		log.Println("tyt")
 		races[mes.SessionID] = races[mes.SessionID] + " " + mes.inSessionID + "/" + strings.Split(mes.isFinished, "/")[1]
 	} else if (strings.Split(mes.isFinished, "/")[0] == "2") && !(strings.Contains(races[mes.SessionID], mes.inSessionID+"/")) {
-		log.Println("tut")
 		races[mes.SessionID] = races[mes.SessionID] + " " + mes.inSessionID + "/" + "NF"
 	}
 

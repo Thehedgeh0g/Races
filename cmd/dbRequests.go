@@ -171,15 +171,12 @@ func setUsersLobby(db *sqlx.DB, lobbyID, userID string) error {
 
 func addUserIntoLobby(db *sqlx.DB, inSessionID, lobbyID, userID string) error {
 	var stmt string
-	switch {
-	case inSessionID == "2":
+	if inSessionID == "2" {
 		stmt = "UPDATE sessions SET player2_id = ? WHERE session_id = ?"
-	case inSessionID == "3":
+	} else if inSessionID == "3" {
 		stmt = "UPDATE sessions SET player3_id = ? WHERE session_id = ?"
-	case inSessionID == "4":
+	} else if inSessionID == "4" {
 		stmt = "UPDATE sessions SET player4_id = ? WHERE session_id = ?"
-	default:
-		stmt = "UPDATE sessions SET player2_id = ? WHERE session_id = ?"
 	}
 	_, err := db.Exec(stmt, userID, lobbyID)
 	if err != nil {
@@ -259,7 +256,6 @@ func deleteSessionRow(db *sqlx.DB, lobbyID string) error {
 }
 
 func clearCurLobbyId(db *sqlx.DB, lobbyID string) error {
-	log.Println("lobby deleted")
 	const query = `SELECT
 	  user_id
 	FROM
@@ -283,10 +279,13 @@ func clearCurLobbyId(db *sqlx.DB, lobbyID string) error {
 		  user_id = ?    
 	`
 
-	_, err = db.Exec(stmt, "0", lobbyID)
+	res, err := db.Exec(stmt, "0", ID)
 	if err != nil {
-		log.Println(err.Error())
+		fmt.Printf("err: %v\n", err)
 		return err
+	} else {
+		result, _ := res.RowsAffected()
+		fmt.Printf("result: %v\n", result)
 	}
 
 	return nil

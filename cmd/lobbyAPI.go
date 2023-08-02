@@ -44,13 +44,14 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		IDs = append(IDs, lobby.HostID, lobby.Player2ID, lobby.Player3ID, lobby.Player3ID)
+		IDs = append(IDs, lobby.HostID, lobby.Player2ID, lobby.Player3ID, lobby.Player4ID)
 		var user UserData
-
 		var myId string
+		fmt.Printf("lobby: %v\n", lobby)
 		for i, element := range IDs {
 
 			if element != "0" {
+				log.Println(element)
 				user, err = getUser(db, element)
 				if err != nil {
 					http.Error(w, "Server Error", 500)
@@ -135,7 +136,6 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-		fmt.Printf("settings: %v\n", settings)
 
 		err = setLobbySettings(db, settings.MapID, settings.Rounds, strconv.Itoa(lobbyId), settings.HP, settings.Collision)
 		if err != nil {
@@ -475,7 +475,6 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
 		var Error string
 
 		if lobby.Boss {
@@ -488,14 +487,14 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else if lobby.Player3ID == "0" {
-			err = addUserIntoLobby(db, "2", lobbyID, userID)
+			err = addUserIntoLobby(db, "3", lobbyID, userID)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
 				return
 			}
 		} else if lobby.Player4ID == "0" {
-			err = addUserIntoLobby(db, "2", lobbyID, userID)
+			err = addUserIntoLobby(db, "4", lobbyID, userID)
 			if err != nil {
 				http.Error(w, "Error", 500)
 				log.Println(err.Error())
