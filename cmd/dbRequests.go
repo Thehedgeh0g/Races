@@ -242,7 +242,22 @@ func getLobbyID(db *sqlx.DB, userID int) (int, error) {
 }
 
 func deleteSession(db *sqlx.DB, lobbyID string) error {
-	const stmt = `
+
+	const query = `SELECT
+	  user_id
+	FROM
+	  users
+	WHERE
+	  currLobby_id = ?    
+	`
+	row := db.QueryRow(query, lobbyID)
+	var ID int
+	err := row.Scan(&ID)
+	if err != nil {
+		return err
+	}
+
+	var stmt = `
 		DELETE 
 		FROM 
 		  sessions 
@@ -250,11 +265,27 @@ func deleteSession(db *sqlx.DB, lobbyID string) error {
 		  session_id = ?
 	`
 
-	_, err := db.Exec(stmt, lobbyID)
+	_, err = db.Exec(stmt, lobbyID)
 	if err != nil {
 		log.Println(err.Error())
 		return err
 	}
+
+	stmt = `
+		UPDATE
+		  users
+		SET
+		  currLobby_id = ? 
+		WHERE
+		  user_id = ?    
+	`
+
+	_, err = db.Exec(stmt, "0", lobbyID)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
 	return nil
 }
 
