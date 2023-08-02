@@ -413,16 +413,16 @@ func getReqList(db *sqlx.DB, recieverID string) ([]FriendRequest, error) {
 	return requests, nil
 }
 
-func deleteReq(db *sqlx.DB, recieverID string) error {
+func deleteReq(db *sqlx.DB, req FriendRequest) error {
 	const stmt = `
 		DELETE 
 		FROM 
 		  friendreq 
 		WHERE 
-		  recieverID = ?
+		  recieverID = ? AND senderID = ?
 	`
 
-	_, err := db.Exec(stmt, recieverID)
+	_, err := db.Exec(stmt, req.RecieverID, req.SenderID)
 	if err != nil {
 		log.Println(err.Error())
 		return err

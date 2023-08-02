@@ -145,19 +145,6 @@ func answerReq(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		var req FriendRequest
 
-		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
-
-		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-		}
-
 		err = json.Unmarshal(reqData, &req)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -180,7 +167,7 @@ func answerReq(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		err = deleteReq(db, user.Id)
+		err = deleteReq(db, req)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error(), "tut")
