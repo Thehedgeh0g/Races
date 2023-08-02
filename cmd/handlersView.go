@@ -10,41 +10,76 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func login(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("pages/login.html")
-	if errorProcessor(err, w) {
-		return
-	}
+func login(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := getUserID(db, r)
+		if errorProcessor(err, w) {
+			return
+		}
+		user, err := getUser(db, userID)
+		if errorProcessor(err, w) {
+			return
+		}
+		clearCurLobbyId(db, user.Id)
+		ts, err := template.ParseFiles("pages/login.html")
+		if errorProcessor(err, w) {
+			return
+		}
 
-	err = ts.Execute(w, nil)
-	if errorProcessor(err, w) {
-		return
+		err = ts.Execute(w, nil)
+		if errorProcessor(err, w) {
+			return
+		}
 	}
 }
 
-func menu(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("pages/menu.html")
-	if errorProcessor(err, w) {
-		return
-	}
+func menu(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := getUserID(db, r)
+		if errorProcessor(err, w) {
+			return
+		}
+		user, err := getUser(db, userID)
+		if errorProcessor(err, w) {
+			return
+		}
+		clearCurLobbyId(db, user.Id)
 
-	err = ts.Execute(w, nil)
-	if errorProcessor(err, w) {
-		return
+		ts, err := template.ParseFiles("pages/menu.html")
+		if errorProcessor(err, w) {
+			return
+		}
+
+		err = ts.Execute(w, nil)
+		if errorProcessor(err, w) {
+			return
+		}
+	}
+}
+func garageHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := getUserID(db, r)
+		if errorProcessor(err, w) {
+			return
+		}
+		user, err := getUser(db, userID)
+		if errorProcessor(err, w) {
+			return
+		}
+		clearCurLobbyId(db, user.Id)
+
+		ts, err := template.ParseFiles("pages/garage.html")
+		if errorProcessor(err, w) {
+			return
+		}
+
+		err = ts.Execute(w, nil)
+		if errorProcessor(err, w) {
+			return
+		}
 	}
 }
 
-func garageHandler(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("pages/garage.html")
-	if errorProcessor(err, w) {
-		return
-	}
-
-	err = ts.Execute(w, nil)
-	if errorProcessor(err, w) {
-		return
-	}
-}
 func lobbyHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		lobbyIDstr := mux.Vars(r)["lobbyID"]
@@ -189,26 +224,50 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleReg(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("pages/registration.html")
-	if errorProcessor(err, w) {
-		return
-	}
+func handleReg(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := getUserID(db, r)
+		if errorProcessor(err, w) {
+			return
+		}
+		user, err := getUser(db, userID)
+		if errorProcessor(err, w) {
+			return
+		}
+		clearCurLobbyId(db, user.Id)
 
-	err = ts.Execute(w, nil)
-	if errorProcessor(err, w) {
-		return
+		ts, err := template.ParseFiles("pages/registration.html")
+		if errorProcessor(err, w) {
+			return
+		}
+
+		err = ts.Execute(w, nil)
+		if errorProcessor(err, w) {
+			return
+		}
 	}
 }
 
-func handleconstruct(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("pages/constructor.html")
-	if errorProcessor(err, w) {
-		return
-	}
+func handleconstruct(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := getUserID(db, r)
+		if errorProcessor(err, w) {
+			return
+		}
+		user, err := getUser(db, userID)
+		if errorProcessor(err, w) {
+			return
+		}
+		clearCurLobbyId(db, user.Id)
 
-	err = ts.Execute(w, nil)
-	if errorProcessor(err, w) {
-		return
+		ts, err := template.ParseFiles("pages/constructor.html")
+		if errorProcessor(err, w) {
+			return
+		}
+
+		err = ts.Execute(w, nil)
+		if errorProcessor(err, w) {
+			return
+		}
 	}
 }
