@@ -276,7 +276,7 @@ func findStart(tiles string, id string) (float64, float64) {
 }
 
 func addAI(db *sqlx.DB, lobbyID string) {
-
+	log.Print("tuta")
 	lobby, err := getLobbyData(db, lobbyID)
 	if err != nil {
 		log.Println(err)

@@ -66,7 +66,7 @@ func handleAccountMessages(db *sqlx.DB, conn *websocket.Conn, clientID string) {
 			removeConnectionFromGroups(db, conn)
 			return
 		}
-
+		log.Println(message)
 		recieverID := strings.Split(message, " ")[0]
 		if recieverID != "0" {
 			connMutex.Lock()

@@ -128,12 +128,12 @@ function getReq() {
             <span>` + response1.Sender.Nickname + `</span>
           </div>
           <div class="choose">
-            <div class="accept" id="a` + i + `">accept</div>
-            <div class="reject" id="r` + i + `">reject</div>
+            <div class="accept" id="a` + i + `" onClick='accept(id)'>accept</div>
+            <div class="reject" id="r` + i + `" onClick='reject(id)'>reject</div>
           </div>
         </div>`
-        document.getElementById("a"+i).addEventListener("click", accept);
-        document.getElementById("r"+i).addEventListener("click", reject);
+        // document.getElementById("a"+i).addEventListener("click", accept);
+        // document.getElementById("r"+i).addEventListener("click", reject);
       });
     
       
@@ -171,12 +171,12 @@ function getFriends() {
        `<div class="friend">
           <img class="middle-ava" src="` + response1.Sender.ImgPath + `">
           <div class="col">
-              <span>name:` + response1.Sender.Nickname + `</span>
-              <span>lvl:` + response1.Sender.Lvl + `</span>
+              <span>` + response1.Sender.Nickname + `</span>
+              <span>lvl:` + (response1.Sender.Lvl - response1.Sender.Lvl % 100) / 100 + `</span>
           </div>
-          <div class="del" id=` + response1.Sender.Nickname + ':' + response1.Sender.Id + `></div>
+          <div class="del" id=` + response1.Sender.Nickname + ':' + response1.Sender.Id + `  onClick='deleteFriend(id)'></div>
         </div>`
-        document.getElementById(response1.Sender.Nickname + ":" + response1.Sender.Id).addEventListener("click", deleteFriend)
+        // document.getElementById(response1.Sender.Nickname + ":" + response1.Sender.Id).addEventListener("click", deleteFriend)
       });
       
     }
@@ -187,7 +187,7 @@ function getFriends() {
 }
 
 function deleteFriend(ev) {
-  cid = ev.target.id.split(':')[0];
+  cid = ev.split(':')[0];
 
   const xhr = new XMLHttpRequest();
   xhr.open('POST', "/api/deleteFriend");
@@ -195,13 +195,13 @@ function deleteFriend(ev) {
   xhr.addEventListener('load', () => {
     getReq();
     getFriends();
-    socket.send(JSON.stringify(ev.target.id.split(':')[1] + " reload"));
-    console.log(JSON.stringify(ev.target.id.split(':')[1] + " reload"));
+    socket.send(JSON.stringify(ev.split(':')[1] + " reload"));
+    console.log(JSON.stringify(ev.split(':')[1] + " reload"));
   });
 }
 
 function accept(ev) {
-  cid = ev.target.id.slice(1);
+  cid = ev.slice(1);
 
   user = reqList.Requests[cid];
   user.Status = "1"
@@ -218,7 +218,7 @@ function accept(ev) {
 }
 
 function reject(ev) {
-  cid = ev.target.id.slice(1);
+  cid = ev.slice(1);
 
   user = reqList.Requests[cid];
   user.Status = "2"
@@ -273,3 +273,8 @@ function playMusic(){
   }
 }
 
+const BackToMenu = document.getElementById("menu");
+
+BackToMenu.addEventListener('click', ()=> {
+  window.location.href = "/menu"
+});
