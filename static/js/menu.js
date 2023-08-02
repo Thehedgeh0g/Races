@@ -13,7 +13,7 @@ function playMusic(){
     musicOff = false;
     let audio = new Audio();
     var musicFolder = '../static/music/';
-    var music = new Array('InitialD-LoveMoney.mp3','InitialD-SpeedySpeedBoy.mp3','InitialD-DejaVu.mp3','InitialD-Spitfire_(muzmo.su).mp3', 'InitialD-RageYourDream_(muzmo.su).mp3', 'need_for_speed_most_wanted_07 - Hush-Fired up.mp3', 'need_for_speed_most_wanted_04 - Suni Clay - In A Hood Near You.mp3', 'need_for_speed_most_wanted_03 - Rock - I Am Rock.mp3', 'need_for_speed_most_wanted_01 - Styles of Beyond - Nine Thou (Superstars Remix).mp3', 'need_for_speed_underground_2_1. Snoop Dogg ft The Doors - Riders on the Storm(fredwreck remix).mp3', 'INITIAL-D_(muzmo.su).mp3', 'need_for_speed_carbon_06.Gary Numan & Tubeway Army - Are Friends Electric.mp3');
+    var music = new Array('initialD-DanceAroundtheWorld_(muzmo.su).mp3', 'InitialD-Goldenage_(muzmo.su).mp3', 'InitialD-RageYourDream_(muzmo.su).mp3');
     var rand_file_index = Math.round(Math.random()*(music.length-1));
     var rand_file_name = music[rand_file_index];
     console.log(rand_file_name);
