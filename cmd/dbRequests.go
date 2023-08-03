@@ -584,3 +584,39 @@ func updateBossCount(db *sqlx.DB, userID string) error {
 	}
 	return nil
 }
+
+func deleteUserFromSession(db *sqlx.DB, user UserData) error {
+	var stmt string
+	if user.CurLobbyID != "0" {
+		lobby, err := getLobbyData(db, user.CurLobbyID)
+		if err != nil {
+			return err
+		}
+		if lobby.HostID == user.Id {
+			stmt = `UPDATE sessions SET host_id = ? WHERE session_id = ?`
+		} else if lobby.Player2ID == user.Id {
+			stmt = `UPDATE sessions SET player2_id = ? WHERE session_id = ?`
+		} else if lobby.Player3ID == user.Id {
+			stmt = `UPDATE sessions SET player3_id = ? WHERE session_id = ?`
+		} else if lobby.Player4ID == user.Id {
+			stmt = `UPDATE sessions SET player4_id = ? WHERE session_id = ?`
+		}
+		_, err = db.Exec(stmt, "0", user.CurLobbyID)
+		if err != nil {
+			fmt.Printf("err: %v\n", err)
+			return err
+		}
+	}
+	return nil
+}
+
+func updateGameStatus(db *sqlx.DB, lobby LobbyData) error {
+	const stmt = `UPDATE sessions SET boss = ? WHERE session_id = ?`
+
+	_, err := db.Exec(stmt, "1", lobby.LobbyID)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return err
+	}
+	return nil
+}

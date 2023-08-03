@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
@@ -12,9 +11,7 @@ import (
 func sendSprites(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sprites, err := getSprites(db)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -25,9 +22,7 @@ func sendSprites(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -42,25 +37,19 @@ func recordKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		reqData, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		var key string
 
 		err = json.Unmarshal(reqData, &key)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		err = saveMap(db, key)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 	}

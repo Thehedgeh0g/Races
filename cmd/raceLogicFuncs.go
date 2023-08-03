@@ -12,6 +12,7 @@ import (
 )
 
 func getIDs(db *sqlx.DB, sessionID string) ([]string, error) {
+	fmt.Printf("sessionID: %v\n", sessionID)
 	lobby, err := getLobbyData(db, sessionID)
 	var IDs []string
 	IDs = append(IDs, lobby.HostID, lobby.Player2ID, lobby.Player3ID, lobby.Player4ID)
@@ -96,8 +97,14 @@ func deleteGroup(db *sqlx.DB, groupID string) {
 }
 
 func deleteSession(db *sqlx.DB, groupID string) {
-	if len(groups[groupID]) == 0 {
-		fmt.Printf("deleted session[groupID]: %v\n", groups[groupID])
+	fmt.Printf("len(groups[groupID]): %v\n", len(groups[groupID]))
+	lobby, err := getLobbyData(db, groupID)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return
+	}
+	if (lobby.HostID == "0") && (lobby.Player2ID == "0") && (lobby.Player3ID == "0") && (lobby.Player4ID == "0") {
+		fmt.Printf("lobby deleted: %v\n", lobby)
 		deleteSessionRow(db, groupID)
 	}
 }

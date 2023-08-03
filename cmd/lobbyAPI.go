@@ -15,22 +15,16 @@ import (
 func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		userID, err := strconv.Atoi(userIdstr)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobbyID, err := getLobbyID(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -87,9 +81,7 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -103,9 +95,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		userIDstr, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -151,9 +141,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -166,23 +154,17 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func sendLobbyID(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		userID, err := strconv.Atoi(userIdstr)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobbyID, err := getLobbyID(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -193,9 +175,7 @@ func sendLobbyID(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -210,38 +190,32 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
 
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		userID, err := strconv.Atoi(userIdstr)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobbyID, err := getLobbyID(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err)
+		if errorProcessor(err, w) {
 			return
 		}
 
 		mapData, err := getMapData(db, lobby.MapID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err)
+		if errorProcessor(err, w) {
 			return
 		}
 
+		err = updateGameStatus(db, lobby)
+		if errorProcessor(err, w) {
+			return
+		}
 		mapKey := mapData.MapKey
 
 		var inSessionId string
@@ -293,9 +267,7 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -310,32 +282,24 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostId, err := getUserID(db, r)
 		log.Println(hostId, "host")
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobbyId := generateLobbyId()
 
 		err = insert(db, lobbyId, hostId, "0", "0", "0", false)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		ID, err := strconv.Atoi(lobbyId)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		err = UPDATE(db, hostId, ID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -348,9 +312,7 @@ func createLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -365,26 +327,20 @@ func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostId, err := getUserID(db, r)
 		log.Println(hostId, "host")
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobbyId := generateLobbyId()
 
 		user, err := getUser(db, hostId)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		var botID string
 		countOfBosses, err := strconv.Atoi(user.Bosses)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		fmt.Printf("countOfBosses: %v\n", countOfBosses)
@@ -397,23 +353,17 @@ func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Printf("botID: %v\n", botID)
 		err = insert(db, lobbyId, hostId, botID, "0", "0", true)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		ID, err := strconv.Atoi(lobbyId)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		err = UPDATE(db, hostId, ID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -426,9 +376,7 @@ func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -443,9 +391,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -513,9 +459,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -528,29 +472,21 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userIdstr, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		userID, err := strconv.Atoi(userIdstr)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobbyID, err := getLobbyID(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -568,9 +504,7 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -584,25 +518,19 @@ func hostCheck(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func getFriendsLobbys(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		fmt.Printf("user.Friends: %v\n", user.Friends)
 
 		lobbyList, err := getLobbyList(db, strings.Split(user.Friends, " "))
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -613,9 +541,7 @@ func getFriendsLobbys(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) 
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
