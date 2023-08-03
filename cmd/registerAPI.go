@@ -15,18 +15,14 @@ import (
 func getNewUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqData, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		var newUser User
 
 		err = json.Unmarshal(reqData, &newUser)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 

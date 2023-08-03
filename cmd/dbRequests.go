@@ -609,3 +609,14 @@ func deleteUserFromSession(db *sqlx.DB, user UserData) error {
 	}
 	return nil
 }
+
+func updateGameStatus(db *sqlx.DB, lobby LobbyData) error {
+	const stmt = `UPDATE sessions SET boss = ? WHERE session_id = ?`
+
+	_, err := db.Exec(stmt, "1", lobby.LobbyID)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return err
+	}
+	return nil
+}
