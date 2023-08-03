@@ -204,6 +204,10 @@ let table = {
   second: 4,
   third: 4,
   forth: 4,
+  is7: false,
+  is8: false,
+  is9: false,
+  is10: false,
 };
 
 let endTime = new Date();
@@ -643,6 +647,10 @@ function updateReduce() {
           roundHTML.innerHTML = curRound + "/" + maxRounds;
         }
       }
+    }
+
+    if (xcanvas < 192 || xcanvas > (1440-192) || ycanvas < 192 || ycanvas > (1440-192)) {
+      wasd.space = 0;
     }
 
     if (grassArr.includes(curTile) && finished == 0) {
@@ -1326,7 +1334,7 @@ var socket = new WebSocket("wss:" + window.location.hostname + "/ws");
 socket.onmessage = function (event) {
   var message = JSON.parse(event.data);
   let go = message.split(" ");
-  console.log(go);
+  //console.log(go);
   cars[go[5]].X = go[0];
   cars[go[5]].Y = go[1];
   cars[go[5]].Angle = go[2];
@@ -1349,7 +1357,8 @@ socket.onmessage = function (event) {
     barHP[go[5]].style.width = go[4] + "%";
   }
 
-  if (go.length == 7) {
+  if (go.length == 7 && !table.is7) {
+    table.is7 = true;
     if (go[6].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[6][0]].Name + " exploded";
     } else {
@@ -1359,7 +1368,8 @@ socket.onmessage = function (event) {
       time1.innerHTML = go[6].split("/")[1].slice(0, 7);
     }
   }
-  if (go.length == 8) {
+  if (go.length == 8 && !table.is8) {
+    table.is8 = true;
     if (go[7].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[7][0]].Name + " exploded";
     } else {
@@ -1376,7 +1386,8 @@ socket.onmessage = function (event) {
       }
     }
   }
-  if (go.length == 9) {
+  if (go.length == 9 && !table.is9) {
+    table.is9 = true;
     if (go[8].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[8][0]].Name + " exploded";
     } else {
@@ -1400,7 +1411,8 @@ socket.onmessage = function (event) {
       }
     }
   }
-  if (go.length == 10) {
+  if (go.length == 10 && !table.is10) {
+    table.is10 = true;
     if (go[9].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[9][0]].Name + " exploded";
     } else {
