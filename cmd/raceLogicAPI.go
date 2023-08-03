@@ -132,7 +132,12 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
+		user, err := getUser(db, userID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
 		IDs, err := getIDs(db, req)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -169,8 +174,8 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
-
-		clearCurLobbyId(db, userID)
+		deleteUserFromSession(db, user)
+		clearCurLobbyId(db, user.Id)
 		deleteSession(db, req)
 	}
 }
