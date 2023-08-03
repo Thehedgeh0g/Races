@@ -84,9 +84,7 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -123,9 +121,7 @@ func sendReqList(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -208,9 +204,7 @@ func sendOtherUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -299,9 +293,7 @@ func sendFriends(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 

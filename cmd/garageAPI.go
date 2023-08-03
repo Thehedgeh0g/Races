@@ -13,30 +13,22 @@ import (
 func garageData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		cars, err := getCars(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		prices, err := getPrices(db)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -54,9 +46,7 @@ func garageData(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -86,16 +76,12 @@ func buyCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		cars, err := getCars(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -104,9 +90,7 @@ func buyCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		success := false
 
 		success, err = updateCar(db, userID, req, "buy", ID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -117,9 +101,7 @@ func buyCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -149,16 +131,12 @@ func buyColor(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		cars, err := getCars(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -167,9 +145,7 @@ func buyColor(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		success := false
 
 		success, err = updateCar(db, userID, req, "recolorate", ID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		response := struct {
@@ -179,9 +155,7 @@ func buyColor(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -211,16 +185,12 @@ func tune(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		cars, err := getCars(db, userID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -229,9 +199,7 @@ func tune(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		success := false
 
 		success, err = updateCar(db, userID, req, "mod", ID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		response := struct {
@@ -241,9 +209,7 @@ func tune(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -286,9 +252,7 @@ func chooseCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		success := false
 		success, err = updateCar(db, userID, req, "choose", ID)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		response := struct {
@@ -298,9 +262,7 @@ func chooseCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			http.Error(w, "Server Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
