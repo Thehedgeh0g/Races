@@ -417,18 +417,19 @@ function UpdatePosition() {
           let speed1 = Number(cars[i].Speed);
           getAchive(4);
           if (
-            (angle1 % Math.PI) - Math.PI / 2 < angle % Math.PI &&
-            (angle1 % Math.PI) + Math.PI / 2 > angle % Math.PI
+            (angle1 % Math.PI * 2) - Math.PI / 2 < angle % Math.PI &&
+            (angle1 % Math.PI * 2) + Math.PI / 2 > angle % Math.PI
           ) {
+            console.log('forw')
             speed = speed1;
           } else {
-            if (Math.sign(speed1) == Math.sign(speed)) {
+            if (!(Math.sign(speed1) == Math.sign(speed))) {
               speed = -(speed + speed1) / 2;
             } else {
               speed = -speed1;
             }
           }
-          if (cars[myCar].HP > 0  && isHp) {
+          if (cars[myCar].HP > 0  && isHp && finished == 0 && false) {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%";
             if (cars[myCar].HP == 0) {
@@ -1012,7 +1013,7 @@ function onCanvasKeyDown(event) {
   }
   dif1 = ((curTime - startTime) / 1000) % 60;
 
-  console.log(dif1);
+  //console.log(dif1);
   if (wasd.r == 1 && dif1 > 5 && ready != 0) {
     ready = 2;
     if (event.code === "KeyW") {
