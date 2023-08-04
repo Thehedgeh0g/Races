@@ -97,7 +97,7 @@ func checkLobby(db *sqlx.DB, lobbyID string) bool {
 	if err != nil {
 		return true
 	}
-	if lobby.LobbyID == "0" {
+	if (lobby.LobbyID == "0") || (lobby.Boss) {
 		return true
 	}
 	return lobby.InProgress
