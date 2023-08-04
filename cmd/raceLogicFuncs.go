@@ -24,15 +24,29 @@ func getIDs(db *sqlx.DB, sessionID string) ([]string, error) {
 }
 
 func getSequence(tableStrings []string) ([]int, error) {
-	var sequence []int
+	var finished []int
+	var NFs []int
 	for _, playerResults := range tableStrings {
-		CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
-		if err != nil {
-			log.Println(err.Error())
-			return sequence, err
+		if strings.Split(playerResults, "/")[1] != "NF" {
+			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
+			if err != nil {
+				log.Println(err.Error())
+				return finished, err
+			}
+			finished = append(finished, CID)
+		} else {
+			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
+			if err != nil {
+				log.Println(err.Error())
+				return finished, err
+			}
+			NFs = append(NFs, CID)
 		}
-		sequence = append(sequence, CID)
+
 	}
+	var sequence []int
+	sequence = append(sequence, finished...)
+	sequence = append(sequence, NFs...)
 	return sequence, nil
 }
 func sendMessageToGroup(db *sqlx.DB, message, group string) {
