@@ -417,8 +417,8 @@ function UpdatePosition() {
           let speed1 = Number(cars[i].Speed);
           getAchive(4);
           if (
-            (angle1 % Math.PI) - Math.PI / 2 < angle % Math.PI &&
-            (angle1 % Math.PI) + Math.PI / 2 > angle % Math.PI
+            (angle1 % Math.PI * 2) - Math.PI / 2 < angle % Math.PI &&
+            (angle1 % Math.PI * 2) + Math.PI / 2 > angle % Math.PI
           ) {
             console.log('forw')
             speed = speed1;
