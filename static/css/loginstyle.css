@@ -8,6 +8,8 @@
     padding: 5vh;
     font-family: 'Press Start 2P';
     color: #ffc30e;
+    display: flex;
+    justify-content: center;
 }
 
 .login-box__eye {
@@ -37,6 +39,8 @@
     height: 40px;
     padding-left: 10px;
     outline: none;
+    width: 30vw;
+    box-sizing: border-box;
 }
 
 .login-box__button {

@@ -14,24 +14,26 @@
         <script defer src="/static/js/login.js"></script>
     </head>
     <body class="page" id="container">
-        <div  class="login-box">
-            <img class="sign-in-img" src="/static/sign-in-img/sign-in.png">
-            <form class="login-box__form">
-                <div id="message"></div>
-                <div id="login-block" class="login-box__email">
-                    <p class="login-box__comment">login</p>
-                    <input id="login-field" class="login-box__field" type="email" onfocus="Select('login')" onblur="NotSelect('login')">
-                </div>
-                <div id="password-block" class="login-box__pass">
-                    <p class="login-box__comment">password</p>
-                    <div class="centering">
-                        <input id="password-field" class="login-box__field" onfocus="Select('password')" onblur="NotSelect('password')" type="password">
-                        <img onclick="password_visibility()" class="login-box__eye" src="/static/img/eye.png" alt="eye">
+        <div class="mid">
+            <div  class="login-box">
+                <img class="sign-in-img" src="/static/sign-in-img/sign-in.png">
+                <form class="login-box__form">
+                    <div id="message"></div>
+                    <div id="login-block" class="login-box__email">
+                        <p class="login-box__comment">login</p>
+                        <input id="login-field" class="login-box__field" type="email" onfocus="Select('login')" onblur="NotSelect('login')">
                     </div>
-                    
-                </div>
-            </form>
-            <button class="login-box__button" onclick="Click()">log in</button>
+                    <div id="password-block" class="login-box__pass">
+                        <p class="login-box__comment">password</p>
+                        <div class="centering">
+                            <input id="password-field" class="login-box__field" onfocus="Select('password')" onblur="NotSelect('password')" type="password">
+                            <img onclick="password_visibility()" class="login-box__eye" src="/static/img/eye.png" alt="eye">
+                        </div>
+                        
+                    </div>
+                </form>
+                <button class="login-box__button" onclick="Click()">log in</button>
+            </div>
         </div>
     </body>
 </html>

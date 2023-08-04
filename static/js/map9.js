@@ -416,9 +416,10 @@ function UpdatePosition() {
           let angle1 = Number(cars[i].Angle);
           let speed1 = Number(cars[i].Speed);
           getAchive(4);
+          console.log(angle % (Math.PI * 2), angle1 % (Math.PI * 2))
           if (
-            (angle1 % Math.PI) - Math.PI / 2 < angle % Math.PI &&
-            (angle1 % Math.PI) + Math.PI / 2 > angle % Math.PI
+            (angle1 % (Math.PI * 2)) - Math.PI / 2 < angle % (Math.PI * 2) &&
+            (angle1 % (Math.PI * 2)) + Math.PI / 2 > angle % (Math.PI * 2)
           ) {
             console.log('forw')
             speed = speed1;
@@ -429,7 +430,7 @@ function UpdatePosition() {
               speed = -speed1;
             }
           }
-          if (cars[myCar].HP > 0  && isHp && finished == 0 && false) {
+          if (cars[myCar].HP > 0  && isHp && finished == 0) {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%";
             if (cars[myCar].HP == 0) {
