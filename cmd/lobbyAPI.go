@@ -359,9 +359,9 @@ func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Printf("countOfBosses: %v\n", countOfBosses)
-		if countOfBosses < 10 {
+		if countOfBosses < 1 {
 			botID = "10"
-		} else if countOfBosses < 20 {
+		} else if countOfBosses < 2 {
 			botID = "12"
 		} else {
 			botID = "13"
