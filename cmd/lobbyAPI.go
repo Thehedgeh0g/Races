@@ -424,49 +424,51 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
-		err = setUsersLobby(db, lobbyID, userID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
+		var Error string
 
 		lobby, err := getLobbyData(db, lobbyID)
 		if err != nil {
 			http.Error(w, "Error", 500)
 			log.Println(err.Error())
-			return
+			Error = "lobby doesn't exists"
 		}
-		var Error string
+		if Error == "" {
+			err = setUsersLobby(db, lobbyID, userID)
+			if err != nil {
+				http.Error(w, "Error", 500)
+				log.Println(err.Error())
+				return
+			}
+			if lobby.Boss {
+				Error = "This lobby for single player"
+				log.Println(Error)
+			} else if lobby.Player2ID == "0" {
+				err = addUserIntoLobby(db, "2", lobbyID, userID)
+				if err != nil {
+					http.Error(w, "Error", 500)
+					log.Println(err.Error())
+					return
+				}
+			} else if lobby.Player3ID == "0" {
+				err = addUserIntoLobby(db, "3", lobbyID, userID)
+				if err != nil {
+					http.Error(w, "Error", 500)
+					log.Println(err.Error())
+					return
+				}
+			} else if lobby.Player4ID == "0" {
+				err = addUserIntoLobby(db, "4", lobbyID, userID)
+				if err != nil {
+					http.Error(w, "Error", 500)
+					log.Println(err.Error())
+					return
+				}
+			} else {
+				Error = "This lobby is full"
 
-		if lobby.Boss {
-			Error = "This lobby for single player"
-		} else if lobby.Player2ID == "0" {
-			err = addUserIntoLobby(db, "2", lobbyID, userID)
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err.Error())
-				return
 			}
-		} else if lobby.Player3ID == "0" {
-			err = addUserIntoLobby(db, "3", lobbyID, userID)
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err.Error())
-				return
-			}
-		} else if lobby.Player4ID == "0" {
-			err = addUserIntoLobby(db, "4", lobbyID, userID)
-			if err != nil {
-				http.Error(w, "Error", 500)
-				log.Println(err.Error())
-				return
-			}
-		} else {
-			Error = "This lobby is full"
-
 		}
+
 		response := struct {
 			Error string `json:"error"`
 		}{

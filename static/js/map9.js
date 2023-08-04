@@ -420,15 +420,16 @@ function UpdatePosition() {
             (angle1 % Math.PI) - Math.PI / 2 < angle % Math.PI &&
             (angle1 % Math.PI) + Math.PI / 2 > angle % Math.PI
           ) {
+            console.log('forw')
             speed = speed1;
           } else {
-            if (Math.sign(speed1) == Math.sign(speed)) {
+            if (!(Math.sign(speed1) == Math.sign(speed))) {
               speed = -(speed + speed1) / 2;
             } else {
               speed = -speed1;
             }
           }
-          if (cars[myCar].HP > 0  && isHp) {
+          if (cars[myCar].HP > 0  && isHp && finished == 0 && false) {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%";
             if (cars[myCar].HP == 0) {
@@ -1012,7 +1013,7 @@ function onCanvasKeyDown(event) {
   }
   dif1 = ((curTime - startTime) / 1000) % 60;
 
-  console.log(dif1);
+  //console.log(dif1);
   if (wasd.r == 1 && dif1 > 5 && ready != 0) {
     ready = 2;
     if (event.code === "KeyW") {
@@ -1462,6 +1463,12 @@ socket.onmessage = function (event) {
       console.log(xhr.responseText);
       let infor = JSON.parse(xhr.responseText);
       money.innerHTML = " " + String(infor.response.Money);
+      if (infor.response.Money == 60) {
+        getAchive('2');
+      }
+      if (infor.response.Money == 15) {
+        getAchive('6');
+      }
       exp.innerHTML = " " + String(infor.response.Exp);
     });
     xhr.send(JSON.stringify(window.location.pathname.split("/")[2]));

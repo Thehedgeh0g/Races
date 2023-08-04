@@ -32,7 +32,9 @@ func menu(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		if errorProcessor(err, w) {
 			return
 		}
+		deleteUserFromSession(db, user)
 		clearCurLobbyId(db, user.Id)
+		deleteSession(db, user.CurLobbyID)
 
 		ts, err := template.ParseFiles("pages/menu.html")
 		if errorProcessor(err, w) {
@@ -55,7 +57,9 @@ func garageHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		if errorProcessor(err, w) {
 			return
 		}
+		deleteUserFromSession(db, user)
 		clearCurLobbyId(db, user.Id)
+		deleteSession(db, user.CurLobbyID)
 
 		ts, err := template.ParseFiles("pages/garage.html")
 		if errorProcessor(err, w) {
@@ -223,7 +227,9 @@ func handleReg(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		if errorProcessor(err, w) {
 			return
 		}
+		deleteUserFromSession(db, user)
 		clearCurLobbyId(db, user.Id)
+		deleteSession(db, user.CurLobbyID)
 
 		ts, err := template.ParseFiles("pages/registration.html")
 		if errorProcessor(err, w) {
@@ -247,7 +253,9 @@ func handleconstruct(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		if errorProcessor(err, w) {
 			return
 		}
+		deleteUserFromSession(db, user)
 		clearCurLobbyId(db, user.Id)
+		deleteSession(db, user.CurLobbyID)
 
 		ts, err := template.ParseFiles("pages/constructor.html")
 		if errorProcessor(err, w) {
