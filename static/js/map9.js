@@ -635,6 +635,12 @@ function updateReduce() {
       turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)] = curRound;
       checkCounter += 1;
       checks.innerHTML = checkCounter + '/' + maxCheck;
+      checks.style.backgroundColor = "#ff0000";
+      setTimeout(() => checks.style.backgroundColor = "#ffffff00", 100);
+      // checks.classList.add("bigger");
+      // checks.addEventListener("animationend", () => {
+      //   checks.classList.remove("bigger");
+      // });
       console.log(turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)]);
     }
 
@@ -648,14 +654,23 @@ function updateReduce() {
       if (flag) {
         checkCounter = 0;
         checks.innerHTML = checkCounter + '/' + maxCheck;
+        checks.style.backgroundColor = "#ff0000";
+        setTimeout(() => checks.style.backgroundColor = "#ffffff00", 100);
+        // checks.classList.add("bigger");
+        // checks.addEventListener("animationend", () => {
+        //   checks.classList.remove("bigger");
+        // });
         curRound += 1;
         if (curRound > maxRounds && sflag) {
           finished = 1;
           roundHTML.innerHTML = "FINISHED";
+          checks.innerHTML = "";
           waiting.innerHTML = "waiting for the other players";
           mspeed = 0;
         } else {
           roundHTML.innerHTML = curRound + "/" + maxRounds;
+          roundHTML.style.backgroundColor = "#ff0000";
+          setTimeout(() => roundHTML.style.backgroundColor = "#ffffff00", 100);
         }
       }
     }

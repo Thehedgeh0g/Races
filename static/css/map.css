@@ -309,3 +309,35 @@ table tr:nth-child(4) td {
     color: #838181;
     margin: 0.06vh;
 }
+
+.bigger {
+    animation: rotors 0.2s;
+}
+
+@keyframes rotors 
+{
+    from 
+    {
+        background-color: #ffffff00;
+        transform: scale(1, 1);
+    }
+    33% 
+    {
+        background-color: #ff0000;
+        transform: scale(1.4, 1.4);
+    }
+    66%
+    {
+        background-color: #ff0000;
+        transform: scale(1.4, 1.4);
+    }
+    to 
+    {
+        background-color: #ffffff00;
+        transform: scale(1, 1);
+    }
+}
+
+#check {
+    border-radius: 2px;
+}
