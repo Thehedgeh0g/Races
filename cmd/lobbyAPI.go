@@ -442,6 +442,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 
 		if lobby.Boss {
 			Error = "This lobby for single player"
+			log.Println(Error)
 		} else if lobby.Player2ID == "0" {
 			err = addUserIntoLobby(db, "2", lobbyID, userID)
 			if err != nil {
