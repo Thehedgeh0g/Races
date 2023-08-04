@@ -188,6 +188,10 @@ console.log(mapdot);
 let sflag = false;
 
 const checkPointTiles = [31, 32, 33, 34, 35, 36];
+let checkCounter = 0;
+let maxCheck = 0;
+const checks = document.getElementById("check");
+
 
 let turnTiles = [];
 
@@ -627,12 +631,10 @@ function updateReduce() {
     curTile = Number(tiles[224 - (divme(x, 96) + divme(y, 96) * 15)]);
     //console.log(curTile);
 
-    if (
-      checkPointTiles.includes(
-        Number(tiles[224 - (divme(x, 96) + divme(y, 96) * 15)])
-      )
-    ) {
+    if (checkPointTiles.includes(curTile) && turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)] != curRound) {
       turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)] = curRound;
+      checkCounter += 1;
+      checks.innerHTML = checkCounter + '/' + maxCheck;
       console.log(turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)]);
     }
 
@@ -644,6 +646,8 @@ function updateReduce() {
         }
       }
       if (flag) {
+        checkCounter = 0;
+        checks.innerHTML = checkCounter + '/' + maxCheck;
         curRound += 1;
         if (curRound > maxRounds && sflag) {
           finished = 1;
@@ -1217,6 +1221,8 @@ function getTiles() {
     console.log(tiles);
     for (let i = 0; i < 225; i++) {
       if (checkPointTiles.includes(Number(tiles[i]))) {
+        maxCheck += 1;
+        checks.innerHTML = checkCounter + '/' + maxCheck;
         turnTiles[i] = 0;
       }
     }
