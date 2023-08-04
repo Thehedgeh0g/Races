@@ -323,16 +323,6 @@ function showAchive(imgSrc, title, subtitle, steps) {
   setTimeout(removeAchive, 5000);
 }
 
-function showAchive(imgSrc, title, subtitle, steps) {
-  achiveImg.src = imgSrc;
-  achiveTitle.innerHTML = title;
-  achiveSubtitle.innerHTML = subtitle;
-  achiveSteps.innerHTML = steps;
-  achive.style.width = "45vw";
-  achive.style.borderWidth = "15px";
-  setTimeout(removeAchive, 7000);
-}
-
 function removeAchive() {
   achive.style.width = "0vw";
   achive.style.borderWidth = "0px";
