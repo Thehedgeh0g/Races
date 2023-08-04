@@ -311,3 +311,10 @@ function sendHp() {
 
 const token = document.getElementById("token");
 const copy = document.getElementById("copy");
+
+const BackToMenu = document.getElementById("menu");
+
+BackToMenu.addEventListener('click', ()=> {
+  window.location.href = "/menu"
+});
+
