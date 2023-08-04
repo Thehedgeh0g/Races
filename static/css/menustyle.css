@@ -121,6 +121,19 @@
     background: rgb(20, 20, 20);
 }
 
+.connect-friend{
+    font-family: 'Press Start 2P';
+    font-size: 1.8vh;
+    color: #ffc30e;
+    padding: 0.6vh;
+    margin-right: 2vh;
+    border-radius: 0.4vh;
+    cursor: pointer;
+    border: 0.3vh solid #a88312;
+    background: #ffdb7f;
+    background-color:#ffe6bf;
+}
+
 
 .overlay {
     position: fixed;
@@ -145,7 +158,7 @@
     flex-direction: column;
     align-items: center;
     border: 30px solid #ffc30e;
-    border-radius: 30px;
+    border-radius: 30px; 
     background-color:#ffe6bf;
     visibility: hidden;
     gap: 3vh;
@@ -237,6 +250,5 @@
 
 #lobby-list {
     width: 90%;
-    height: 30vh;
     overflow-y: scroll;
 }

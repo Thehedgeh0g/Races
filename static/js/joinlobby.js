@@ -2,7 +2,7 @@ const JoinButton = document.getElementById("JoinButton");
 const formJoinLobby = document.getElementById("formJoinLobby"); 
 const JoinLobbyBox = document.getElementById("JoinLobbyBox");
 const CloseButtonJoinLobby = document.getElementById("CloseButtonJoinLobby");
-const ConnectLobbyButton = document.getElementById("ConnectLobbyButton");
+const ConnectLobbyButton = document.getElementById("ConnectLobbyButton"); 
 
 JoinButton.addEventListener("click", showButtonAndDarkScreen);
 
@@ -20,6 +20,7 @@ function returnBorderColor() {
 
 ConnectLobbyButton.addEventListener("mouseover", changeBorderColor);
 ConnectLobbyButton.addEventListener("mouseout", returnBorderColor);
+
 
 formJoinLobby.addEventListener("submit", function() {
   handleTokenInputSubmit(event);
@@ -51,10 +52,10 @@ function handleJoinButtonClick() {
           <span>` + response.LobbyList[i].Friend.Nickname + `</span>
           <span>lvl:` + (response.LobbyList[i].Friend.Lvl - response.LobbyList[i].Friend.Lvl % 100) / 100 + `</span>
         </div>
-        <span>` + response.LobbyList[i].LobbyID + `</span>
+        <button class="connect-friend" id="Connect`+ response.LobbyList[i].LobbyID +`" onclick="handleTokenInputSubmitByFriend(id)">connect</button>
       </div>
       `
-    }
+    } 
   })
 }
 
@@ -65,6 +66,12 @@ function handleTokenInputSubmit(event) {
   event.preventDefault();
   const tokenData = JSON.stringify(token);
   getIdLobby(tokenData);
+}
+
+function handleTokenInputSubmitByFriend(id) {
+  id = id.slice(7);
+  const idData = JSON.stringify(id);
+  getIdLobby(idData);
 }
 
 let overlay = document.createElement("div");
