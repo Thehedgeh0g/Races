@@ -1465,6 +1465,9 @@ socket.onmessage = function (event) {
       if (infor.response.Money == 60) {
         getAchive('2');
       }
+      if (infor.response.Money == 15) {
+        getAchive('6');
+      }
       exp.innerHTML = " " + String(infor.response.Exp);
     });
     xhr.send(JSON.stringify(window.location.pathname.split("/")[2]));
