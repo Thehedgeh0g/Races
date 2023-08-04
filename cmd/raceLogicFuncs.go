@@ -169,11 +169,13 @@ func botProcessing(db *sqlx.DB, sessionID, readiness, hp, group, isFinished stri
 
 		botMessage := fmt.Sprintf("%f", bot.x) + " " + fmt.Sprintf("%f", bot.y) + " " + fmt.Sprintf("%f", bot.angle) + " " + "1/" + fmt.Sprintf("%f", bot.speed) + " " + strconv.Itoa(bot.hp) + " " + bot.inSessionId + races[sessionID]
 
-		bots[sessionID] = bot
-
 		connMutex.Lock()
 		sendMessageToGroup(db, botMessage, group)
 		connMutex.Unlock()
+		if strings.Split(isFinished, "/")[0] == "1" {
+			bot.laps = 0
+		}
+		bots[sessionID] = bot
 	}
 
 }
