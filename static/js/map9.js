@@ -1462,6 +1462,9 @@ socket.onmessage = function (event) {
       console.log(xhr.responseText);
       let infor = JSON.parse(xhr.responseText);
       money.innerHTML = " " + String(infor.response.Money);
+      if (infor.response.Money == 60) {
+        getAchive('2');
+      }
       exp.innerHTML = " " + String(infor.response.Exp);
     });
     xhr.send(JSON.stringify(window.location.pathname.split("/")[2]));
