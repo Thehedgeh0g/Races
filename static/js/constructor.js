@@ -8,6 +8,39 @@ const necessaryGrassPoints = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29
 const grassTilesId = [1, 2, 3, 4];
 const finalTileId = 37;
 let flagId;
+const achive = document.getElementById("achive");
+const achiveImg = document.getElementById("achive__img");
+const achiveTitle = document.getElementById("achive__title");
+const achiveSubtitle = document.getElementById("achive__subtitle");
+const achiveSteps = document.getElementById("achive__steps");
+
+function showAchive(imgSrc, title, subtitle, steps) {
+    achiveImg.src = imgSrc;
+    achiveTitle.innerHTML = title;
+    achiveSubtitle.innerHTML = subtitle;
+    achiveSteps.innerHTML = steps;
+    achive.style.width = "46vw";
+    achive.style.borderWidth = "13px";
+    setTimeout(removeAchive, 5000);
+}
+
+function removeAchive() {
+    achive.style.width = "0vw";
+    achive.style.borderWidth = "0px";
+}
+
+function getAchive(achivmentID) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', "/api/getAchivment");
+    xhr.send(JSON.stringify(achivmentID));
+    xhr.addEventListener('load', () => {
+    let resp = JSON.parse(xhr.response);
+    console.log(xhr.response);
+    if(resp.achivment.AchivmentPath != "") {
+        showAchive(resp.achivment.AchivmentPath, resp.achivment.Achivment, resp.achivment.AchivmentCom, resp.achivment.AchivmentDesc);
+    }
+    }); 
+}
 
 
 function loadPuzzles() {
@@ -113,7 +146,7 @@ function fillDesignField() {
 
 createMap.addEventListener("click", saveMap);
 
-function sendMap (val) {
+function sendMap(val) {
     let data = { map: val };
 
     const xhr = new XMLHttpRequest();
@@ -121,7 +154,7 @@ function sendMap (val) {
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     xhr.addEventListener('load', () => {
-        window.location.reload();
+        getAchive('15');
     });
 
     xhr.addEventListener('error', () => {
@@ -152,8 +185,9 @@ function saveMap() {
             alert('Добавьте фрагмент чекпоинта!');
         if (!isStartTile)
             alert('Добавьте фрагмент старта(финиша)!');
-        if (isStartTile && isCheckPoint)
-            sendMap(tilesString);
+        if (isStartTile && isCheckPoint) {
+            sendMap(tilesString); 
+        }
             
     } else {
         alert('Заполните поле!');
