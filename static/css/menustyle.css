@@ -129,7 +129,7 @@
     margin-right: 2vh;
     border-radius: 0.4vh;
     cursor: pointer;
-    border: 0.3vh solid #a88312;
+    border: 0.3vh solid #ffc30e;
     background: #ffdb7f;
     background-color:#ffe6bf;
 }
@@ -237,7 +237,7 @@
     border-width:  2px;
     border-style: solid;
     border-color: #ffc30e;
-    background-color: #ffe6bf;
+    background-color: #ffdb7f;
     width: 100%;
     justify-content: space-between;
     box-sizing: border-box;

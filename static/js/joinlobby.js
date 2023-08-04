@@ -52,7 +52,7 @@ function handleJoinButtonClick() {
           <span>` + response.LobbyList[i].Friend.Nickname + `</span>
           <span>lvl:` + (response.LobbyList[i].Friend.Lvl - response.LobbyList[i].Friend.Lvl % 100) / 100 + `</span>
         </div>
-        <button class="connect-friend" id="Connect`+ response.LobbyList[i].LobbyID +`" onclick="handleTokenInputSubmitByFriend(id)">connect</button>
+        <div class="connect-friend" id="Connect`+ response.LobbyList[i].LobbyID +`" onclick="handleTokenInputSubmitByFriend(id)">connect</div>
       </div>
       `
     } 
