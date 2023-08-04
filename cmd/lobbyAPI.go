@@ -424,6 +424,14 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
+		var Error string
+
+		lobby, err := getLobbyData(db, lobbyID)
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			Error = "lobby doesn't exists"
+		}
 
 		err = setUsersLobby(db, lobbyID, userID)
 		if err != nil {
@@ -431,14 +439,6 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-
-		lobby, err := getLobbyData(db, lobbyID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
-		var Error string
 
 		if lobby.Boss {
 			Error = "This lobby for single player"
