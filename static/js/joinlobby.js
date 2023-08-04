@@ -85,7 +85,7 @@ function getIdLobby(idLobby) {
   xhr.addEventListener('load', () => {
     console.log(xhr.responseText)
     window.localStorage.setItem("lobbyID", xhr.responseText.substring(12, 17))
-    if (xhr.responseText == "") {
+    if (JSON.parse(xhr.responseText).error == "") {
       window.location.href = "/lobby/" + idLobby.split('"')[1]
     }
   });
