@@ -172,7 +172,7 @@ func botProcessing(db *sqlx.DB, sessionID, readiness, hp, group, isFinished stri
 		connMutex.Lock()
 		sendMessageToGroup(db, botMessage, group)
 		connMutex.Unlock()
-		if strings.Split(isFinished, "/")[0] == "1" {
+		if (strings.Split(isFinished, "/")[0] == "1") || (strings.Split(isFinished, "/")[0] == "2") {
 			bot.laps = 0
 		}
 		bots[sessionID] = bot

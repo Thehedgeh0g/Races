@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math"
 	"strconv"
@@ -12,12 +11,10 @@ import (
 
 func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 	maxSpeed := 5 + (float64(bot.difficulty-1)*5)/(5/7.6)/4
-	fmt.Printf("bot.difficulty: %v\n", bot.difficulty)
 	bot.angle = math.Floor(bot.angle*10000) / 10000
 	corners := "/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/"
 	grass := "/1/2/3/4/"
 	roads := "/10/11/17/18/27/28/29/30/6/7/8/9/13/14/15/16/19/20/21/22/23/24/25/26/34/32/31/33/"
-	fmt.Printf("maxSpeed: %v\n", maxSpeed)
 	curTileIDI, curTileIDJ := getCurTile(int(bot.x), int(bot.y))
 	var VisMat [3][3]string
 
@@ -36,7 +33,6 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 		if bot.checks > 0 {
 			bot.checks = 0
 			bot.laps -= 1
-			log.Println("lap completed", bot.laps)
 		}
 	}
 	deviation := (math.Mod(math.Mod(bot.angle*180/math.Pi, 360)+360, 90))
@@ -67,7 +63,6 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 		}
 	}
 	rspeed := 0.03 * math.Sqrt(bot.speed*1.6)
-	fmt.Printf("rspeed: %v\n", rspeed)
 	if rspeed < 0.06 {
 		rspeed = 0.06
 	}
@@ -76,7 +71,6 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 			bot = turnRight(bot, rspeed)
 		} else if strings.Contains(roads, "/"+VisMat[0][1]+"/") {
 			bot = turnLeft(bot, rspeed)
-			log.Println("tut")
 		}
 	} else if deviation < -0.5 {
 		bot = turnLeft(bot, rspeed)
@@ -87,12 +81,6 @@ func AI(db *sqlx.DB, lobbyID string, bot Bot) Bot {
 	}
 	bot.visionMatrix = VisMat
 	bot = correctPosDiv(bot)
-	// log.Println(VisMat[0])
-	// log.Println(VisMat[1])
-	// log.Println(VisMat[2])
-
-	// log.Println()
-	// log.Println()
 	return bot
 }
 
@@ -104,7 +92,6 @@ func correctPosDiv(bot Bot) Bot {
 		} else if inTilePosX < 36 {
 			bot.x += 0.05
 		}
-		log.Println("vrx")
 	} else if (math.Mod(bot.angle*180/math.Pi, 360)+360 >= 225) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 315) {
 		inTilePosY := (int(bot.y) % 96)
 		if inTilePosY > 60 {
@@ -112,7 +99,6 @@ func correctPosDiv(bot Bot) Bot {
 		} else if inTilePosY < 36 {
 			bot.y += 0.05
 		}
-		log.Println("vry")
 	} else if ((math.Mod(bot.angle*180/math.Pi, 360)+360 >= 495) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 585)) ||
 		((math.Mod(bot.angle*180/math.Pi, 360)+360 >= 135) && (math.Mod(bot.angle*180/math.Pi, 360)+360 < 225)) {
 		inTilePosX := (int(bot.x) % 96)
@@ -121,7 +107,6 @@ func correctPosDiv(bot Bot) Bot {
 		} else if inTilePosX < 36 {
 			bot.x += 0.05
 		}
-		log.Println("vrxx")
 	} else {
 		inTilePosY := (int(bot.y) % 96)
 		if inTilePosY > 60 {
@@ -129,7 +114,6 @@ func correctPosDiv(bot Bot) Bot {
 		} else if inTilePosY < 36 {
 			bot.y += 0.05
 		}
-		log.Println("vryy")
 	}
 	return bot
 }
