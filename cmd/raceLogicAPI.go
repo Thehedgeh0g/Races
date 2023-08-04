@@ -174,6 +174,6 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonResponse)
 		deleteUserFromSession(db, user)
 		clearCurLobbyId(db, user.Id)
-		deleteSession(db, req)
+		deleteSession(db, user.CurLobbyID)
 	}
 }
