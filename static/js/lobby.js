@@ -452,3 +452,9 @@ copy.addEventListener("click", () => {
   navigator.clipboard.writeText(token.innerHTML.slice(6));
   copy.innerHTML = "Copied";
 });
+
+const BackToMenu = document.getElementById("menu");
+
+BackToMenu.addEventListener('click', ()=> {
+  window.location.href = "/menu"
+});

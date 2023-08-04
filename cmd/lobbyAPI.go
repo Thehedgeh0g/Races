@@ -118,6 +118,13 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 		}
 
+		lobby, err := getLobbyData(db, strconv.Itoa(lobbyId))
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+		log.Println("before", lobby)
 		var settings LobbySettings
 
 		err = json.Unmarshal(reqData, &settings)
@@ -134,6 +141,14 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		lobby, err = getLobbyData(db, strconv.Itoa(lobbyId))
+		if err != nil {
+			http.Error(w, "Error", 500)
+			log.Println(err.Error())
+			return
+		}
+
+		log.Println("after", lobby)
 		response := struct {
 			LobbyID string `json:"lobbyId"`
 		}{

@@ -150,7 +150,7 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var results ResultsTable
-		fmt.Printf("races[req]: %v\n", races[req])
+		fmt.Printf("races[req]: %v\n", lobby)
 		results, err = processResults(db, results, sequence, tableStrings, IDs, userID, lobby.Boss)
 		if err != nil {
 			http.Error(w, "Error", 500)

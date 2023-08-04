@@ -95,9 +95,9 @@ const r3 = document.getElementById("r3");
 const r4 = document.getElementById("r4");
 
 const grassArr = [1, 2, 3, 4];
-const roadArr = [11, 10, 9, 8, 7, 6, 31];
-const BGtransArr = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
-const bRoadArr = [13, 14, 15, 16, 17, 18];
+const roadArr = [11, 10, 9, 8, 7, 6, 31, 32];
+const BGtransArr = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 38, 39, 40, 41, 42];
+const bRoadArr = [13, 14, 15, 16, 17, 18, 33, 34];
 const borderArr = [12];
 
 const startArr = ["37"];
@@ -437,6 +437,11 @@ function UpdatePosition() {
               roundHTML.innerHTML = "EXPLODED";
               waiting.innerHTML = "waiting for the other players";
               mspeed = 0;
+
+              Car.src = cars[myCar].Img.slice(0, -5) + "EXP.png";
+              CarF.src = cars[myCar].Img.slice(0, -5) + "EXP.png";
+              CarL.src = cars[myCar].Img.slice(0, -5) + "EXP.png";
+              CarR.src = cars[myCar].Img.slice(0, -5) + "EXP.png";
             }
           }
           xspeed = Math.sin(angle) * speed;
@@ -1361,6 +1366,8 @@ socket.onmessage = function (event) {
     table.is7 = true;
     if (go[6].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[6][0]].Name + " exploded";
+      cars[go[6][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
+
     } else {
       table.first = go[6][0];
       notification.innerHTML = cars[go[6][0]].Name + " finished first";
@@ -1372,6 +1379,8 @@ socket.onmessage = function (event) {
     table.is8 = true;
     if (go[7].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[7][0]].Name + " exploded";
+      cars[go[7][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
+
     } else {
       if (table.first == 4) {
         table.first = go[7][0];
@@ -1390,6 +1399,7 @@ socket.onmessage = function (event) {
     table.is9 = true;
     if (go[8].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[8][0]].Name + " exploded";
+      cars[go[8][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
     } else {
       if (table.first == 4) {
         table.first = go[8][0];
@@ -1415,6 +1425,7 @@ socket.onmessage = function (event) {
     table.is10 = true;
     if (go[9].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[9][0]].Name + " exploded";
+      cars[go[9][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
     } else {
       if (table.first == 4) {
         table.first = go[9][0];

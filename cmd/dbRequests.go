@@ -123,6 +123,7 @@ func updateCarStatement(db *sqlx.DB, cars, money, userID string) error {
 }
 
 func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id string, boss bool) error {
+	log.Println(boss)
 	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id, rounds, boss)
     VALUES(?, ?, ?, ?, ?, ?, ?)`
 	var rounds string
@@ -131,10 +132,18 @@ func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id st
 	} else {
 		rounds = "1"
 	}
-	_, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id, rounds, boss)
-	if err != nil {
-		return err
+	if boss {
+		_, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id, rounds, "1")
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err := db.Exec(stmt, lobby_id, hostId, player1_id, player2_id, player3_id, rounds, "0")
+		if err != nil {
+			return err
+		}
 	}
+	
 
 	return nil
 }
@@ -611,7 +620,7 @@ func deleteUserFromSession(db *sqlx.DB, user UserData) error {
 }
 
 func updateGameStatus(db *sqlx.DB, lobby LobbyData) error {
-	const stmt = `UPDATE sessions SET boss = ? WHERE session_id = ?`
+	const stmt = `UPDATE sessions SET inProgress = ? WHERE session_id = ?`
 
 	_, err := db.Exec(stmt, "1", lobby.LobbyID)
 	if err != nil {

@@ -179,6 +179,7 @@ func botProcessing(db *sqlx.DB, sessionID, readiness, hp, group, isFinished stri
 }
 
 func processResults(db *sqlx.DB, results ResultsTable, sequence []int, tableStrings, IDs []string, userID string, isBoss bool) (ResultsTable, error) {
+	log.Println(isBoss)
 	modifier := 0
 	if !isBoss {
 		for place, inSessionId := range sequence {
