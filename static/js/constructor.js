@@ -71,6 +71,7 @@ function playMusic(){
   if (musicOff){
     musicOff = false;
     let audio = new Audio();
+    audio.volume = 0.3;
     var musicFolder = '../static/music/editor/';
     var music = new Array('fur21.mp3', 'fur22.mp3', 'fur23.mp3');
     var rand_file_index = Math.round(Math.random()*(music.length-1));

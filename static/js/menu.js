@@ -12,6 +12,7 @@ function playMusic(){
   if (musicOff){
     musicOff = false;
     let audio = new Audio();
+    audio.volume = 0.3;
     var musicFolder = '../static/music/menu/';
     var music = new Array('initialD-DanceAroundtheWorld_(muzmo.su).mp3', 'InitialD-Goldenage_(muzmo.su).mp3', 'InitialD-RageYourDream_(muzmo.su).mp3');
     var rand_file_index = Math.round(Math.random()*(music.length-1));

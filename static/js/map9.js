@@ -32,16 +32,22 @@ let CarR = new Image();
 
 var audioStart = new Audio();
 audioStart.src = "../static/sounds/jiga2kStart.mp3";
+audioStart.volume = 0.2;
 var audioStay = new Audio();
 audioStay.src = "../static/sounds/jiga hol2Stay.wav";
+audioStay.volume = 0.2;
 var audioGo = new Audio();
 audioGo.src = "../static/sounds/jiga 3kGo2.wav";
+audioGo.volume = 0.2;
 var audioStop = new Audio();
 audioStop.src = "../static/sounds/jiga 3kStop.mp3";
+audioStop.volume = 0.1;
 var audioTires = new Audio();
 audioTires.src = "../static/sounds/tires.wav";
+audioTires.volume = 0.2;
 var audioEngineOn = new Audio();
-audioEngineOn.src = "../static/sounds/jigaEngineOn.wav";
+audioEngineOn.src = "../static/sounds/jigasEngineOn.wav";
+audioEngineOn.volume = 0.2;
 
 let musicOff = true;
 document.body.addEventListener("mousemove", playMusic);
@@ -51,6 +57,7 @@ function playMusic(){
   if (musicOff){
     musicOff = false;
     let audio = new Audio();
+    audio.volume = 0.3;
     var musicFolder = '../static/music/race/';
     var music = new Array('INITIAL-D_(muzmo.su).mp3', 'InitialD-GASGAS_(muzmo.su).mp3', 'InitialD-RunninginThe90s_(muzmo.su).mp3', 'InitialD-SpeedySpeedBoy.mp3', 'InitialD-Spitfire_(muzmo.su).mp3', 'need_for_speed_most_wanted_01 - Styles of Beyond - Nine Thou (Superstars Remix).mp3');
     var rand_file_index = Math.round(Math.random()*(music.length-1));
@@ -191,6 +198,12 @@ const checkPointTiles = [31, 32, 33, 34, 35, 36];
 let checkCounter = 0;
 let maxCheck = 0;
 const checks = document.getElementById("check");
+var checkSound = new Audio('/static/sounds/beep-check.mp3');
+checkSound.volume = 0.3;
+var roundSound = new Audio('/static/sounds/beep-round.mp3');
+roundSound.volume = 0.3;
+var winSound = new Audio('/static/sounds/win.wav');
+winSound.volume = 0.3;
 
 
 let turnTiles = [];
@@ -242,6 +255,7 @@ const button = document.getElementById("button");
 
 let dif1 = 0;
 let vzhoom = new Audio();
+vzhoom.volume = 0.1;
 
 let bar = [];
 
@@ -340,8 +354,8 @@ function drawMapDots() {
       if (i == myCar) {
         mapdot[i].style.backgroundColor = "white";
       }
-      mapdot[i].style.top = cars[i].Y / 19.2 + "px";
-      mapdot[i].style.left = cars[i].X / 19.2 + "px";
+      mapdot[i].style.top = (cars[i].Y / 19.2) * 1.5 + "px";
+      mapdot[i].style.left = (cars[i].X / 19.2) * 1.5 + "px";
     }
   }
 }
@@ -631,10 +645,11 @@ function updateReduce() {
     curTile = Number(tiles[224 - (divme(x, 96) + divme(y, 96) * 15)]);
     //console.log(curTile);
 
-    if (checkPointTiles.includes(curTile) && turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)] != curRound) {
+    if (checkPointTiles.includes(curTile) && turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)] != curRound && finished == 0) {
       turnTiles[224 - (divme(x, 96) + divme(y, 96) * 15)] = curRound;
       checkCounter += 1;
-      checks.innerHTML = checkCounter + '/' + maxCheck;
+      checkSound.play();
+      checks.innerHTML = 'checks:' + checkCounter + '/' + maxCheck;
       checks.style.backgroundColor = "#ff0000";
       setTimeout(() => checks.style.backgroundColor = "#ffffff00", 100);
       // checks.classList.add("bigger");
@@ -653,7 +668,7 @@ function updateReduce() {
       }
       if (flag) {
         checkCounter = 0;
-        checks.innerHTML = checkCounter + '/' + maxCheck;
+        checks.innerHTML = 'checks:' + checkCounter + '/' + maxCheck;
         checks.style.backgroundColor = "#ff0000";
         setTimeout(() => checks.style.backgroundColor = "#ffffff00", 100);
         // checks.classList.add("bigger");
@@ -662,13 +677,15 @@ function updateReduce() {
         // });
         curRound += 1;
         if (curRound > maxRounds && sflag) {
+          winSound.play();
           finished = 1;
           roundHTML.innerHTML = "FINISHED";
           checks.innerHTML = "";
           waiting.innerHTML = "waiting for the other players";
           mspeed = 0;
         } else {
-          roundHTML.innerHTML = curRound + "/" + maxRounds;
+          roundSound.play();
+          roundHTML.innerHTML = 'round:' + curRound + "/" + maxRounds;
           roundHTML.style.backgroundColor = "#ff0000";
           setTimeout(() => roundHTML.style.backgroundColor = "#ffffff00", 100);
         }
@@ -1228,7 +1245,7 @@ function getTiles() {
 
     rspeed = mrspeed;
     console.log(mcarspeed, mrspeed);
-    roundHTML.innerHTML = curRound + "/" + maxRounds;
+    roundHTML.innerHTML = 'round:' + curRound + "/" + maxRounds;
 
     mapping = info.MapKey;
     console.log(mapping);
@@ -1237,7 +1254,7 @@ function getTiles() {
     for (let i = 0; i < 225; i++) {
       if (checkPointTiles.includes(Number(tiles[i]))) {
         maxCheck += 1;
-        checks.innerHTML = checkCounter + '/' + maxCheck;
+        checks.innerHTML = 'checks:' + checkCounter + '/' + maxCheck;
         turnTiles[i] = 0;
       }
     }
@@ -1332,8 +1349,8 @@ function showAchive(imgSrc, title, subtitle, steps) {
   achiveTitle.innerHTML = title;
   achiveSubtitle.innerHTML = subtitle;
   achiveSteps.innerHTML = steps;
-  achive.style.width = "9vw";
-  achive.style.borderWidth = "3px";
+  achive.style.width = "13.5vw";
+  achive.style.borderWidth = "4.5px";
   setTimeout(removeAchive, 5000);
 }
 

@@ -168,6 +168,7 @@ function playMusic(){
   if (musicOff){
     musicOff = false;
     let audio = new Audio();
+    audio.volume = 0.3;
     var musicFolder = '../static/music/garage/';
     var music = new Array('need_for_speed_carbon_06.Gary Numan & Tubeway Army - Are Friends Electric.mp3','need_for_speed_most_wanted_03 - Rock - I Am Rock.mp3', 'need_for_speed_most_wanted_04 - Suni Clay - In A Hood Near You.mp3', 'need_for_speed_most_wanted_07 - Hush-Fired up.mp3', 'need_for_speed_underground_2_1. Snoop Dogg ft The Doors - Riders on the Storm(fredwreck remix).mp3');
     var rand_file_index = Math.round(Math.random()*(music.length-1));
