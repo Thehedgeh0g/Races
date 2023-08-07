@@ -26,22 +26,24 @@ submit.addEventListener("click",()=>
                 user.avatar = readerAvatar.result;
                 console.log(user)
                 Loaded = true
+
+                if (verifyMailFormat(user.email) && Loaded){
+                    let XHR = new XMLHttpRequest();
+                    XHR.open("POST", "/api/registrate");
+                    XHR.send(JSON.stringify(user));
+                    XHR.onload = function() {
+                        if (XHR.status != 200){
+                            DataError();
+                        }
+                        else {
+                            window.location.href = "/login"
+                        }
+                    }
+                }
             },
             false
         );
-        if (verifyMailFormat(user.email) && Loaded){
-            let XHR = new XMLHttpRequest();
-            XHR.open("POST", "/api/registrate");
-            XHR.send(JSON.stringify(user));
-            XHR.onload = function() {
-                if (XHR.status != 200){
-                    DataError();
-                }
-                else {
-                    window.location.href = "/login"
-                }
-            }
-        }
+        
         console.log(formData, user)
         
     }
@@ -59,6 +61,22 @@ function verifyMailFormat(email){
 
 const hiddenUpload = document.getElementById("avatar-field");
 const visibleUpload = document.getElementById("upload");
+const ava = document.getElementById("ava");
+
 visibleUpload.addEventListener("click", () => {
     hiddenUpload.click();
 })
+
+hiddenUpload.addEventListener("change", () => {
+    console.log(hiddenUpload.value);
+
+    const file = hiddenUpload.files[0];
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      ava.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+
+})
+
