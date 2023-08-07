@@ -68,8 +68,10 @@ func sendMessageToGroup(db *sqlx.DB, message, group string) {
 	}
 }
 
-func addToGroup(conn *websocket.Conn, groupID string) {
-	if !Contains(groups[groupID], conn) {
+func addToGroup(conn *websocket.Conn, groupID, lobbyID string) {
+	if groupID == "" {
+		groups[lobbyID] = append(groups[lobbyID], conn)
+	} else if !Contains(groups[groupID], conn) {
 		groups[groupID] = append(groups[groupID], conn)
 	}
 
@@ -87,12 +89,11 @@ func Contains(a []*websocket.Conn, x *websocket.Conn) bool {
 func determineGroup(clientID, groupID string) string {
 	for group := range groups {
 		if strings.Split(clientID, " ")[0] == group {
-			return group
+			return groupID
 		} else {
 			continue
 		}
 	}
-
 	return ""
 }
 
