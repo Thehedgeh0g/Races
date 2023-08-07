@@ -16,18 +16,19 @@
     <body class="page">
         <span class="title">REGISTRATION</span>
         <form name="regForm" class="forma">
-            <span>Nickname</span>
+            <span>nickname</span>
             <input name="nickname-field" class="login-box__field" type="text">
             <span>email</span>
             <input name="email-field" class="login-box__field" type="email">
             <span>password</span>
             <input name="password-field" class="login-box__field" type="password">
             <input type="file" class="hidden" id="avatar-field" name="avatar-field" />
-            <div class="fl">
+            <div class="fl"> 
                 <span id="upload">Upload avatar!</span>
                 <img class="ava" id="ava" src="/static/sprites/camera.png">
             </div>
         </form>
         <button id="submit">submit</button>
+        <div><span class="registration__login" onclick="GoToLogin()">Allready have account?</span></div>
     </body>
 </html>
