@@ -13,8 +13,11 @@ const achiveImg = document.getElementById("achive__img");
 const achiveTitle = document.getElementById("achive__title");
 const achiveSubtitle = document.getElementById("achive__subtitle");
 const achiveSteps = document.getElementById("achive__steps");
+const audioAchive = new Audio();
+audioAchive.src = "../static/sounds/achive.mp3";
 
 function showAchive(imgSrc, title, subtitle, steps) {
+    audioAchive.play();
     achiveImg.src = imgSrc;
     achiveTitle.innerHTML = title;
     achiveSubtitle.innerHTML = subtitle;
