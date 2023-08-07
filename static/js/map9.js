@@ -204,6 +204,8 @@ var roundSound = new Audio('/static/sounds/beep-round.mp3');
 roundSound.volume = 0.3;
 var winSound = new Audio('/static/sounds/win.wav');
 winSound.volume = 0.3;
+var boomSound = new Audio('/static/sounds/boom.mp3');
+boomSound.volume = 1;
 
 
 let turnTiles = [];
@@ -452,6 +454,7 @@ function UpdatePosition() {
             cars[myCar].HP -= 10;
             barHP[myCar].style.width = cars[myCar].HP + "%";
             if (cars[myCar].HP == 0) {
+              boomSound.play();
               getAchive(3);
               finished = 2;
               roundHTML.innerHTML = "EXPLODED";
@@ -1405,6 +1408,7 @@ socket.onmessage = function (event) {
   if (go.length == 7 && !table.is7) {
     table.is7 = true;
     if (go[6].split("/")[1] == "NF") {
+      boomSound.play();
       notification.innerHTML = cars[go[6][0]].Name + " exploded";
       cars[go[6][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
 
@@ -1418,6 +1422,7 @@ socket.onmessage = function (event) {
   if (go.length == 8 && !table.is8) {
     table.is8 = true;
     if (go[7].split("/")[1] == "NF") {
+      boomSound.play();
       notification.innerHTML = cars[go[7][0]].Name + " exploded";
       cars[go[7][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
 
@@ -1438,6 +1443,7 @@ socket.onmessage = function (event) {
   if (go.length == 9 && !table.is9) {
     table.is9 = true;
     if (go[8].split("/")[1] == "NF") {
+      boomSound.play();
       notification.innerHTML = cars[go[8][0]].Name + " exploded";
       cars[go[8][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
     } else {
@@ -1465,6 +1471,7 @@ socket.onmessage = function (event) {
     table.is10 = true;
     if (go[9].split("/")[1] == "NF") {
       notification.innerHTML = cars[go[9][0]].Name + " exploded";
+      boomSound.play();
       cars[go[9][0]].Imag.src = cars[go[5]].Imag.src.slice(0, -5) + "EXP.png";
     } else {
       if (table.first == 4) {

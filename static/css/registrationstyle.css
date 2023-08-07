@@ -71,10 +71,14 @@
     border-style: solid;
     border-color: #ffc30e;
     background-color: #ffdb7f;
-    width: 40vw;
+    width: 28vw;
     cursor: pointer;
     padding: 10px;
     box-sizing: border-box;
+    margin-right: 2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #submit {
@@ -90,4 +94,18 @@
     color: #ffc30e;
     font-size: 35px;
     margin-top: 10px;
+}
+
+.ava {
+    height: 10vw;
+    width: 10vw;
+    border-width:  3px;
+    border-style: solid;
+    border-color: #ffc30e;
+    box-sizing: border-box;
+}
+
+.fl {
+    display: flex;
+
 }
