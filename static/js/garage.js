@@ -35,6 +35,11 @@ const achiveImg = document.getElementById("achive__img");
 const achiveTitle = document.getElementById("achive__title");
 const achiveSubtitle = document.getElementById("achive__subtitle");
 const achiveSteps = document.getElementById("achive__steps");
+const audioAchive = new Audio();
+audioAchive.src = "../static/sounds/achive.mp3";
+
+const audioBuy = new Audio();
+audioBuy.src = "../static/sounds/buy.mp3";
 
 let Data = '';
 let GarageCars = [
@@ -315,6 +320,7 @@ BackToMenu.addEventListener('click', ()=> {
 });
 
 function showAchive(imgSrc, title, subtitle, steps) {
+  audioAchive.play();
   achiveImg.src = imgSrc;
   achiveTitle.innerHTML = title;
   achiveSubtitle.innerHTML = subtitle;
@@ -416,6 +422,7 @@ function replaceCar() {
       xhrACar.onload = () => {
         let answer = JSON.parse(xhrACar.response);
         if (answer.response) {
+
           carArrowCnt = 1;
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
@@ -443,6 +450,7 @@ function replaceCar() {
       xhrUCar.onload = () => {
         let answer = JSON.parse(xhrUCar.response);
         if (answer.response) {
+
           carArrowCnt = 2;
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
@@ -469,6 +477,7 @@ function replaceCar() {
       xhrBCar.onload = () => {
         let answer = JSON.parse(xhrBCar.response);
         if (answer.response) {
+
           carArrowCnt = 3;
           document.getElementById("currentCar").src = '/static/sprites/' + String(GarageCars[carArrowCnt].Scr) + '.png';
           GarageCarsCount += 1;
