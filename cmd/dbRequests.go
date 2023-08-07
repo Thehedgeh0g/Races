@@ -120,7 +120,6 @@ func updateCarStatement(db *sqlx.DB, cars, money, userID string) error {
 }
 
 func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id string, boss bool) error {
-	log.Println(boss)
 	stmt := `INSERT INTO sessions (session_id, host_id, player2_id, player3_id, player4_id, rounds, boss)
     VALUES(?, ?, ?, ?, ?, ?, ?)`
 	var rounds string

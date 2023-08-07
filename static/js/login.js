@@ -88,7 +88,11 @@ function DataError()
         message.classList.add('login-box__message');
         message.insertBefore(text, message.children[0]);
         message.insertBefore(icon, message.children[0]);
-    }
+    } 
+}
+
+function GoToRegistration() {
+    window.location.href = "/registration"
 }
 
 function Click()
