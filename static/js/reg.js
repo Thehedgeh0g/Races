@@ -26,7 +26,7 @@ submit.addEventListener("click",()=>
                 user.avatar = readerAvatar.result;
                 console.log(user)
                 Loaded = true
-
+ 
                 if (verifyMailFormat(user.email) && Loaded){
                     let XHR = new XMLHttpRequest();
                     XHR.open("POST", "/api/registrate");
@@ -80,3 +80,6 @@ hiddenUpload.addEventListener("change", () => {
 
 })
 
+function GoToLogin() {
+    window.location.href = "/login"
+}

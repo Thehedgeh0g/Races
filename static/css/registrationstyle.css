@@ -26,8 +26,19 @@
 
 .forma {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
     gap: 10px;
+}
+
+.registration__login {
+    margin: 10px;
+    cursor: pointer;
+    font-size: 2vh;
+}
+
+.registration__login:hover{
+    margin: 10px;
+    color: #a17c0c;
 }
 
 .login-box__field {
