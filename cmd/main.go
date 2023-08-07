@@ -37,7 +37,7 @@ func main() {
 	mux.HandleFunc("/race/{lobbyID}", gameAreaHandler(dbx))
 	mux.HandleFunc("/account", accountHandler(dbx))
 	mux.HandleFunc("/garage", garageHandler(dbx))
-	mux.HandleFunc("/registration", handleReg(dbx))
+	mux.HandleFunc("/registration", handleReg)
 	mux.HandleFunc("/constructor", handleconstruct(dbx))
 
 	mux.HandleFunc("/ws", handleWebSocket(dbx))

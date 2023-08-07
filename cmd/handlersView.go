@@ -217,29 +217,16 @@ func accountHandler(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleReg(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		userID, err := getUserID(db, r)
-		if errorProcessor(err, w) {
-			return
-		}
-		user, err := getUser(db, userID)
-		if errorProcessor(err, w) {
-			return
-		}
-		deleteUserFromSession(db, user)
-		clearCurLobbyId(db, user.Id)
-		deleteSession(db, user.CurLobbyID)
+func handleReg(w http.ResponseWriter, r *http.Request) {
 
-		ts, err := template.ParseFiles("pages/registration.html")
-		if errorProcessor(err, w) {
-			return
-		}
+	ts, err := template.ParseFiles("pages/registration.html")
+	if errorProcessor(err, w) {
+		return
+	}
 
-		err = ts.Execute(w, nil)
-		if errorProcessor(err, w) {
-			return
-		}
+	err = ts.Execute(w, nil)
+	if errorProcessor(err, w) {
+		return
 	}
 }
 
