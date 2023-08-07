@@ -134,8 +134,6 @@ func collision(bot Bot, userX, userY int, userHp string) Bot {
 			bot.speed = 0.1
 		}
 		bot.userHP = userHp
-
-		log.Println("damaged", bot.hp)
 	}
 	return bot
 }
@@ -210,7 +208,6 @@ func moveStright(bot Bot) Bot {
 	ySpeed := math.Cos(bot.angle) * bot.speed
 	bot.x = bot.x + xSpeed
 	bot.y = bot.y + ySpeed
-	//log.Println(speed, newSpeed)
 	return bot
 }
 
@@ -255,12 +252,11 @@ func findStart(tiles string, id string) (float64, float64) {
 		log.Println(err)
 	}
 	startY = startY + 5 + 17/2 + 23*inSessionId
-	log.Println(startX, startY)
 	return float64(startX), float64(startY)
 }
 
 func addAI(db *sqlx.DB, lobbyID string) {
-	log.Print("tuta")
+
 	lobby, err := getLobbyData(db, lobbyID)
 	if err != nil {
 		log.Println(err)
@@ -274,7 +270,6 @@ func addAI(db *sqlx.DB, lobbyID string) {
 	bot.speed = 0
 	bot.laps = laps
 	bot.x, bot.y = findStart(setMapKey(db, lobbyID).MapKey, "1")
-	log.Println("hui")
 	bot.inSessionId = "1"
 	if lobby.Player2ID == "10" {
 		bot.difficulty = 1

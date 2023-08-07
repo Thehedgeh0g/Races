@@ -31,8 +31,6 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				return true
 			},
 		}
-		int optval = 1
-		setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval))
 		cookie, err := r.Cookie("authCookieName")
 		if err != nil {
 			log.Println(err)
