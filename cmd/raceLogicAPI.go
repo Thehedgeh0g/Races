@@ -31,7 +31,8 @@ func handleWebSocket(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 				return true
 			},
 		}
-
+		int optval = 1
+		setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval))
 		cookie, err := r.Cookie("authCookieName")
 		if err != nil {
 			log.Println(err)
@@ -89,7 +90,7 @@ func handleMessages(db *sqlx.DB, conn *websocket.Conn, clientID string, lobbyID 
 		}
 
 		group := determineGroup(clientID, strconv.Itoa(lobbyID))
-		addToGroup(conn, group)
+		addToGroup(conn, group, strconv.Itoa(lobbyID))
 
 		if strings.Split(message, " ")[1] == "race" {
 			message = verificatePos(db, message, group)
