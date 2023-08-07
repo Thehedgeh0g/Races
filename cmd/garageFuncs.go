@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -95,7 +94,6 @@ func updateCar(db *sqlx.DB, userID, req, method string, carID int) (bool, error)
 			return false, err
 		}
 	}
-	fmt.Printf("price: %v\n", price)
 	updateCarStatement(db, user.Cars, strconv.Itoa(user.Money-price), userID)
 
 	return true, nil

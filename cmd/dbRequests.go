@@ -111,13 +111,10 @@ func getMapIDs(db *sqlx.DB) ([]string, error) {
 func updateCarStatement(db *sqlx.DB, cars, money, userID string) error {
 	stmt := `UPDATE users SET cars = ?, money = ? WHERE user_id = ?`
 
-	res, err := db.Exec(stmt, cars, money, userID)
+	_, err := db.Exec(stmt, cars, money, userID)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		return err
-	} else {
-		result, _ := res.RowsAffected()
-		fmt.Printf("result: %v\n", result)
 	}
 	return nil
 }
@@ -143,7 +140,6 @@ func insert(db *sqlx.DB, lobby_id, hostId, player1_id, player2_id, player3_id st
 			return err
 		}
 	}
-	
 
 	return nil
 }
@@ -274,13 +270,10 @@ func clearCurLobbyId(db *sqlx.DB, userID string) error {
 		  user_id = ?    
 	`
 
-	res, err := db.Exec(stmt, "0", userID)
+	_, err := db.Exec(stmt, "0", userID)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		return err
-	} else {
-		result, _ := res.RowsAffected()
-		fmt.Printf("result: %v\n", result)
 	}
 
 	return nil
@@ -553,7 +546,6 @@ func deleteFromFriendList(db *sqlx.DB, userID, friendID string) error {
 	}
 	friendsStr := strings.Join(friendList, " ")
 	friendsStr = strings.Trim(friendsStr, " ")
-	fmt.Printf("friendsStr: %v\n", friendsStr)
 	const stmt = `UPDATE users SET friends = ? WHERE user_id = ?`
 	_, err = db.Exec(stmt, friendsStr, userID)
 	if err != nil {

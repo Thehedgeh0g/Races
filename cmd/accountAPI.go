@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -24,12 +23,9 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		friendReq.Status = "0"
 
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		user, err := getUser(db, userID)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -62,7 +58,6 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-			fmt.Printf("checkRequests(db, friendReq.RecieverID, userID): %v\n", checkRequests(db, friendReq.RecieverID, userID))
 			if (!inFriends) && !checkRequests(db, friendReq.RecieverID, userID) {
 				err = createFriendsReq(db, friendReq)
 				if err != nil {
@@ -96,12 +91,9 @@ func addFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func sendReqList(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		user, err := getUser(db, userID)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -184,19 +176,13 @@ func sendOtherUser(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var SenderID string
 
 		err = json.Unmarshal(reqData, &SenderID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		sender, err := getUser(db, SenderID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		response := struct {
 			Sender UserData `json:"Sender"`
 		}{
@@ -225,12 +211,9 @@ func deleteFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var friendsNick string
 
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		user, err := getUser(db, userID)
 		if err != nil {
 			http.Error(w, "Error", 500)
@@ -271,19 +254,13 @@ func deleteFriend(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 func sendFriends(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		freinds := strings.Split(user.Friends, " ")
 
 		response := struct {

@@ -20,21 +20,15 @@ func sendAchivment(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var achivmentID string
 
 		err = json.Unmarshal(reqData, &achivmentID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		var achivment AchivmentData

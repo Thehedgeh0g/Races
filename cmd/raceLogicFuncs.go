@@ -23,7 +23,10 @@ func getIDs(db *sqlx.DB, sessionID string) ([]string, error) {
 	return IDs, nil
 }
 
-func getSequence(tableStrings []string) ([]int, error) {
+func getSequence(tableStrings []string) ([]int, []string, error) {
+	var NFsIds []string
+	var finishedIds []string
+	var table []string
 	var finished []int
 	var NFs []int
 	for _, playerResults := range tableStrings {
@@ -31,15 +34,17 @@ func getSequence(tableStrings []string) ([]int, error) {
 			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
 			if err != nil {
 				log.Println(err.Error())
-				return finished, err
+				return finished, finishedIds, err
 			}
+			finishedIds = append(finishedIds, playerResults)
 			finished = append(finished, CID)
 		} else {
 			CID, err := strconv.Atoi(strings.Split(playerResults, "/")[0])
 			if err != nil {
 				log.Println(err.Error())
-				return finished, err
+				return finished, finishedIds, err
 			}
+			NFsIds = append(NFsIds, playerResults)
 			NFs = append(NFs, CID)
 		}
 
@@ -47,7 +52,10 @@ func getSequence(tableStrings []string) ([]int, error) {
 	var sequence []int
 	sequence = append(sequence, finished...)
 	sequence = append(sequence, NFs...)
-	return sequence, nil
+	table = append(table, finishedIds...)
+	table = append(table, NFsIds...)
+	fmt.Printf("sequence: %v\n", sequence)
+	return sequence, table, nil
 }
 func sendMessageToGroup(db *sqlx.DB, message, group string) {
 	for _, conn := range groups[group] {
@@ -111,10 +119,9 @@ func deleteGroup(db *sqlx.DB, groupID string) {
 }
 
 func deleteSession(db *sqlx.DB, groupID string) {
-	fmt.Printf("len(groups[groupID]): %v\n", len(groups[groupID]))
 	lobby, err := getLobbyData(db, groupID)
 	if err != nil {
-		fmt.Printf("err: %v\n", err)
+		log.Println("lobby not found")
 		return
 	}
 	if (lobby.HostID == "0") && (lobby.Player2ID == "0") && (lobby.Player3ID == "0") && (lobby.Player4ID == "0") {
@@ -194,12 +201,15 @@ func botProcessing(db *sqlx.DB, sessionID, readiness, hp, group, isFinished stri
 
 }
 
-func processResults(db *sqlx.DB, results ResultsTable, sequence []int, tableStrings, IDs []string, userID string, isBoss bool) (ResultsTable, error) {
+func processResults(db *sqlx.DB, sequence []int, tableStrings, IDs []string, userID string, isBoss bool) (ResultsTable, error) {
 	log.Println(isBoss)
+	var results ResultsTable
 	modifier := 0
 	if !isBoss {
 		for place, inSessionId := range sequence {
 			fmt.Printf("tableStrings[place]: %v\n", tableStrings[place])
+			fmt.Printf("place: %v\n", place)
+			fmt.Printf("IDs[inSessionId]: %v\n", IDs[inSessionId])
 			if inSessionId < 4 {
 				if strings.Split(tableStrings[place], "/")[1] != "NF" {
 					if IDs[inSessionId] == userID {

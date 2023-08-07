@@ -69,9 +69,7 @@ func buyCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var req string
 
 		err = json.Unmarshal(reqData, &req)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -124,9 +122,7 @@ func buyColor(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var req string
 
 		err = json.Unmarshal(reqData, &req)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -178,9 +174,7 @@ func tune(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var req string
 
 		err = json.Unmarshal(reqData, &req)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -231,22 +225,16 @@ func chooseCar(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var req string
 
 		err = json.Unmarshal(reqData, &req)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		ID, err := strconv.Atoi(req)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 

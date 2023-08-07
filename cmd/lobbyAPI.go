@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -32,16 +31,13 @@ func sendPlayers(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var IDs []string
 
 		lobby, err := getLobbyData(db, strconv.Itoa(lobbyID))
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
 		IDs = append(IDs, lobby.HostID, lobby.Player2ID, lobby.Player3ID, lobby.Player4ID)
 		var user UserData
 		var myId string
-		fmt.Printf("lobby: %v\n", lobby)
 		for i, element := range IDs {
 
 			if element != "0" {
@@ -106,9 +102,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		lobbyId, err := getLobbyID(db, userID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -119,18 +113,14 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		lobby, err := getLobbyData(db, strconv.Itoa(lobbyId))
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		log.Println("before", lobby)
 		var settings LobbySettings
 
 		err = json.Unmarshal(reqData, &settings)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -142,9 +132,7 @@ func chooseMap(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		lobby, err = getLobbyData(db, strconv.Itoa(lobbyId))
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 
@@ -236,10 +224,7 @@ func sendKey(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var inSessionId string
 		var cars, nicknames []string
 		IDs := []string{lobby.HostID, lobby.Player2ID, lobby.Player3ID, lobby.Player4ID}
-		fmt.Printf("lobby: %v\n", lobby)
 		for i, id := range IDs {
-
-			fmt.Printf("id: %v\n", id)
 			if id != "0" {
 				if userIdstr == id {
 					inSessionId = strconv.Itoa(i)
@@ -358,7 +343,7 @@ func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		if errorProcessor(err, w) {
 			return
 		}
-		fmt.Printf("countOfBosses: %v\n", countOfBosses)
+
 		if countOfBosses < 1 {
 			botID = "10"
 		} else if countOfBosses < 2 {
@@ -366,7 +351,7 @@ func createBossLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		} else {
 			botID = "13"
 		}
-		fmt.Printf("botID: %v\n", botID)
+
 		err = insert(db, lobbyId, hostId, botID, "0", "0", true)
 		if errorProcessor(err, w) {
 			return
@@ -419,9 +404,7 @@ func joinLobby(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var lobbyID string
 
 		err = json.Unmarshal(reqData, &lobbyID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		var Error string
@@ -543,8 +526,6 @@ func getFriendsLobbys(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) 
 		if errorProcessor(err, w) {
 			return
 		}
-
-		fmt.Printf("user.Friends: %v\n", user.Friends)
 
 		lobbyList, err := getLobbyList(db, strings.Split(user.Friends, " "))
 		if errorProcessor(err, w) {

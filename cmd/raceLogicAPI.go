@@ -112,52 +112,33 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		var req string
 
 		err = json.Unmarshal(reqData, &req)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		tableStrings := strings.Split(races[req][1:], " ")
-		sequence, err := getSequence(tableStrings)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		sequence, tableStrings, err := getSequence(tableStrings)
+		if errorProcessor(err, w) {
 			return
 		}
-
 		userID, err := getUserID(db, r)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
-			return
-		}
-		user, err := getUser(db, userID)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
 		IDs, err := getIDs(db, req)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		if errorProcessor(err, w) {
 			return
 		}
-
 		lobby, err := getLobbyData(db, req)
 		if errorProcessor(err, w) {
 			return
 		}
 		var results ResultsTable
 		fmt.Printf("races[req]: %v\n", lobby)
-		results, err = processResults(db, results, sequence, tableStrings, IDs, userID, lobby.Boss)
-		if err != nil {
-			http.Error(w, "Error", 500)
-			log.Println(err.Error())
+		results, err = processResults(db, sequence, tableStrings, IDs, userID, lobby.Boss)
+		if errorProcessor(err, w) {
 			return
 		}
-
+		log.Println(results, sequence, tableStrings, IDs, userID, lobby.Boss)
 		response := struct {
 			Response ResultsTable `json:"response"`
 		}{
@@ -172,8 +153,5 @@ func getTable(db *sqlx.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
-		deleteUserFromSession(db, user)
-		clearCurLobbyId(db, user.Id)
-		deleteSession(db, user.CurLobbyID)
 	}
 }
