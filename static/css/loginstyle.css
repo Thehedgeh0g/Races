@@ -22,7 +22,7 @@
     width: 30vw;
 }
 
-.centering {
+.centering { 
     display: flex;
     align-items: center;
 }
@@ -56,6 +56,16 @@
     height: 40px;
     padding-left: 10px;
     outline: none;
+}
+
+.login__registration {
+    margin: 10px;
+    cursor: pointer;
+}
+
+.login__registration:hover{
+    margin: 10px;
+    color: #a17c0c;
 }
 
 .text {
